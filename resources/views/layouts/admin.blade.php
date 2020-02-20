@@ -94,7 +94,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Tùy chọn thống kê:</h6>
                         <a class="collapse-item" href="{{ route('doanh.thu.theo.ngay') }}">Doanh thutrong ngày</a>
-                        <a class="collapse-item" href="#">Doanh thu trong tháng</a>
+                    <a class="collapse-item" href="{{ route('doanh.thu.theo.thang') }}">Doanh thu trong tháng</a>
                     </div>
                 </div>
             </li>
@@ -329,7 +329,7 @@
             var existingNotifications = notifications.html();
         var avatar = Math.floor(Math.random() * (71 - 20 + 1)) + 20;
         var newNotificationHtml = `
-           <a class="dropdown-item d-flex align-items-center" href="localhost/backend-office/public/order/details/` + data.id + `">
+           <a class="dropdown-item d-flex align-items-center" href="{{env('APP_URL')}}/order/details/` + data.id + `">
             <audio src="{{asset('audio.mp3')}}" autoplay></audio>
                                     <div class="mr-3">
                                       <div class="icon-circle bg-primary">

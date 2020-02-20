@@ -39,12 +39,16 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     Route::get('order/product/{id}', 'OrderController@printproduct')->name('order.product');
 
     Route::get('doanh-thu-theo-ngay', 'StaticController@doanhthutheongay')->name('doanh.thu.theo.ngay');
-    Route::get('lay-doanh-thu-theo-ngay', 'StaticController@laydoanhthutheongay');
+        Route::get('lay-doanh-thu-theo-ngay', 'StaticController@laydoanhthutheongay');
+    
 
 
     //For Sếp
     Route::group(['middleware' => ['check_role']], function () {
-
+        
+        Route::get('doanh-thu-theo-thang', 'StaticController@doanhthutheothang')->name('doanh.thu.theo.thang');
+        Route::get('lay-doanh-thu-theo-thang', 'StaticController@laydoanhthutheothang');
+       
         //settings
         Route::get('setting/index', 'SettingController@index')->name('setting.index');
         Route::post('setting/update/{id}', 'SettingController@update')->name('setting.update');

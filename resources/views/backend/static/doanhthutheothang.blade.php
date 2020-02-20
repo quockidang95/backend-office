@@ -3,9 +3,9 @@
 <?php
     $stores = App\Store::all();
 ?>
-<nav aria-label="breadcrumb">
+<nav aria-label="breadcrumb">  
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Thông kê doanh thu theo ngày</a></li>
+        <li class="breadcrumb-item"><a href="#">Thông kê doanh thu theo tháng</a></li>
     </ol>
 </nav>
 <div class="input-group col-3">
@@ -30,9 +30,9 @@
 <table class="table">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">Ca làm việc</th>
-            <th scope="col">Nhân viên</th>
-            <th scope="col">Doanh thu của ca</th>
+            <th scope="col">Bàn</th>
+            <th scope="col">ID KH</th>
+            <th scope="col">Tổng bill</th>
         </tr>
     </thead>
     <tbody>
@@ -48,7 +48,7 @@
 <script src="{{ asset('datepicker/dist/datepicker.js') }}"></script>
 <script>
     $('[data-toggle="datepicker"]').datepicker(
-        {format: 'yyyy-mm-dd'}
+        {format: 'mm'}
     );
 </script>
 
@@ -56,18 +56,19 @@
 <script>
         $('#date_selected').on('change',function(){
                     $date_selected = $(this).val();
+                    console.log($date_selected);
                     $store_code = $('#store_code').val();
                     $.ajax({
                         type: 'get',
-                        url: '{{ URL::to('lay-doanh-thu-theo-ngay') }}',
+                        url: '{{ URL::to('lay-doanh-thu-theo-thang') }}',
                         data: {
                             'dateselected': $date_selected,
                             'storecode': $store_code
                         },
                         success:function(data){
                             var getData = $.parseJSON(data);
-                           console.log(getData);
-                           $('tbody').html(getData[0].a);
+                           
+                          $('tbody').html(getData[0].a);
                            $('#total_price').html('Tổng tiền: ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(getData[0].b));
                         }
                     });
