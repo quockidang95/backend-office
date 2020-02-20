@@ -80,7 +80,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     public function revenue(){
         
         $user = auth('web')->user();
-        $date = '2020-02-13';
+        $date = date('Y-m-d');
         $orders = Order::where('order_date', 'LIKE', '%' . $date . '%')->whereIn('status', [3, 4])->where('store_code', $user->store_code)->orderby('order_date', 'desc')->get();
     
         $totalPrice = 0;
