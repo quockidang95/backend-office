@@ -126,11 +126,8 @@ class CustomerController extends Controller
 
         $setting = Setting::find(1);
         $price_discount =  $total_price - $total_price * $setting->discount_user/100;
-
         $point = $price_discount/$setting->discount_point;
-
         $order = new Order;
-
         $order->order_code = '#' . session('store_code') . time() . $id;
 
         $order->store_code = session('store_code');
@@ -162,7 +159,7 @@ class CustomerController extends Controller
             ]);
         }
 
-        /*
+        
         $data['store_code'] = session('store_code');
         $data['table'] = session('table');
         $data['id'] = $order->id;
@@ -175,13 +172,11 @@ class CustomerController extends Controller
             env('PUSHER_APP_SECRET'),
             env('PUSHER_APP_ID'),
             $options
-        );*/
-       // $pusher->trigger('Notify', 'send-message', $data);
+        );
+        $pusher->trigger('Notify', 'send-message', $data);
         Cart::destroy();
         session(['store_code' => null, 'table' => null]);
         return view('frontend.success');
-
-
     }
 
     public function notification(Request $request){

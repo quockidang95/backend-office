@@ -35,7 +35,6 @@ class OrderController extends Controller
         $products = json_decode($request->products);
 
         foreach ($products as $product) {
-
             $item = new OrderItem;
             $item->order_id = $order->id;
             $item->product_id = $product->id;
@@ -47,8 +46,6 @@ class OrderController extends Controller
                 $item->size = 'Lớn';
             }
             $item->quantity = $product->slChon;
-           
-            $item->recipe = json_encode($product->recipe);
             $item->save();
         }
 

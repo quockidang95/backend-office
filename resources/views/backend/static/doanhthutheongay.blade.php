@@ -66,7 +66,7 @@
                         },
                         success:function(data){
                             var getData = $.parseJSON(data);
-                           console.log(getData);
+                           console.log(getData[0]);
                            $('tbody').html(getData[0].a);
                            $('#total_price').html('Tổng tiền: ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(getData[0].b));
                         }

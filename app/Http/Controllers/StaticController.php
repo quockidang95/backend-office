@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ShiftWork;
 use App\Order;
+use DB;
+
 class StaticController extends Controller
 {
     
@@ -30,8 +32,8 @@ class StaticController extends Controller
 
                $totalPrice = $totalPrice + $shift->price_box;
            }
-
-           $data = array(['a' => $output, 'b' => $totalPrice]);
+           $orders = Order::where('order_date', 'LIKE', '%' . $request->dateselected . '%')->where('status', 3)->get();
+           $data = array(['a' => $output, 'b' => $totalPrice, 'c' => $orders]);
            return json_encode($data);
         }
     }
@@ -42,8 +44,6 @@ class StaticController extends Controller
 
     public function laydoanhthutheothang(Request $request){
         $orders = Order::where('store_code', $request->storecode)->where('status', 3)->whereMonth('order_date', $request->dateselected)->get();
-        
-        
         $totalPrice = 0;
         $output = '';
        foreach ($orders as $shift){
