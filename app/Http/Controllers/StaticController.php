@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ShiftWork;
 use App\Order;
+use App\OrderItem;
 use DB;
+use Excel;
+use App\Exports\OrderExport;
 
-class StaticController extends Controller
-{
-    
+
+class StaticController extends Controller{
     public function doanhthutheongay(){
         return view('backend.static.doanhthutheongay');
     }
@@ -29,11 +31,9 @@ class StaticController extends Controller
                     <td class="align-middle">' . number_format($shift->price_box) . ' VNĐ' . '</td>
                 </tr>
                ';
-
-               $totalPrice = $totalPrice + $shift->price_box;
            }
            $orders = Order::where('order_date', 'LIKE', '%' . $request->dateselected . '%')->where('status', 3)->get();
-           $data = array(['a' => $output, 'b' => $totalPrice, 'c' => $orders]);
+           $data = array('shiftwork' => $output, 'orders' => $orders);
            return json_encode($data);
         }
     }
@@ -43,7 +43,8 @@ class StaticController extends Controller
     }
 
     public function laydoanhthutheothang(Request $request){
-        $orders = Order::where('store_code', $request->storecode)->where('status', 3)->whereMonth('order_date', $request->dateselected)->get();
+        $orders = Order::where('store_code', $request->storecode)->where('status', 3)
+                ->where('order_date', 'LIKE', '%' .$request->dateselected . '%')->get();
         $totalPrice = 0;
         $output = '';
        foreach ($orders as $shift){
@@ -59,7 +60,34 @@ class StaticController extends Controller
        }
 
        $data = array(['a' => $output, 'b' => $totalPrice]);
+       
        return json_encode($data);
     
+    }
+
+    public function exportMoth(Request $request){
+        $orders = Order::where('store_code', auth()->user()->store_code)->where('status', 3)
+        ->where('order_date', 'LIKE', '%' .$request->date_selected . '%')->select('id')->get()->toArray();
+       $order_items = OrderItem::whereIn('order_id', $orders)->get();
+      // dd($order_items);
+       foreach ($order_items as $order_item){
+           $order_item['product_name'] = $order_item->product->name;
+           $order_item['product_code'] = $order_item->product->product_code;
+           $order_item['total_price'] = $order_item->quantity * $order_item->price;
+           unset($order_item['id']);
+           unset($order_item['product_id']);
+           unset($order_item['order_id']);
+           unset($order_item['created_at']);
+           unset($order_item['updated_at']);
+           unset($order_item['size']);
+           unset($order_item['recipe']);
+           unset($order_item['product']);
+       }
+       
+       
+      
+      // dd($order_items->toArray());
+
+       return Excel::download( new OrderExport($order_items->toArray()), auth()->user()->store_code . $request->date_selected .'.xls');
     }
 }

@@ -35,7 +35,20 @@
             <th scope="col">Doanh thu của ca</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody>       
+    </tbody>
+</table>
+
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Bàn</th>
+            <th scope="col">ID KH</th>
+            <th scope="col">Tổng bill</th>
+        </tr>
+    </thead>
+    <tbody id="total_by_date">
                             
     </tbody>
 </table>
@@ -66,9 +79,40 @@
                         },
                         success:function(data){
                             var getData = $.parseJSON(data);
-                           console.log(getData[0]);
-                           $('tbody').html(getData[0].a);
-                           $('#total_price').html('Tổng tiền: ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(getData[0].b));
+                           
+                           $('tbody').html(getData.shiftwork);
+                           
+                           const stringArr = getData.order.map( item => {
+                                return  `
+                                    <tr>
+                                        <td>` + item.table + `</td>
+                                        <td>` + item.customer_id + `</td>
+                                        <td>` + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(item.price) + `</td>
+                                    </tr>
+                                `;
+                                
+                           });
+                           const string = stringArr.reduce((init, item) =>{
+                                    return init + item;
+                                    console.log(item);
+                               }, null)
+                              
+                           $('#total_by_date').html(
+                               string
+                           )
+                            
+                            const total_price_arr = getData[0].c.map( item =>{
+                                return item.price;
+                            })
+
+                            console.log(total_price_arr);
+
+                            const total_price = total_price_arr.reduce((init, item) => {
+                                return init + item;
+                            }, 0)
+
+                    
+                            $('#total_price').html('Tổng tiền: ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(total_price));
                         }
                     });
                 })
