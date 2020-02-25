@@ -86,6 +86,10 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
 
         Route::get('recipe/store', 'ProductController@storeRecipe')->name('recipe.store');
         Route::post('recipe/store', 'ProductController@postStoreRecipe')->name('recipe.store');
+
+
+        // export 
+        Route::post('export', 'StaticController@exportMoth')->name('export.revenue');
     });
 
 

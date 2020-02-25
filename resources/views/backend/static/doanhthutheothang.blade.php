@@ -8,10 +8,13 @@
         <li class="breadcrumb-item"><a href="#">Thông kê doanh thu theo tháng</a></li>
     </ol>
 </nav>
+<form action="{{ route('export.revenue')}}" method="post">
+    @csrf
 <div class="input-group col-3">
-    <input type="text" id="date_selected" class="form-control bg-lightlight border-0 small"data-toggle="datepicker" placeholder="Select date...">
+    <input type="text" id="date_selected" name="date_selected" class="form-control bg-lightlight border-0 small"data-toggle="datepicker" placeholder="Select date...">
 </div>
-
+    <button class="btn btn-warning"type="submit">Xuất ra excel</button>
+</form>
 
 <div class="input-group col-3 pt-3 pb-3">
     <select class="form-control form-control-sm" required
@@ -48,7 +51,7 @@
 <script src="{{ asset('datepicker/dist/datepicker.js') }}"></script>
 <script>
     $('[data-toggle="datepicker"]').datepicker(
-        {format: 'mm'}
+        {format: 'yyyy-mm'}
     );
 </script>
 
