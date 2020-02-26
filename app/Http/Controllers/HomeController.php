@@ -37,11 +37,9 @@ class HomeController extends Controller
 
         $data_array = [];
         foreach ($categories as $key => $value) {
-
             $object['category'] = $value;
             $object['list_product'] = $value->products;
             array_push($data_array, $object);
-
         }
 
         return view('home', compact('data_array', 'categories'));

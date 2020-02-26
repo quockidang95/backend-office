@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Recipe;
@@ -16,6 +15,7 @@ class ProductController extends Controller
     protected $successStatus = 200;
     protected $productReposotory;
     protected $categoryRepository;
+
     public function __construct(ProductRepositoryInterface $productReposotory, CategoryRepositoryInterface $categoryRepository) {
         $this->productReposotory = $productReposotory;
         $this->categoryRepository = $categoryRepository;
@@ -31,7 +31,6 @@ class ProductController extends Controller
         $products = $category->products;
 
         foreach($products as $product){
-          //  $product = Product::find($id);
             $recipe_ids = ProductRecipe::where('product_id', $product->id)->get('recipe_id');
             $recipes = Recipe::whereIn('id', $recipe_ids)->get();
             $product['recipe'] = $recipes;
@@ -41,21 +40,6 @@ class ProductController extends Controller
     }
 
     public function GetProductById($id){
-        //return response()->json($this->productReposotory->find_1($id), $this->successStatus);
-
         return $this->productReposotory->find_1($id);
-    }
-
-
-
-    public function jsondecode(Request $request){
-
-        $string = $request->json;
-        $array = json_decode($string);
-        if(gettype($array) === "array"){
-           return  response()->json($array);
-        }
-
-        return response()->json('error');
     }
 }

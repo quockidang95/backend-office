@@ -1,21 +1,20 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Validator;
 use App\User;
 use App\Repositories\User\UserRepositoryInterface;
 use Carbon\Carbon;
 use App\Rechage;
 use App\Feedback;
+
 class UserController extends Controller
 {
 
-   protected $successStatus = 200;
-   protected $errorStatus = 401;
+    protected $successStatus = 200;
+    protected $errorStatus = 401;
     protected $userReposotory;
 
     public function __construct(UserRepositoryInterface $userReposotory){

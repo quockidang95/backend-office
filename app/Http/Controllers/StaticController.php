@@ -22,8 +22,7 @@ class StaticController extends Controller{
             $shiftworks = Shiftwork::where('created_at', 'LIKE', '%' . $request->dateselected . '%')
                                     ->where('store_code', $request->storecode)->get();
             $totalPrice = 0;
-
-           foreach ($shiftworks as $shift){
+            foreach ($shiftworks as $shift){
                $output .='
                 <tr>
                     <th class="align-middle" scope="row">' . $shift->name_shift . '</th>
@@ -55,21 +54,18 @@ class StaticController extends Controller{
                 <td class="align-middle">' . number_format($shift->price) . ' VNĐ' . '</td>
             </tr>
            ';
-
            $totalPrice = $totalPrice + $shift->price;
        }
-
        $data = array(['a' => $output, 'b' => $totalPrice]);
        
        return json_encode($data);
-    
     }
 
     public function exportMoth(Request $request){
         $orders = Order::where('store_code', auth()->user()->store_code)->where('status', 3)
         ->where('order_date', 'LIKE', '%' .$request->date_selected . '%')->select('id')->get()->toArray();
        $order_items = OrderItem::whereIn('order_id', $orders)->get();
-      // dd($order_items);
+      
        foreach ($order_items as $order_item){
            $order_item['product_name'] = $order_item->product->name;
            $order_item['product_code'] = $order_item->product->product_code;
@@ -83,11 +79,6 @@ class StaticController extends Controller{
            unset($order_item['recipe']);
            unset($order_item['product']);
        }
-       
-       
-      
-      // dd($order_items->toArray());
-
        return Excel::download( new OrderExport($order_items->toArray()), auth()->user()->store_code . $request->date_selected .'.xls');
     }
 }

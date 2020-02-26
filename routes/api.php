@@ -24,7 +24,6 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('details', 'Api\UserController@details');
     Route::post('update', 'Api\UserController@update');
     Route::post('orders', 'Api\OrderController@order');
-
     Route::get('getkey', 'Api\UserController@getkey');
 
     //historyorders
@@ -34,6 +33,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     //notification
     Route::get('list-notification', 'Api\NotificationController@index');
     Route::post('check-read', 'Api\NotificationController@check_read');
+
     // history rechage
     Route::get('list-rechage', 'Api\UserController@rechage');
 
@@ -42,7 +42,6 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('feedback', 'Api\UserController@feedback');
 });
 Route::get('products/{id}', 'Api\ProductController@GetProductByCategory');
-//Route::get('products', 'Api\ProductController@index');
 Route::get('categories', 'Api\CategoryController@index');
 Route::get('product/{id}', 'Api\ProductController@GetProductById');
 Route::get('getconfig', 'Api\SettingController@getconfig');

@@ -36,12 +36,12 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         $productAdd = new Product;
         $productAdd->category_id = $req->category_id;
         $productAdd->name = $req->name;
-
         $productAdd->description = $req->description;
         $productAdd->content = $req->content;
         $productAdd->price = $req->price;
         $productAdd->price_L = $req->price_L;
         $productAdd->promotion_price =  $req->promotion_price;
+
         $get_image = $req->file('image');
         $name_image = current(explode('.', $get_image->getClientOriginalName()));
         $new_image = $name_image . rand(0, 99) . '.' . $get_image->getClientOriginalExtension();
@@ -62,7 +62,6 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
     function updateProduct($req, $id){
         $recipes = $req->input('recipe');
         $product_recipe = ProductRecipe::where('product_id', $id)->get();
-    //    dd($product_recipe);
         if(!$product_recipe){
             foreach($recipes as $recipe){
                 ProductRecipe::create([
@@ -113,7 +112,6 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         if ($request->ajax()) {
             $output = '';
             $products = Product::where('name', 'LIKE', '%' . $request->search . '%')->get();
-
 
             foreach ($products as $key => $item) {
                 $output .= '

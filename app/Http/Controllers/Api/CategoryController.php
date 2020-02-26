@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Category\CategoryRepositoryInterface;
+
 class CategoryController extends Controller
 {
     protected $successStatus = 200;
@@ -18,5 +18,4 @@ class CategoryController extends Controller
         $categories = $this->categoryReposotory->getAll();
         return response()->json($categories, $this->successStatus);
     }
-    
 }

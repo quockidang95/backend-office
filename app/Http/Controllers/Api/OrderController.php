@@ -14,10 +14,11 @@ use function GuzzleHttp\json_decode;
 
 class OrderController extends Controller
 {
+    protected $successStatusCode = 200;
+
     public function order(Request $request)
     {
         $user = auth('api')->user();
-
         $order = new Order;
 
         $order->order_code = '#' . $request->store_code . time() . $user->id;
@@ -33,7 +34,6 @@ class OrderController extends Controller
         $order->save();
 
         $products = json_decode($request->products);
-
         foreach ($products as $product) {
             $item = new OrderItem;
             $item->order_id = $order->id;
@@ -48,7 +48,6 @@ class OrderController extends Controller
             $item->quantity = $product->slChon;
             $item->save();
         }
-
 
         $data['store_code'] = $request->store_code;
         $data['table'] = $request->table;
@@ -65,17 +64,13 @@ class OrderController extends Controller
         );
 
         $pusher->trigger('Notify', 'send-message', $data);
-
         return response()->json($order, 200);
     }
-    protected $successStatusCode = 200;
-
-
+    
 
     public function historyorder()
     {
         $userid = auth('api')->user()->id;
-        // $user = User::find($userid);
         $order = Order::where('customer_id', $userid)->orderby('order_date', 'desc')->get();
         return response()->json($order, $this->successStatusCode);
     }

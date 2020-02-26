@@ -1,11 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\FE;
 
 use Cart;
 use App\User;
 use App\Order;
-
 use App\Product;
 use App\Rechage;
 use App\Setting;
@@ -22,7 +20,6 @@ class CustomerController extends Controller
     public function login(Request $request)
     {
         $user = User::where('phone', $request->phone)->first();
-
         if ($user){
             return redirect('/json')->withCookie(cookie('id', $user->id, 43000));
         }
@@ -39,8 +36,6 @@ class CustomerController extends Controller
             'name' => $request->name,
             'address' => $request->address
         ]);
-
-
         return redirect('/json')->withCookie(cookie('id', $user->id, 43000));;
     }
 
@@ -54,7 +49,6 @@ class CustomerController extends Controller
     {
         if ($request->ajax()) {
             $data = json_decode($request->data);
-
             session(['store_code' => $data->ChiNhanh, 'table' => $data->SoBan]);
             $redirect = 'http://localhost/backend-office/public';
             return Response($redirect);
@@ -64,14 +58,11 @@ class CustomerController extends Controller
     public function detailsProduct($id)
     {
         $product = Product::find($id);
-       // dd($product);
         return view('frontend.productdetails', compact('product'));
     }
 
     public function addProduct(Request $request)
     {
-
-
         $temp_array = explode("k", (string) $request->p_id);
         $setting = Setting::find(1);
         $product_id = $temp_array[0];
@@ -94,7 +85,6 @@ class CustomerController extends Controller
                 'size' => $size,
             ],
         ]);
-          //  dd(Cart::content());
         return redirect('/');
     }
 
@@ -143,14 +133,12 @@ class CustomerController extends Controller
         $order->status = 1;
         $order->save();
 
-
         $contents = Cart::content();
         foreach ($contents as $key => $value) {
-
             $product_id = explode('k', $value->id);
             $id = $product_id[0];
 
-           $item = OrderItem::create([
+            $item = OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $id,
                 'price' => $product_id[1],
@@ -159,7 +147,6 @@ class CustomerController extends Controller
             ]);
         }
 
-        
         $data['store_code'] = session('store_code');
         $data['table'] = session('table');
         $data['id'] = $order->id;
@@ -188,8 +175,8 @@ class CustomerController extends Controller
 
     public function profiler(Request $request){
         $id = $request->cookie('id');
-
         $user = User::find(intval($id));
+        
         return view('frontend.profiler', compact('user'));
     }
 

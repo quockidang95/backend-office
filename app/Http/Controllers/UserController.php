@@ -8,10 +8,8 @@ use Carbon\Carbon;
 use App\Notification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-//use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Session;
 use App\Repositories\User\UserRepositoryInterface;
-
 use App\Imports\UsersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Collection;
@@ -59,12 +57,6 @@ class UserController extends Controller
         User::create($input);
         Session::put('success', 'Thêm mới tài khoản thành công');
         return redirect()->route('customer.index');
-    }
-
-    public function excel(){
-
-        Excel::import(new UsersImport, ('DSHV_OFFICE_2019.xls'));
-        echo 'import thành công!';
     }
 }
 

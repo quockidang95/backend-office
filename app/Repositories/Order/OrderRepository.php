@@ -78,7 +78,6 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     }
 
     public function revenue(){
-        
         $user = auth('web')->user();
         $date = date('Y-m-d');
         $orders = Order::where('order_date', 'LIKE', '%' . $date . '%')->whereIn('status', [3, 4])->where('store_code', $user->store_code)->orderby('order_date', 'desc')->get();
@@ -98,7 +97,6 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         return view('backend.order.totalbyday', compact('totalPrice', 'orders', 'price', 'tienmat'));
     }
 
-// success order
     public function checkOrder($orderID){
         $order = $this->find($orderID);
         if($order->status != 2){
@@ -138,17 +136,14 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         $noti['type_notifi'] = 'order';
         $noti['customer_id'] = $user->id;
         $noti['id'] = $order->id;
-        $notifi = Notification::create($noti);
 
+        $notifi = Notification::create($noti);
         $dataMess = [
             'title' => 'Thông báo đơn hàng',
             'body' => 'Đơn hàng ' . $order->order_code . ' của Quí khách đã hoàn tất.',
         ];
-
         return $dataMess;
     }
-
-// error order
     public function changeStatusAndCancelOrder($order, $user){
         $setting = Setting::find(1);
         $price = $order->total_price - ($setting->discount_user * $order->total_price)/100;
@@ -156,7 +151,6 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     }
 
     public function createdNotificationCancelOrder($order, $user){
-
         $noti['title'] = 'Thông báo đơn hàng';
         $noti['body'] = 'Đơn hàng ' . $order->order_code . ' của Quí khách bị hủy. Cám ơn quí khách đã sử dụng dịch vụ tại OFFICE COFFEE.';
         $noti['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
@@ -172,14 +166,10 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         return $dataMess;
     }
 
-
-// next order
     public function changeStatusNextOrder($orderID){
         $order = $this->find($orderID);
         $order->update(['status' => 2]);
     }
-
-
 
     public function send($to = "", $data = array())
     {
@@ -187,12 +177,11 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         $serverKey = "AIzaSyB7ZLUj7bIfiAWHStCpKVDfguewapUloX0";
 
         $fields = array('to' => $to, 'data' => $data, 'priority' => 'high');
-
-
         $headers = array(
             'Content-Type:application/json',
             'Authorization:key=' . $serverKey
         );
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
