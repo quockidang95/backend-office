@@ -8,6 +8,7 @@ use App\Repositories\Store\StoreRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+
 class StoreController extends Controller
 {
     protected $storeRepository;

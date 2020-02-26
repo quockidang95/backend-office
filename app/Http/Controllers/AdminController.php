@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Feedback;
 class AdminController extends Controller
 {
-    //
     protected $adminRepository;
     public function __construct(UserRepositoryInterface $adminRepository)
     {
@@ -28,7 +27,6 @@ class AdminController extends Controller
 
     public function store(Request $request){
         $input = $request->all();
-        //dd($input);
         $admin = User::where('email', $input['email'])->first();
         if($admin){
             Session::put('error', 'Email đã tồn tại');
@@ -50,6 +48,7 @@ class AdminController extends Controller
         Session::put('success', 'Tạo tài khoảng thành công');
         return redirect()->route('admin.index');
     }
+    
     public function delete($id){
         $user = $this->adminRepository->find($id);
         $user->status = 0;

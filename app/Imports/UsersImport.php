@@ -106,7 +106,6 @@ class UsersImport implements ToModel, WithHeadingRow
             default:
                 break;
         }
-
         return $str;
     }
 }

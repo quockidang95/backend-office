@@ -8,8 +8,6 @@ class SettingController extends Controller
 {
     public function index(){
         $setting = Setting::all();
-        //dd($setting);
-
         return view('backend.setting.index', compact('setting'));
     }
     public function update(Request $request, $id){

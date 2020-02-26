@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Exports;
 use App\Order;
 use Maatwebsite\Excel\Concerns\FromArray;
@@ -9,9 +8,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class OrderExport implements WithHeadings, FromArray, ShouldAutoSize, WithMapping
 {
-  
     protected $rows;
-
     public function __construct(array $rows)
     {
         $this->rows = $rows;

@@ -27,7 +27,6 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         return \App\User::class;
     }
 
-    // api
     public function validator($request){
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -51,6 +50,7 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         $input = $request->all();
         $input['is_admin'] = 0;
         $input['role_id'] = 3;
+
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         return response()->json($success, $this->successStatus);
@@ -84,27 +84,24 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         $setting = Setting::find(1);
 
         if($request->money_discount != null){
-
             $rechageData['money_discount'] = $request->money_discount;
             $user->wallet = $user->wallet + $request->money_discount;
         }
         if($request->point_discount != null){
-
             if($request->point_discount > $user->point){
-
                 session(['error' => 'Điểm thưởng không hợp lệ']);
                 return redirect(route('customer.info', ['id' => $id]));
             }
+
             $rechageData['point_discount'] = $request->point_discount;
             $user->point = $user->point - $request->point_discount;
             $user->wallet = $user->wallet + $request->point_discount * 1000;
         }
         $user->wallet = $user->wallet + $request->money;
-
         $user->save();
-        $message = 'Quí khách đã nap thành công ' .  number_format($request->money) . ' VNĐ vào tài khoản.';
+        $message = 'Quí khách đã nạp thành công ' .  number_format($request->money) . ' VNĐ vào tài khoản.';
 
-        $notifiData['title'] = 'Tài khoản' . ' ' . $user->name;
+        $notifiData['title'] = 'Tài khoản ' . $user->name;
         $notifiData['body'] = $message;
         $notifiData['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
         $notifiData['type_notifi'] = 'naptien';
@@ -128,23 +125,20 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
             return redirect(route('customer.info', ['id' => $id]));
         }
         $mess = $this->send($user->token_device, $dataMessage);
-
         Session::put('success', 'Nạp thành công ' . number_format($request->money) . ' vào tài khoản khách hàng ' . $user->name . '.');
         return redirect(route('customer.info', ['id' => $id]));
-
     }
 
     public function send($to = "", $data = array())
     {
         $url = 'https://fcm.googleapis.com/fcm/send';
         $serverKey = "AIzaSyB7ZLUj7bIfiAWHStCpKVDfguewapUloX0";
-
         $fields = array('to' => $to, 'data' => $data);
-
         $headers = array(
             'Content-Type:application/json',
             'Authorization:key=' . $serverKey
         );
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);

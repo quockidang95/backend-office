@@ -48,8 +48,7 @@ class ProductController extends Controller
         $recipes = Recipe::all();
         $product_recipe = ProductRecipe::select('recipe_id')->where('product_id', $id)->get();
         $product_recipe = Recipe::whereIn('id', $product_recipe)->get();
-        //dd($product_recipe);
-
+       
         return view('backend.product.update', compact('item', 'recipes', 'product_recipe'));
     }
 
