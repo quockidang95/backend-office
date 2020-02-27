@@ -82,7 +82,7 @@
                            
                            $('tbody').html(getData.shiftwork);
                            
-                           const stringArr = getData.order.map( item => {
+                           const stringArr = getData.orders.map( item => {
                                 return  `
                                     <tr>
                                         <td>` + item.table + `</td>

@@ -43,9 +43,6 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
             $item->product_id = $product;
             $recipe_arr = json_decode($item->recipe);
             $output = '';
-            foreach ($recipe_arr as $recipe) {
-                $output .= $recipe->name . ': ' . $recipe->value . '% , ';
-            }
             $item->recipe = $output;
         }
     }
@@ -106,11 +103,9 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     }
 
     public function changeStatusAndCheckOutOrder($order, $user){
-        
         $setting = Setting::find(1);
         if($order->payment_method == 1){ // dùng ví điện tử
-            $price = $order->total_price - ($setting->discount_user * $order->total_price)/100;
-            $order->update(['status' => 3, 'created_by' => auth()->user()->name, 'price' => $price]);
+            $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
             $session_priceBox = session('price_box');
             $session_priceBox = $session_priceBox + $price;
             session(['price_box' => $session_priceBox]);
@@ -118,8 +113,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['wallet' => $wallet, 'point' => $point]);
         }else if($order->payment_method == 2){ // tien mat tai ban
-            $price = $order->total_price - ($setting->discount_user * $order->total_price)/100;
-            $order->update(['status' => 3, 'created_by' => auth()->user()->name, 'price' => $price]);
+            $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['point' => $point]);
 

@@ -50,7 +50,7 @@ class CustomerController extends Controller
         if ($request->ajax()) {
             $data = json_decode($request->data);
             session(['store_code' => $data->ChiNhanh, 'table' => $data->SoBan]);
-            $redirect = 'http://localhost/backend-office/public';
+            $redirect = env('APP_URL');
             return Response($redirect);
         }
     }
@@ -81,7 +81,6 @@ class CustomerController extends Controller
             'price' => (int) $request->p_price,
             'weight' => 12,
             'options' => [
-
                 'size' => $size,
             ],
         ]);
