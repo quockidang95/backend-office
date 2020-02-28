@@ -25,7 +25,6 @@ class CustomerController extends Controller
         }
             $phone = $request->phone;
             return view('frontend.register', compact('phone'));
-
     }
 
     public function register(Request $request){

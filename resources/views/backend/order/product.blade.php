@@ -74,6 +74,9 @@
                 </table>
             </div>
            <br />
+           <div style="text-align:center; margin-bottom:8px;" class="font-weight-bold">
+            {{'Lưu ý: ' . $order->note}}
+        </div>
            <?php
                 if($order->payment_method == 1){
                  echo '   <div style="text-align:center; margin-bottom:8px;" class="font-weight-bold"> Đã thanh toán<br />';

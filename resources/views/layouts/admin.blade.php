@@ -141,6 +141,16 @@
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{route('notification.sendall')}}" aria-expanded="true"
+                    aria-controls="collapseUtilities">
+                    <i class="fas fa-bell"></i>
+                    <span class="font-weight-bold">Gửi thông báo đến khách hàng</span>
+                </a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>

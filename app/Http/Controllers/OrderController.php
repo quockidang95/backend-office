@@ -51,7 +51,7 @@ class OrderController extends Controller
         $setting = Setting::find(1);
         $this->orderRepository->printOrder($order, $orderItems);
 
-        return view('backend.order.test', compact('order', 'orderItems', 'setting'));
+        return view('backend.order.printbill', compact('order', 'orderItems', 'setting'));
 
     }
 

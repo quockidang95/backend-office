@@ -40,6 +40,7 @@ class OrderController extends Controller
         foreach ($products as $product) {
             $item = new OrderItem;
             $item->order_id = $order->id;
+            $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
             $item->product_id = $product->id;
             if ($product->price != 0) {
                 $item->price = $product->price;

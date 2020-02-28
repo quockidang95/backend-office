@@ -104,11 +104,12 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
 
     public function changeStatusAndCheckOutOrder($order, $user){
         $setting = Setting::find(1);
+        $session_pricebox = session('price_box') + $order->price;  
+       
+        session(['price_box' => $session_pricebox]);
+
         if($order->payment_method == 1){ // dùng ví điện tử
             $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
-            $session_priceBox = session('price_box');
-            $session_priceBox = $session_priceBox + $price;
-            session(['price_box' => $session_priceBox]);
             $wallet =  $user->wallet - $order->price;
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['wallet' => $wallet, 'point' => $point]);
@@ -116,10 +117,6 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
             $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['point' => $point]);
-
-            $session_priceBox = session('price_box');
-            $session_priceBox = $session_priceBox + $price;
-            session(['price_box' => $session_priceBox]);
         }
     }
 
@@ -186,7 +183,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($ch);
         if ($result === FALSE) {
-            die('FCM Send Error: '  .  curl_error($ch));
+            return null;
         }
         curl_close($ch);
         return json_decode($result, true);
