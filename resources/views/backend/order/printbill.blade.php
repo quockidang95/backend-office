@@ -88,11 +88,6 @@
                         <td colspan="4">Tông cộng: </td>
                         <td>{{number_format($order->price)}}</td>
                     </tr>
-
-
-
-
-
                 </table>
             </div>
 

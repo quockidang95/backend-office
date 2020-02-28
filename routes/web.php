@@ -77,6 +77,10 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
 
         // export 
         Route::post('export', 'StaticController@exportMoth')->name('export.revenue');
+
+        //notification 
+        Route::get('notification/sendall', 'NotificationController@sendAll')->name('notification.sendall');
+        Route::post('notification/sendall', 'NotificationController@postSendAll')->name('notification.sendall');
     });
 
         //Customer

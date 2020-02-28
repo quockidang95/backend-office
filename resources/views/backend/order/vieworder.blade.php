@@ -42,6 +42,15 @@
                             {{'Khách: ' . $customer->name}}</div>
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                             {{'SĐT: ' . $customer->phone}}</div>
+                        <?php
+                            if($order->payment_method == 1){
+                                echo '<div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Thanh toán bằng ví    </div>';
+                            }elseif($order->payment_method == 2){
+                                echo '<div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Thanh toán bằng tiền mặt tại bàn   </div>';
+                            }
+                        ?>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             {{number_format($order->total_price) . '  VNĐ'}} </div>
                     </div>

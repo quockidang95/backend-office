@@ -25,7 +25,6 @@ class CustomerController extends Controller
         }
             $phone = $request->phone;
             return view('frontend.register', compact('phone'));
-
     }
 
     public function register(Request $request){
@@ -50,7 +49,7 @@ class CustomerController extends Controller
         if ($request->ajax()) {
             $data = json_decode($request->data);
             session(['store_code' => $data->ChiNhanh, 'table' => $data->SoBan]);
-            $redirect = 'http://localhost/backend-office/public';
+            $redirect = env('APP_URL');
             return Response($redirect);
         }
     }
@@ -81,7 +80,6 @@ class CustomerController extends Controller
             'price' => (int) $request->p_price,
             'weight' => 12,
             'options' => [
-
                 'size' => $size,
             ],
         ]);

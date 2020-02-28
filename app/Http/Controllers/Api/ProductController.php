@@ -35,7 +35,6 @@ class ProductController extends Controller
             $recipes = Recipe::whereIn('id', $recipe_ids)->get();
             $product['recipe'] = $recipes;
         }
-
         return response()->json($products, $this->successStatus);
     }
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use Pusher\Pusher;
 use App\User;
 use App\Product;
+use App\Setting;
 use function GuzzleHttp\json_decode;
 
 class OrderController extends Controller
@@ -19,6 +20,7 @@ class OrderController extends Controller
     public function order(Request $request)
     {
         $user = auth('api')->user();
+        $setting = Setting::find(1);
         $order = new Order;
 
         $order->order_code = '#' . $request->store_code . time() . $user->id;
@@ -31,12 +33,14 @@ class OrderController extends Controller
         $order->payment_method = $request->payment_method;
         $order->order_date = Carbon::now('Asia/Ho_Chi_Minh');
         $order->status = 1;
+        $order->price = $request->total_price - ($request->total_price * $setting->discount_user/100);
         $order->save();
 
         $products = json_decode($request->products);
         foreach ($products as $product) {
             $item = new OrderItem;
             $item->order_id = $order->id;
+            $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
             $item->product_id = $product->id;
             if ($product->price != 0) {
                 $item->price = $product->price;
@@ -67,7 +71,6 @@ class OrderController extends Controller
         return response()->json($order, 200);
     }
     
-
     public function historyorder()
     {
         $userid = auth('api')->user()->id;
