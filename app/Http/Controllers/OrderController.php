@@ -39,7 +39,7 @@ class OrderController extends Controller
     {
         $order = $this->orderRepository->getOrderById($id);
         $orderItems = $this->orderRepository->getAllOrderItemByOrderId($id);
-        $this->orderRepository->getDetailOrder($orderItems);
+       $this->orderRepository->getDetailOrder($orderItems);
 
         return view('backend.order.detail', compact('order', 'orderItems'));
     }
@@ -143,15 +143,6 @@ class OrderController extends Controller
         foreach ($orderItems as $item) {
             $product = Product::find($item->product_id);
             $item->product_id = $product;
-
-            $recipe_arr = json_decode($item->recipe);
-            $output = '';
-            if($recipe_arr){
-                foreach ($recipe_arr as $recipe) {
-                    $output .= $recipe->name . ': ' . $recipe->value . '% , ';
-                }
-            }
-            $item->recipe = $output;
         }
         return view('backend.order.product', compact('order', 'orderItems', 'name'));
     }

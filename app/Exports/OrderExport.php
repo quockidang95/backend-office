@@ -22,22 +22,26 @@ class OrderExport implements WithHeadings, FromArray, ShouldAutoSize, WithMappin
     public function headings(): array
     {
         return [
+            'Ngày',
             'Mã hàng',
             'Tên hàng',
             'Số lượng',
             'Giá',
-            'Tổng tiền'
+            'Thành tiền',
+            'DVT'
         ];
     }
 
     public function map($row): array
     {
         return [
+            $row['created_at'],
             $row['product_code'],
             $row['product_name'],
             $row['quantity'],
             $row['price'],
-            $row['total_price']
+            $row['total_price'],
+            $row['dvt']
         ];
     }
 }

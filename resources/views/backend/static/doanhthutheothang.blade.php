@@ -13,7 +13,9 @@
 <div class="input-group col-3">
     <input type="text" id="date_selected" name="date_selected" class="form-control bg-lightlight border-0 small"data-toggle="datepicker" placeholder="Select date...">
 </div>
+<div class="p-3">
     <button class="btn btn-warning"type="submit">Xuất ra excel</button>
+</div>
 </form>
 
 <div class="input-group col-3 pt-3 pb-3">

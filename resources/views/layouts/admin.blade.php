@@ -94,7 +94,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Tùy chọn thống kê:</h6>
                         <a class="collapse-item" href="{{ route('doanh.thu.theo.ngay') }}">Doanh thutrong ngày</a>
-                    <a class="collapse-item" href="{{ route('doanh.thu.theo.thang') }}">Doanh thu trong tháng</a>
+                        <a class="collapse-item" href="{{ route('doanh.thu.theo.thang') }}">Doanh thu trong tháng</a>
+                        
                     </div>
                 </div>
             </li>
@@ -247,7 +248,9 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2019</span>
+                        <span>@author : Dang Quoc Ki  </span> <br>
+                        <span>@company : Kingbao Media </span> <br>
+                        <span>Support: 0348704901 or fb: fb.com/quocki.dang</span>
                     </div>
                 </div>
             </footer>

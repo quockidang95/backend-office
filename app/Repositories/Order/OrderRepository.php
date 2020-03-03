@@ -41,9 +41,6 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         foreach ($orderItems as $item) {
             $product = Product::find($item->product_id);
             $item->product_id = $product;
-            $recipe_arr = json_decode($item->recipe);
-            $output = '';
-            $item->recipe = $output;
         }
     }
 
@@ -63,14 +60,6 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         foreach ($orderItems as $item) {
             $product = Product::find($item->product_id);
             $item->product_id = $product;
-            $recipe_arr = json_decode($item->recipe);
-            $output = '';
-            if($recipe_arr){
-                foreach ($recipe_arr as $recipe) {
-                    $output .= $recipe->name . ': ' . $recipe->value . '% , ';
-                }
-            }
-            $item->recipe = $output;
         }
     }
 
@@ -192,6 +181,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     function vieworder($id){
         $order = Order::find($id);
         $orderItems = OrderItem::where('order_id', $id)->get();
+
         foreach ($orderItems as $item) {
             $product = Product::find($item->product_id);
             $item->product_id = $product;
@@ -209,3 +199,4 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         return view('backend.rechage.index', compact('rechages', 'totalPrice'));
     }
 }
+

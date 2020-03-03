@@ -37,20 +37,45 @@ class OrderController extends Controller
         $order->save();
 
         $products = json_decode($request->products);
-        foreach ($products as $product) {
-            $item = new OrderItem;
-            $item->order_id = $order->id;
-            $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
-            $item->product_id = $product->id;
-            if ($product->price != 0) {
-                $item->price = $product->price;
-                $item->size = 'Vừa';
-            } else {
-                $item->price = $product->price_L;
-                $item->size = 'Lớn';
+      
+        foreach ($products as $product){
+          //  dd($product->recipe);
+            if(count($product->recipe) > 0)
+            {
+                $output = '';
+                foreach ($product->recipe as $recipe){
+                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+                }
+                $item = new OrderItem;
+                $item->recipe = $output;
+                $item->order_id = $order->id;
+                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
+                $item->product_id = $product->id;
+                if ($product->price != 0) {
+                    $item->price = $product->price;
+                    $item->size = 'Vừa';
+                } else {
+                    $item->price = $product->price_L;
+                    $item->size = 'Lớn';
+                }
+                $item->quantity = $product->slChon;
+                $item->save();
+            }else{
+                $item = new OrderItem;
+                $item->order_id = $order->id;
+                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
+                $item->product_id = $product->id;
+                if ($product->price != 0) {
+                    $item->price = $product->price;
+                    $item->size = 'Vừa';
+                } else {
+                    $item->price = $product->price_L;
+                    $item->size = 'Lớn';
+                }
+                $item->quantity = $product->slChon;
+                $item->save();
             }
-            $item->quantity = $product->slChon;
-            $item->save();
+            
         }
 
         $data['store_code'] = $request->store_code;

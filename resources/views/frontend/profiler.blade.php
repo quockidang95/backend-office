@@ -18,7 +18,7 @@
                                 Số điện thoại: {{$user->phone}}.</div>
 
                             <div class="h6 mb-0 mr-3 font-weight-bold text-gray-800">
-                                {{$user->wallet}}
+                                {{number_format($user->wallet)}}
                                 <i class="fas fa-money-check-alt"></i>
                             </div>
                             <div class="h6 mb-0 mr-3 font-weight-bold text-gray-800">
