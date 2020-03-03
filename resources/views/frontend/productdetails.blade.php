@@ -1,8 +1,101 @@
 @extends('layouts.customer')
+@section('css')
+  <style>
+      *, *:before, *:after {
+  box-sizing: border-box;
+}
+body {
+  font-family: sans-serif;
+  padding: 60px 20px;
+}
+@media (min-width: 600px) {
+  body {
+    padding: 60px;
+  }
+}
+.range-slider {
+  margin: 10px 0 0 0%;
+}
+.range-slider {
+  width: 100%;
+}
+.range-slider__range {
+  -webkit-appearance: none;
+  width: calc(100% - (73px));
+  height: 10px;
+  border-radius: 5px;
+  background: #d7dcdf;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+.range-slider__range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #2c3e50;
+  cursor: pointer;
+  transition: background 0.15s ease-in-out;
+}
+.range-slider__range::-webkit-slider-thumb:hover {
+  background: #1abc9c;
+}
+.range-slider__range:active::-webkit-slider-thumb {
+  background: #1abc9c;
+}
+.range-slider__range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 50%;
+  background: #2c3e50;
+  cursor: pointer;
+  transition: background 0.15s ease-in-out;
+}
+.range-slider__range::-moz-range-thumb:hover {
+  background: #1abc9c;
+}
+.range-slider__range:active::-moz-range-thumb {
+  background: #1abc9c;
+}
+.range-slider__range:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1abc9c;
+}
+.range-slider__value {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  color: #fff;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 3px;
+  background: #2c3e50;
+  padding: 5px 10px;
+  margin-left: 8px;
+}
+.range-slider__value:after {
+  position: absolute;
+  top: 8px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-right: 7px solid #2c3e50;
+  border-bottom: 7px solid transparent;
+  content: '';
+}
+::-moz-range-track {
+  background: #d7dcdf;
+  border: 0;
+}
+input::-moz-focus-inner, input::-moz-focus-outer {
+  border: 0;
+}
 
+  </style>
+@endsection
 @section('customer')
-
-
 <div class="media mt-4">
     <img class="pr-2 align-self-start" src="{{asset('source/images/' . $product->image)}}" alt="" width="80"
         height="80">
@@ -41,6 +134,17 @@
         <br>
     </fieldset>
     @endif
+    @if($recipes)
+        @foreach ($recipes as $recipe)
+        <div class="recipes">
+        <span>{{ $recipe->name }}</span>
+        <div class="range-slider">
+            <input class="range-slider__range" type="range" value="100" min="0" max="200" step="20">
+            <span class="range-slider__value">100</span>
+          </div>
+        </div>
+        @endforeach
+    @endif
     <div class="modal-footer" style="position: relative">
         <div class="quantity buttons_added" style="position: absolute; left: 5">
             <input type="button" value="-" class="minus style rounded"><input type="number"
@@ -57,12 +161,33 @@
         <input type="text" name="p_price" hidden id="p_price" value="">
         <input type="text" name="p_name" hidden value="{{$product->name}}">
         <input type="text" name="p_id" id="p_id" hidden value="">
-
+        <input type="text" name="p_recipe" id="p_recipe" hidden value="">
 
     </form>
 </div>
 @endsection()
 @section('script')
+<script>
+    var rangeSlider = function(){
+  var slider = $('.range-slider'),
+      range = $('.range-slider__range'),
+      value = $('.range-slider__value');
+    
+  slider.each(function(){
+
+    value.each(function(){
+      var value = $(this).prev().attr('value');
+      $(this).html(value + '%');
+    });
+
+    range.on('input', function(){
+      $(this).next(value).html(this.value + '%');
+    });
+  });
+};
+
+rangeSlider();
+</script>
 <script>
     function wcqib_refresh_quantity_increments() {
         jQuery("div.quantity:not(.buttons_added), td.quantity:not(.buttons_added)").each(function(a, b) {
@@ -105,28 +230,36 @@
             $('#p_quantity').val(quantity);
             var total_price = Number(radioValue) * Number(quantity);
             $('#total_price').val(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(total_price));
+        
     });
 
 });
 </script>
 <script>
     $(document).ready(function(){
-
-    $('#total_price').click(function(){
-    $('#p_quantity').val($('#quantity').val());
-    var id = $('#product_id').val();
-    var price =  $("input[name='price']:checked").val();
-    var p_id = id + 'k' + price;
-        $('#p_id').val(p_id);
-        console.log(p_id);
-       if($(this).val() === ''){
-           alert('vui lòng chọn món!');
-       }else{
-        $('#frmAddProduct').submit();
-       }
-
-   });
-
+        $('#total_price').click(function(){
+            var recipes = $('.recipes').toArray();
+            const arr = [];
+            for(let i = 0; i < recipes.length; i++){
+                arr.push({
+                    name: recipes[i].childNodes[1].innerHTML,
+                    value: recipes[i].childNodes[3].firstChild.nextSibling.value
+                });         
+            }
+            const string = JSON.stringify(arr)
+            $('#p_recipe').val(string);
+            $('#p_quantity').val($('#quantity').val());
+            var id = $('#product_id').val();
+            var price =  $("input[name='price']:checked").val();
+            var p_id = id + 'k' + price;
+                $('#p_id').val(p_id);
+                console.log(p_id);
+            if($(this).val() === ''){
+                alert('vui lòng chọn món!');
+            }else{
+                $('#frmAddProduct').submit();
+            }
+    });
 })
 </script>
 @endsection

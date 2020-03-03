@@ -37,15 +37,13 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         $productAdd->category_id = $req->category_id;
         $productAdd->name = $req->name;
         $productAdd->description = $req->description;
-        $productAdd->content = $req->content;
         $productAdd->price = $req->price;
         $productAdd->price_L = $req->price_L;
-        $productAdd->promotion_price =  $req->promotion_price;
 
         $get_image = $req->file('image');
         $name_image = current(explode('.', $get_image->getClientOriginalName()));
         $new_image = $name_image . rand(0, 99) . '.' . $get_image->getClientOriginalExtension();
-        $get_image->move('source/images', $new_image);
+        $get_image->move(public_path('source/images'), $new_image);
         $productAdd->image = $new_image;
         $productAdd->save();
         Session::put('success', 'Add sản phẩm thành công');
@@ -61,24 +59,26 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
 
     function updateProduct($req, $id){
         $recipes = $req->input('recipe');
-        $product_recipe = ProductRecipe::where('product_id', $id)->get();
-        if(!$product_recipe){
-            foreach($recipes as $recipe){
-                ProductRecipe::create([
-                    'product_id' => $id,
-                    'recipe_id' => $recipe
-                ]);
-            }
-        }else{
-            foreach($product_recipe as $item){
-                ProductRecipe::destroy($item->id);
-            }
+        if($recipes){
+            $product_recipe = ProductRecipe::where('product_id', $id)->get();
+            if(!$product_recipe){
+                foreach($recipes as $recipe){
+                    ProductRecipe::create([
+                        'product_id' => $id,
+                        'recipe_id' => $recipe
+                    ]);
+                }
+            }else{
+                foreach($product_recipe as $item){
+                    ProductRecipe::destroy($item->id);
+                }
 
-            foreach($recipes as $recipe){
-                ProductRecipe::create([
-                    'product_id' => $id,
-                    'recipe_id' => $recipe
-                ]);
+                foreach($recipes as $recipe){
+                    ProductRecipe::create([
+                        'product_id' => $id,
+                        'recipe_id' => $recipe
+                    ]);
+                }
             }
         }
 
@@ -87,11 +87,8 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         $productAdd->name = $req->name;
         $productAdd->price = $req->price;
         $productAdd->description = $req->description;
-        $productAdd->content = $req->content;
-        $productAdd->price = $req->price;
         $productAdd->price_L = $req->price_L;
-        $productAdd->promotion_price =  $req->promotion_price;
-
+       
         $get_image = $req->file('image');
         if ($get_image) {
             $name_image = current(explode('.', $get_image->getClientOriginalName()));

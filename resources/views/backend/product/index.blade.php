@@ -86,20 +86,6 @@
                             <label for="inputZip">Size L</label>
                             <input type="text" class="form-control" id="inputZip" name="price_L">
                         </div>
-                        <div class="form-group col-md-4">
-                            <label for="inputCity1">Khuyến mãi (%)</label>
-                            <input type="text" class="form-control" id="inputCity1" name="promotion_price">
-                        </div>
-                    </div>
-                    <div class="form-group ">
-                        <textarea rows="10" cols="80" type="text" id="addProduct1" name="content" placeholder="Content"
-                            required></textarea>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
-                        <div class="invalid-feedback">
-                            Doesn't look good!
-                        </div>
                     </div>
                     <button class="btn btn-primary fa-pull-right mr-5 w-60" type="submit">Thêm</button>
                 </form>

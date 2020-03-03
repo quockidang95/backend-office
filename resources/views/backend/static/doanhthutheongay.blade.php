@@ -94,24 +94,20 @@
                            });
                            const string = stringArr.reduce((init, item) =>{
                                     return init + item;
-                                    console.log(item);
                                }, null)
                               
                            $('#total_by_date').html(
                                string
                            )
                             
-                            const total_price_arr = getData[0].c.map( item =>{
+                            const total_price_arr = getData.orders.map( item =>{
                                 return item.price;
                             })
-
-                            console.log(total_price_arr);
 
                             const total_price = total_price_arr.reduce((init, item) => {
                                 return init + item;
                             }, 0)
 
-                    
                             $('#total_price').html('Tổng tiền: ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(total_price));
                         }
                     });

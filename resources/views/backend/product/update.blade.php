@@ -68,11 +68,6 @@
             <label for="inputZip">Size L</label>
             <input type="text" class="form-control" id="inputZip" name="price_L" value="{{$item->price_L}}">
         </div>
-        <div class="form-group col-md-4">
-            <label for="inputCity1">Khuyến mãi (%)</label>
-            <input type="text" class="form-control" id="inputCity1" name="promotion_price"
-                value="{{$item->promotion_price}}">
-        </div>
     </div>
     <div class="form-group">
         <label for="">Công thức hiện tại</label>
@@ -87,16 +82,7 @@
     <label class="form-check-label" for="{{$recipe->id . 'check'}}">{{ $recipe->name }}</label>
       </div>
     @endforeach
-    <div class="form-group ">
-        <textarea rows="10" cols="80" type="text" id="updateProduct1" name="content" placeholder="Content"
-            required>{{$item->content}}</textarea>
-        <div class="valid-feedback">
-            Looks good!
-        </div>
-        <div class="invalid-feedback">
-            Doesn't look good!
-        </div>
-    </div>
+   
     <button class="btn btn-primary fa-pull-right mr-5 w-60" type="submit">Update Product</button>
 </form>
 @endsection

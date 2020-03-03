@@ -5,6 +5,8 @@ use Cart;
 use App\User;
 use App\Order;
 use App\Product;
+use App\ProductRecipe;
+use App\Recipe;
 use App\Rechage;
 use App\Setting;
 use App\OrderItem;
@@ -57,32 +59,65 @@ class CustomerController extends Controller
     public function detailsProduct($id)
     {
         $product = Product::find($id);
+        $recipe_ids = ProductRecipe::where('product_id', $id)->get('recipe_id');
+        $recipes = Recipe::whereIn('id', $recipe_ids)->get();
+        if($recipes){
+            return view('frontend.productdetails', compact('product', 'recipes'));
+        }
         return view('frontend.productdetails', compact('product'));
     }
 
     public function addProduct(Request $request)
     {
-        $temp_array = explode("k", (string) $request->p_id);
-        $setting = Setting::find(1);
-        $product_id = $temp_array[0];
-        $product = Product::find($product_id);
-        $size = '';
-        if ($product->price == $request->p_price) {
-            $size = 'M';
-        }else{
-            $size = 'L';
-        }
+       //dd($request->p_recipe);
+        $recipes = json_decode($request->p_recipe);
+        if(count($recipes) > 0){
+            $temp_array = explode("k", (string) $request->p_id);
+            $setting = Setting::find(1);
+            $product_id = $temp_array[0];
+            $product = Product::find($product_id);
+            $size = '';
+            if ($product->price == $request->p_price) {
+                $size = 'M';
+            }else{
+                $size = 'L';
+            }
 
-        Cart::add([
-            'id' => $request->p_id,
-            'name' => $request->p_name,
-            'qty' => $request->p_quantity,
-            'price' => (int) $request->p_price,
-            'weight' => 12,
-            'options' => [
-                'size' => $size,
-            ],
-        ]);
+            Cart::add([
+                'id' => $request->p_id,
+                'name' => $request->p_name,
+                'qty' => $request->p_quantity,
+                'price' => (int) $request->p_price,
+                'weight' => 12,
+                'options' => [
+                    'size' => $size,
+                    'recipe' => $request->p_recipe
+                ],
+            ]);
+        }else{
+            $temp_array = explode("k", (string) $request->p_id);
+            $setting = Setting::find(1);
+            $product_id = $temp_array[0];
+            $product = Product::find($product_id);
+            $size = '';
+            if ($product->price == $request->p_price) {
+                $size = 'M';
+            } else {
+                $size = 'L';
+            }
+
+            Cart::add([
+                'id' => $request->p_id,
+                'name' => $request->p_name,
+                'qty' => $request->p_quantity,
+                'price' => (int) $request->p_price,
+                'weight' => 12,
+                'options' => [
+                    'size' => $size,
+                    'recipe' => null,
+                ],
+            ]);
+        }
         return redirect('/');
     }
 
@@ -135,14 +170,30 @@ class CustomerController extends Controller
         foreach ($contents as $key => $value) {
             $product_id = explode('k', $value->id);
             $id = $product_id[0];
-
-            $item = OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $id,
-                'price' => $product_id[1],
-                'quantity' => $value->qty,
-                'size' => $value->options->size
-            ]);
+            if($value->options->recipe == null){
+                $item = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $id,
+                    'price' => $product_id[1],
+                    'quantity' => $value->qty,
+                    'size' => $value->options->size
+                ]);
+            }else{
+                $recipes = json_decode($value->options->recipe);
+                $output = '';
+                foreach((array)$recipes as $key => $recipe) {
+                
+                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+                }
+                $item = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $id,
+                    'price' => $product_id[1],
+                    'quantity' => $value->qty,
+                    'size' => $value->options->size,
+                    'recipe' => $output
+                ]);
+            }
         }
 
         $data['store_code'] = session('store_code');
