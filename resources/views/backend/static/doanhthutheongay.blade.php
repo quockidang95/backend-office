@@ -105,7 +105,7 @@
                             })
 
                             const total_price = total_price_arr.reduce((init, item) => {
-                                return init + item;
+                                return init + parseInt(item);
                             }, 0)
 
                             $('#total_price').html('Tổng tiền: ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(total_price));
