@@ -14,6 +14,7 @@ class SettingController extends Controller
         $setting = Setting::find($id);
         $setting->discount_point = $request->discount_point;
         $setting->discount_user = $request->discount_user;
+        $setting->is_payment_delivery = $request->is_payment_delivery;
         $setting->save();
         return redirect(route('setting.index'));
     }

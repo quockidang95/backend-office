@@ -121,17 +121,4 @@
 </div>
 @endsection()
 @section('script')
-
-<script>
-    $(function(){
-        var success = $('.success').val();
-        var error = $('.error').val();
-        if(success){
-            toastr.success(success, 'Hệ thống thông báo: ', {timeOut: 3000});
-        }
-        if(error){
-            toastr.error(error, 'Hệ thống thông báo: ', {timeOut: 3000});
-        }
-    });
-</script>
 @endsection()

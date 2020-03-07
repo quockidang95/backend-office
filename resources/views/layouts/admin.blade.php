@@ -17,12 +17,14 @@
 
     <!-- Custom styles for this template-->
     <link href="{{asset('css/sb-admin-2.min.css')}}" rel="stylesheet">
-
+    @yield('css')
 
 
     <!-- Custom scripts for all pages-->
     <script src="{{asset('js/sb-admin-2.min.js')}}"></script>
     <!-- Toast notification-->
+    
+   
     <style>
         #drop {
             height: 100px;
@@ -304,13 +306,13 @@
     <link href="{{asset('vendor/toastr-master/build/toastr.css')}}" rel="stylesheet">
     <script>
         $(function(){
-           var message = $('#success').val();
+           var message = $('.success').val();
            if(message){
            toastr.success(message, 'Hệ thống thông báo: ', {timeOut: 5000});
            }
            });
            $(function(){
-           var message = $('#error').val();
+           var message = $('.error').val();
            if(message){
                toastr.error(message, 'Hệ thống thông báo: ', {timeOut: 5000})
            }

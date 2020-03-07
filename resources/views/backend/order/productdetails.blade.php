@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+@extends('layouts.admin')
 @section('css')
   <style>
       *, *:before, *:after {
@@ -6,11 +6,10 @@
 }
 body {
   font-family: sans-serif;
-  padding: 60px 20px;
 }
 @media (min-width: 600px) {
   body {
-    padding: 60px;
+   
   }
 }
 .range-slider {
@@ -95,77 +94,95 @@ input::-moz-focus-inner, input::-moz-focus-outer {
 
   </style>
 @endsection
-@section('customer')
-<div class="media mt-4">
-    <img class="pr-2 align-self-start" src="{{asset('source/images/' . $product->image)}}" alt="" width="80"
-        height="80">
-    <div class="media-body">
-        <h5 class="mt-0">{{$product->name}}</h5>
-    </div>
+@section('content')
+<div class="row">
+  <div class="col-lg-12">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('order.admin')}}">Danh sách sản phẩm</a></li>
+              <li class="breadcrumb-item active font-weight-bold" aria-current="page">Thêm sản phẩm vào giỏ</li>
+          </ol>
+      </nav>
+  </div>
 </div>
 
-<div>
-    <label for="status" class="font-weight-bold">Size:</label> <br>
-    <input type="text" id="product_id" value="{{$product->id}}" hidden>
-    @if ($product->price_L == null)
-    <fieldset id="foobar">
-        <div class="custom-control custom-radio">
-            <input type="radio" class="custom-control-input input-checked" id="{{$product->price . $product->id . ''}}"
-                name="price" value="{{$product->price}}">
-            <label class="custom-control-label" for="{{$product->price . $product->id . ''}}"><span
-                    class="badge badge-warning">{{number_format($product->price) . ' VNĐ'}}</span></label>
-        </div>
-    </fieldset>
-    @else
-    <fieldset id="foobar">
-        <div class="custom-control custom-radio">
-            <input type="radio" class="custom-control-input input-checked" id="{{$product->price . $product->id . ''}}"
-                name="price" value="{{$product->price}}">
-            <label class="custom-control-label" for="{{$product->price . $product->id . ''}}"><span
-                    class="badge badge-warning">{{number_format($product->price) . ' VNĐ'}}</span></label>
-        </div>
-        <br>
-        <div class="custom-control custom-radio">
-            <input type="radio" class="custom-control-input input-checked"
-                id="{{$product->price_L . $product->id . ''}}" name="price" value="{{$product->price_L}}">
-            <label class="custom-control-label" for="{{$product->price_L . $product->id . ''}}"><span
-                    class="badge badge-warning">{{number_format($product->price_L) . ' VNĐ'}}</span></label>
-        </div>
-        <br>
-    </fieldset>
-    @endif
-    @if($recipes)
-        @foreach ($recipes as $recipe)
-        <div class="recipes">
-        <span>{{ $recipe->name }}</span>
-        <div class="range-slider">
-            <input class="range-slider__range" type="range" value="100" min="0" max="200" step="20">
-            <span class="range-slider__value">100</span>
+<div class="row justify-content-center">
+  <div class="col-6">
+    <div class="media mt-4">
+      <img class="pr-2 align-self-start" src="{{asset('source/images/' . $product->image)}}" alt="" width="160"
+          height="160">
+      <div class="media-body">
+          <h5 class="mt-0">{{$product->name}}</h5>
+      </div>
+  </div>
+  
+  <div>
+      <label for="status" class="font-weight-bold h4">Size:</label> <br>
+      <input type="text" id="product_id" value="{{$product->id}}" hidden>
+      @if ($product->price_L == null)
+      <fieldset id="foobar" class="h4">
+          <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input input-checked" id="{{$product->price . $product->id . ''}}"
+                  name="price" value="{{$product->price}}">
+              <label class="custom-control-label" for="{{$product->price . $product->id . ''}}"><span
+                      class="badge badge-warning">{{number_format($product->price) . ' VNĐ'}}</span></label>
           </div>
-        </div>
-        @endforeach
-    @endif
-    <div class="modal-footer" style="position: relative">
-        <div class="quantity buttons_added" style="position: absolute; left: 5">
-            <input type="button" value="-" class="minus style rounded"><input type="number"
-                style="width: 25%; border: 0px solid #f6c23e; text-align: center" step="1" min="1" max=""
-                name="quantity" id="quantity" value="1" title="Qty" class="input-text qty text rounded" size="4"
-                pattern="" inputmode=""><input type="button" value="+" class="plus style rounded">
-        </div>
-        <input type="button" readonly class="btn btn-warning" name="total_price" id="total_price" value=""
+      </fieldset>
+      @else
+      <fieldset id="foobar" class="h4">
+          <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input input-checked" id="{{$product->price . $product->id . ''}}"
+                  name="price" value="{{$product->price}}">
+              <label class="custom-control-label" for="{{$product->price . $product->id . ''}}"><span
+                      class="badge badge-warning">{{number_format($product->price) . ' VNĐ'}}</span></label>
+          </div>
+          <br>
+          <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input input-checked"
+                  id="{{$product->price_L . $product->id . ''}}" name="price" value="{{$product->price_L}}">
+              <label class="custom-control-label" for="{{$product->price_L . $product->id . ''}}"><span
+                      class="badge badge-warning">{{number_format($product->price_L) . ' VNĐ'}}</span></label>
+          </div>
+          <br>
+      </fieldset>
+      @endif
+      @if($recipes)
+          @foreach ($recipes as $recipe)
+          <div class="recipes mt-2">
+          <span>{{ $recipe->name }}</span>
+          <div class="range-slider">
+              <input class="range-slider__range" type="range" value="100" min="0" max="200" step="20">
+              <span class="range-slider__value">100</span>
+            </div>
+          </div>
+          @endforeach
+      @endif
+      <div class="modal-footer mt-2 h4" style="position: relative">
+          <div class="quantity buttons_added" style="position: absolute; left: 0">
+              <input type="button" value="-" class="minus style rounded"><input type="number"
+                  style="width: 25%; border: 0px solid #f6c23e; text-align: center" step="1" min="1" max=""
+                  name="quantity" id="quantity" value="1" title="Qty" class="input-text qty text rounded" size="4"
+                  pattern="" inputmode=""><input type="button" value="+" class="plus style rounded">
+          </div>
+      </div>
+      <div class="mt-2 h4">
+        <input type="button" readonly class="btn btn-warning font-weight-bold" name="total_price" id="total_price" value=""
             style="border: none;position: absolute; right: 5; width: 30%"><span>&nbsp;</span>
-    </div>
-    <form id="frmAddProduct" action="{{route('cart.add')}}" method="post">
-        @csrf
-        <input type="text" name="p_quantity" hidden id="p_quantity" value="">
-        <input type="text" name="p_price" hidden id="p_price" value="">
-        <input type="text" name="p_name" hidden value="{{$product->name}}">
-        <input type="text" name="p_id" id="p_id" hidden value="">
-        <input type="text" name="p_recipe" id="p_recipe" hidden value="">
-
-    </form>
+          </div>
+      <form id="frmAddProduct" action="{{route('admin.cart.add')}}" method="post">
+          @csrf
+          <input type="text" name="p_quantity" hidden id="p_quantity" value="">
+          <input type="text" name="p_price" hidden id="p_price" value="">
+          <input type="text" name="p_name" hidden value="{{$product->name}}">
+          <input type="text" name="p_id" id="p_id" hidden value="">
+          <input type="text" name="p_recipe" id="p_recipe" hidden value="">
+  
+      </form>
+  </div>
+  </div>
 </div>
-@endsection()
+
+@endsection
 @section('script')
 <script>
     var rangeSlider = function(){
@@ -254,7 +271,7 @@ rangeSlider();
             var p_id = id + 'k' + price;
                 $('#p_id').val(p_id);
                 console.log(p_id);
-            if($(this).val() === '' || isNaN(parseInt($(this).val())) === true){
+            if( isNaN(parseInt($(this).val())) === true || $(this).val() == ''){
                 alert('vui lòng chọn món!');
             }else{
                 $('#frmAddProduct').submit();

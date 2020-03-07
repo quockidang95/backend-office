@@ -18,14 +18,14 @@
   <div class="col-lg-12">
       <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-              <li class="breadcrumb-item active font-weight-bold" aria-current="page">Danh sách đơn hàng chưa xử lí</li>
+                <li class="breadcrumb-item active font-weight-bold" aria-current="page">Danh sách đơn hàng chưa xử lí</li>
           </ol>
       </nav>
   </div>
 </div>
 
 <div class="col-lg-3 mb-5">
-    <button type="button" class="btn btn-primary">Tạo đơn hàng trực tiếp</button>
+    <a href="{{  route('order.admin') }}" class="btn btn-primary">Tạo đơn hàng trực tiếp</a>
 </div>
 
 <div class="row">
@@ -63,17 +63,4 @@
 
 @endsection()
 @section('script')
-
-<script>
-    $(function(){
-        var success = $('.success').val();
-        var error = $('.error').val();
-        if(success){
-            toastr.success(success, 'Hệ thống thông báo: ', {timeOut: 3000});
-        }
-        if(error){
-            toastr.error(error, 'Hệ thống thông báo: ', {timeOut: 3000});
-        }
-    });
-</script>
 @endsection()

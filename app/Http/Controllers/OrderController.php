@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Order;
 use Exception;
+use Cart;
+use App\Recipe;
 use App\Product;
 use App\Rechage;
 use App\Setting;
+use App\Category;
 use App\OrderItem;
 use App\ShiftWork;
+use App\ProductRecipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Repositories\User\UserRepositoryInterface;
@@ -157,4 +161,146 @@ class OrderController extends Controller
         return redirect('order/index');
     }
 
+    //create order for admin
+    public function createorderadmin (){
+        $categories = Category::all();
+        return view('backend.order.createorder', compact('categories'));
+    }
+
+    public function getproductbycategory(Request $request){
+        if($request->ajax()){
+            $products = Product::where('category_id', $request->category_id)->get();
+            return json_encode($products);
+        }
+    }
+
+    public function productdetails($id){
+        $product = Product::find($id);
+        $recipe_ids = ProductRecipe::where('product_id', $id)->get('recipe_id');
+        $recipes = Recipe::whereIn('id', $recipe_ids)->get();
+        if($recipes){
+            return view('backend.order.productdetails', compact('product', 'recipes'));
+        }
+        return view('backend.order.productdetails', compact('product'));
+    }
+
+    public function admincartadd(Request $request){
+        $recipes = json_decode($request->p_recipe);
+        if(count($recipes) > 0){
+            $temp_array = explode("k", (string) $request->p_id);
+            $setting = Setting::find(1);
+            $product_id = $temp_array[0];
+            $product = Product::find($product_id);
+            $size = '';
+            if ($product->price == $request->p_price) {
+                $size = 'M';
+            }else{
+                $size = 'L';
+            }
+
+            Cart::add([
+                'id' => $request->p_id,
+                'name' => $request->p_name,
+                'qty' => $request->p_quantity,
+                'price' => (int) $request->p_price,
+                'weight' => 12,
+                'options' => [
+                    'size' => $size,
+                    'recipe' => $request->p_recipe
+                ],
+            ]);
+        }else{
+            $temp_array = explode("k", (string) $request->p_id);
+            $setting = Setting::find(1);
+            $product_id = $temp_array[0];
+            $product = Product::find($product_id);
+            $size = '';
+            if ($product->price == $request->p_price) {
+                $size = 'M';
+            } else {
+                $size = 'L';
+            }
+
+            Cart::add([
+                'id' => $request->p_id,
+                'name' => $request->p_name,
+                'qty' => $request->p_quantity,
+                'price' => (int) $request->p_price,
+                'weight' => 12,
+                'options' => [
+                    'size' => $size,
+                    'recipe' => null,
+                ],
+            ]);
+        }
+        session(['success' => 'Thêm thành công']);
+        return redirect(route('order.admin'));
+    }
+
+    public function admincartshow(){
+        return view('backend.order.showcart');
+    }
+
+    public function admincartdelete($rowID){
+        Cart::update($rowID, 0);
+        if (Cart::count() === 0) {
+            session(['success' => 'Bạn vừa xoá một sản phẩm']);
+            return redirect(route('order.admin'));
+        }
+        session(['success' => 'Bạn vừa xoá một sản phẩm']);
+        return redirect(route('admin.cart.show'));
+    }
+
+    public function admincartcheckout(Request $request){
+        $cart_subtotal = Cart::subtotal();
+        $temp = explode(".", $cart_subtotal);
+        $temp1 = explode(",", $temp[0]);
+        $price = $temp1[0] . $temp1[1];
+        $total_price = intval($price);
+        $order = Order::create([
+            'store_code' => auth()->user()->store_code,
+            'total_price' => $total_price,
+            'customer_id' => auth()->id(),
+            'order_here' => 1,
+            'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
+            'note' => $request->note,
+            'created_by' => auth()->user()->name,
+            'payment_method' => 2, 
+            'price' => $total_price,
+            'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
+        ]);
+
+        $contents = Cart::content();
+        foreach ($contents as $key => $value) {
+            $product_id = explode('k', $value->id);
+            $id = $product_id[0];
+            if($value->options->recipe == null){
+                $item = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $id,
+                    'price' => $product_id[1],
+                    'quantity' => $value->qty,
+                    'size' => $value->options->size
+                ]);
+            }else{
+                $recipes = json_decode($value->options->recipe);
+                $output = '';
+                foreach((array)$recipes as $key => $recipe) {
+                
+                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+                }
+                $item = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $id,
+                    'price' => $product_id[1],
+                    'quantity' => $value->qty,
+                    'size' => $value->options->size,
+                    'recipe' => $output
+                ]);
+            }
+        }
+
+        Cart::destroy();
+        return redirect(route('order.byday'));
+    }
 }

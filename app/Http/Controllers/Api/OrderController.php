@@ -40,7 +40,7 @@ class OrderController extends Controller
       
         foreach ($products as $product){
           //  dd($product->recipe);
-            if(count($product->recipe) > 0)
+            if(isset($product->recipe))
             {
                 $output = '';
                 foreach ($product->recipe as $recipe){

@@ -12,6 +12,7 @@
         <tr>
             <th scope="col">Tích điểm(1 điểm tương với)</th>
             <th scope="col">Chiết khấu hội viên(được giảm bao nhiêu % dựa trên đơn hàng)</th>
+            <th scope="col"> Cho phép thanh bằng tiền mặt khi delivery</th>
             <th scope="col">Thao tác</th>
         </tr>
     </thead>
@@ -20,6 +21,12 @@
         <tr>
         <th scope="row">{{number_format($item->discount_point) . ' VNĐ'}}</th>
         <td >{{$item->discount_user . ' %'}}</td>
+        @if($item->is_payment_delivery === 1)
+            <td>true</td>
+        @elseif($item->is_payment_delivery === 2)
+            <td>false</td>
+        @endif
+        </td>
         <td>
               <!-- Delete category -->
               <button class="btn btn-warning btn-circle" data-toggle="modal" data-target="#deleteProduct{{$item->id}}"
@@ -49,6 +56,13 @@
                                 <label for="">Chiết khấu hội viên(%)</label>
                             <input type="number" name="discount_user" class="form-control  form-control-sm" value="{{$item->discount_user}}"
                                     required placeholder="Chiết khấu hội viên">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Cho phép thanh bằng tiền mặt khi delivery</label>
+                                <select name="is_payment_delivery" id="" class="form-control">
+                                    <option value="1">True</option>
+                                    <option value="2">False</option>
+                                </select>
                             </div>
                             <button style="margin-left: 300px" type="submit" class="btn btn-primary">Cập nhật cài đặt</button>
                         </form>
