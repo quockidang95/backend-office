@@ -39,8 +39,7 @@ class OrderController extends Controller
         $products = json_decode($request->products);
       
         foreach ($products as $product){
-          //  dd($product->recipe);
-            if(count($product->recipe) > 0)
+            if(isset($product->recipe))
             {
                 $output = '';
                 foreach ($product->recipe as $recipe){
@@ -120,5 +119,78 @@ class OrderController extends Controller
             array_push($data, $input);
         }
         return response()->json($data, $this->successStatusCode);
+    }
+
+    public function delivery(Request $request){
+        $order = Order::create([
+            'store_code' => $request->store_code,
+            'total_price' => $request->total_price,
+            'customer_id' => auth('api')->id(),
+            'address' => $request->address,
+            'order_here' => 3,
+            'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
+            'note' => $request->note,
+            'payment_method' => $request->payment_method, 
+            'price' => $request->total_price,
+            'order_code' => '#' . $request->store_code . time() . auth()->id()
+        ]);
+
+        $products = json_decode($request->products);
+      
+        foreach ($products as $product){
+            if(isset($product->recipe))
+            {
+                $output = '';
+                foreach ($product->recipe as $recipe){
+                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+                }
+                $item = new OrderItem;
+                $item->recipe = $output;
+                $item->order_id = $order->id;
+                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
+                $item->product_id = $product->id;
+                if ($product->price != 0) {
+                    $item->price = $product->price;
+                    $item->size = 'Vừa';
+                } else {
+                    $item->price = $product->price_L;
+                    $item->size = 'Lớn';
+                }
+                $item->quantity = $product->slChon;
+                $item->save();
+            }else{
+                $item = new OrderItem;
+                $item->order_id = $order->id;
+                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
+                $item->product_id = $product->id;
+                if ($product->price != 0) {
+                    $item->price = $product->price;
+                    $item->size = 'Vừa';
+                } else {
+                    $item->price = $product->price_L;
+                    $item->size = 'Lớn';
+                }
+                $item->quantity = $product->slChon;
+                $item->save();
+            }
+            
+        }
+
+        $data['store_code'] = $request->store_code;
+        $data['table'] = $request->table;
+        $data['id'] = $order->id;
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+
+        $pusher->trigger('Notify', 'send-message', $data);
+        return response()->json($order, 200);
     }
 }

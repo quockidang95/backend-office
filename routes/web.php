@@ -36,6 +36,14 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     Route::get('doanh-thu-theo-ngay', 'StaticController@doanhthutheongay')->name('doanh.thu.theo.ngay');
     Route::get('lay-doanh-thu-theo-ngay', 'StaticController@laydoanhthutheongay');
     
+    // Create order for admin
+    Route::get('create-order-admin', 'OrderController@createorderadmin')->name('order.admin');
+    Route::get('get-product-by-categoryid', 'OrderController@getproductbycategory');
+    Route::get('admin/order/{id}', 'OrderController@productdetails');
+    Route::post('admin/cart/add', 'OrderController@admincartadd')->name('admin.cart.add');
+    Route::get('admin/cart/show', 'OrderController@admincartshow')->name('admin.cart.show');
+    Route::get('admin/cart/delete/{rowID}', 'OrderController@admincartdelete')->name('admin.cart.delete');
+    Route::post('admin/cart/checkout', 'OrderController@admincartcheckout')->name('admin.cart.checkout');
     //For Sếp
     Route::group(['middleware' => ['check_role']], function () {
         Route::get('doanh-thu-theo-thang', 'StaticController@doanhthutheothang')->name('doanh.thu.theo.thang');

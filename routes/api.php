@@ -25,7 +25,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('update', 'Api\UserController@update');
     Route::post('orders', 'Api\OrderController@order');
     Route::get('getkey', 'Api\UserController@getkey');
-
+    Route::post('order/delivery', 'Api\OrderController@delivery');
     //historyorders
     Route::post('listorder', 'Api\OrderController@historyorder');
     Route::get('orderdetail/{id}', 'Api\OrderController@historyorderdetails');
