@@ -261,6 +261,7 @@ class OrderController extends Controller
             'store_code' => auth()->user()->store_code,
             'total_price' => $total_price,
             'customer_id' => auth()->id(),
+            'table' => 'admin',
             'order_here' => 1,
             'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
             'note' => $request->note,
