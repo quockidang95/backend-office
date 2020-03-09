@@ -94,18 +94,22 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     public function changeStatusAndCheckOutOrder($order, $user){
         $setting = Setting::find(1);
         $session_pricebox = session('price_box') + $order->price;  
-       
-        session(['price_box' => $session_pricebox]);
+        $total_revenue = $order->price + session('total_revenue');
+        session(['total_revenue' => $total_revenue]);
 
         if($order->payment_method == 1){ // dùng ví điện tử
             $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
             $wallet =  $user->wallet - $order->price;
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['wallet' => $wallet, 'point' => $point]);
+            $revenue_online = session('revenue_online') + $order->price;
+            session(['revenue_online' => $revenue_online]);
         }else if($order->payment_method == 2){ // tien mat tai ban
             $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['point' => $point]);
+            $revenue_cash = session('revenue_cash') + $order->price;
+            session(['revenue_cash' => $revenue_cash]);
         }
     }
 

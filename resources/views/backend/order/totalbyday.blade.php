@@ -56,13 +56,13 @@
     </div>
     <div class="col-6">
         <div class="pt-5">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#chotca"> Chốt ca</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#chotca">Nhận & giao ca</button>
         <!-- Modal -->
             <div class="modal fade" id="chotca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Chốt ca</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Nhận & giao ca</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -78,15 +78,31 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" name="name_admin" type="text" name="name" placeholder="Tên nhân viên" required>
+                                <input class="form-control" name="name_admin" type="text" placeholder="Tên nhân viên" required>
                             </div>
-                            <div class="input-group pt-3">
-                            <input type="text" class="form-control" placeholder="Doanh thu của ca" name="price_box" value="{{ session('price_box') }}" aria-label="" aria-describedby="basic-addon3" id="checkNum" readonly required>
-                                <div class="input-group-append">
-                                    <span class="input-group-text" id="basic-addon3">VNĐ</span>
-                                </div>
+                            <div class="form-group">
+                                <label for="">Type</label>
+                                <select class="form-control" name="type_shift">
+                                    <option value="nhan_ca">Nhận ca</option>
+                                    <option value="giao_ca">Giao ca</option>
+                                </select>
                             </div>
-                            <div><span>{{ number_format(session('price_box')) . 'VND'}}</span></div>
+                            <div class="form-group">
+                                <label for="">Số tiền hiện tại trong két</label>
+                                <input class="form-control" type="number" name="surplus_box">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Tổng doanh thu của ca</label>
+                            <input class="form-control" type="number" name="total_revenue" value="{{ session('total_revenue') }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Tiền mặt</label>
+                            <input class="form-control" type="number" value="{{ session('revenue_cash')}}" name="revenue_cash" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Online</label>
+                            <input class="form-control" type="number" value="{{ session('revenue_online')}}" name="revenue_online" readonly>
+                            </div>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
