@@ -77,7 +77,6 @@
                         <a class="collapse-item" href="{{route('recipe.index')}}">Công thức</a>
                         <a class="collapse-item" href="{{route('customer.index')}}">Khách Hàng</a>
                         <a class="collapse-item" href="{{route('feedback.index')}}">Phản Hồi</a>
-
                         <a class="collapse-item" href="{{route('setting.index')}}">Cài đặt</a>
                     </div>
                 </div>

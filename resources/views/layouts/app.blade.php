@@ -19,10 +19,14 @@
 
     <!-- Custom styles for this template-->
     <link href="{{asset('css/sb-admin-2.min.css')}}" rel="stylesheet">
-
+    <style>
+        #bg-office {
+            background-image: url("{{ asset('img/office.jpg')}}");
+        }
+    </style>
 </head>
 
-<body class="bg-gradient-white">
+<body  id="bg-office">
 
     @yield('content')
     <!-- Bootstrap core JavaScript-->
