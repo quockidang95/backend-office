@@ -22,7 +22,10 @@
                 <?php
                     $id = $item->customer_id;
                     $customer = App\User::find($id);
-                    echo $customer->name;
+                    if(isset($customer)){
+                        echo $customer->name;
+                    }
+                    
 
                 ?>
             </th>
