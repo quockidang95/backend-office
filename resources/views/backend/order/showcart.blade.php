@@ -47,6 +47,10 @@
 <div class="container mt-5">
     <form id="frmCheckOut" action="{{route('admin.cart.checkout')}}" method="post">
         @csrf
+        <div class="form-group ">
+            <label for="sothe">Số thẻ</label>
+            <input type="text" class="form-control" name="table" />
+        </div>
         <input type="text" name="note" required="" class="form-control form-control-user p-4" placeholder="Bạn có muốn dặn dò gì không">
     </form>
 </div>
