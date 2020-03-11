@@ -31,8 +31,19 @@ class OrderController extends Controller
 
     public function index()
     {
+        /*
         if(!session('price_box')){
             session(['price_box' => 0]);
+        }*/
+
+        if(!session('total_revenue')){
+            session(['total_revenue' => 0]);
+        }
+        if(!session('revenue_cash')){
+            session(['revenue_cash' => 0]);
+        }
+        if(!session('revenue_online')){
+            session(['revenue_online' => 0]);
         }
         $user = auth('web')->user();
         $date = date('Y-m-d');
@@ -157,7 +168,7 @@ class OrderController extends Controller
         $input['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
         $input['store_code'] = auth()->user()->store_code;
         ShiftWork::create($input);
-        session(['price_box' => 0]);
+        session(['total_revenue' => 0, 'revenue_cash' => 0, 'revenue_online' => 0]);
         return redirect('order/index');
     }
 

@@ -12,7 +12,7 @@
         <tr>
             <th scope="col">Tích điểm(1 điểm tương với)</th>
             <th scope="col">Chiết khấu hội viên(được giảm bao nhiêu % dựa trên đơn hàng)</th>
-            <th scope="col"> Cho phép thanh bằng tiền mặt khi delivery</th>
+            <th scope="col"> Cho phép thanh toán bằng tiền mặt khi delivery</th>
             <th scope="col">Thao tác</th>
         </tr>
     </thead>

@@ -72,7 +72,7 @@ class AdminController extends Controller
     }
 
     public function feedback(){
-        $feedbacks = Feedback::orderby('created_at', 'desc')->get();
+        $feedbacks = Feedback::all();
         return view('backend.admin.feedback', compact('feedbacks'));
 
     }

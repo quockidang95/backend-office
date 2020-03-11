@@ -34,7 +34,10 @@ class StaticController extends Controller
                 <tr>
                     <th class="align-middle" scope="row">' . $shift->name_shift . '</th>
                     <td class="align-middle">' . $shift->name_admin . '</td>
-                    <td class="align-middle">' . number_format($shift->price_box) . ' VNĐ' . '</td>
+                    <td class="align-middle">' . $shift->type_shift . '</td>
+                    <td class="align-middle">' . $shift->total_revenue . '</td>
+                    <td class="align-middle">' . $shift->revenue_cash . '</td>
+                    <td class="align-middle">' . $shift->revenue_online . '</td>
                 </tr>
                ';
             }
@@ -91,6 +94,7 @@ class StaticController extends Controller
                 $item['quantity'] = $order_item->quantity;
                 $item['price'] = $order_item->price;
                 $item['dvt'] = 'Ly';
+                
                 array_push($data, $item);
             }
         }
