@@ -16,7 +16,7 @@ class Feedback extends Model
     protected $fillable = [
        'customer_id',
        'body',
-       'craeted_at'
+       'created_at'
    ];
    public $timestamps = false;
 }
