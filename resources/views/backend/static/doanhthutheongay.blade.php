@@ -8,20 +8,22 @@
         <li class="breadcrumb-item"><a href="#">Thông kê doanh thu theo ngày</a></li>
     </ol>
 </nav>
-<div class="input-group col-3">
-    <input type="text" id="date_selected" class="form-control bg-lightlight border-0 small"data-toggle="datepicker" placeholder="Select date...">
-</div>
+<form action="{{ route('export.day')}}" method="post">
+    @csrf
+    <div class="input-group col-3">
+        <input type="text" id="date_selected" name="date_selected" class="form-control bg-lightlight border-0 small"data-toggle="datepicker" placeholder="Select date...">
+    </div>
 
+    <div class="input-group col-3 pt-3 pb-3">
+        <select class="form-control form-control-sm" required name="store_code" id="storecode">
+            @foreach ($stores as $key => $item)
+            <option value="{{$item->store_code}}">{{$item->name}}</option>
+            @endforeach
+        </select>
+    </div>
 
-<div class="input-group col-3 pt-3 pb-3">
-    <select class="form-control form-control-sm" required
-        aria-placeholder="Chọn danh mục">
-        <option id="store_code" disabled>Chọn cửa hàng</option>
-        @foreach ($stores as $key => $item)
-        <option value="{{$item->store_code}}">{{$item->name}}</option>
-        @endforeach
-    </select>
-</div>
+    <button class="btn btn-warning" type="submit">Xuất ra Excel</button>
+</form>
 
 <div>
     <h4 id="total_price"></h4>
@@ -72,7 +74,7 @@
 <script>
         $('#date_selected').on('change',function(){
                     $date_selected = $(this).val();
-                    $store_code = $('#store_code').val();
+                    $store_code = document.getElementById('storecode').value;
                     $.ajax({
                         type: 'get',
                         url: '{{ URL::to('lay-doanh-thu-theo-ngay') }}',

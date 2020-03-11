@@ -23,7 +23,7 @@ class UserController extends Controller
     }
 
     public function index(){
-        $users = User::where('is_admin', 0)->paginate(10);
+        $users = User::where('is_admin', 0)->orderBy('point', 'desc')->paginate(10);
         Session::put('success', 'Load danh sách khách hàng thành công');
         return view('backend.customer.index', compact('users'));
     }

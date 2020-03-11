@@ -245,7 +245,7 @@ class OrderController extends Controller
             ]);
         }
         session(['success' => 'Thêm thành công']);
-        return redirect(route('order.admin'));
+        return redirect(route('admin.cart.show'));
     }
 
     public function admincartshow(){
@@ -263,6 +263,7 @@ class OrderController extends Controller
     }
 
     public function admincartcheckout(Request $request){
+        dd($request);
         $cart_subtotal = Cart::subtotal();
         $temp = explode(".", $cart_subtotal);
         $temp1 = explode(",", $temp[0]);
@@ -272,7 +273,7 @@ class OrderController extends Controller
             'store_code' => auth()->user()->store_code,
             'total_price' => $total_price,
             'customer_id' => auth()->id(),
-            'table' => 'admin',
+            'table' => $request->table,
             'order_here' => 1,
             'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
             'note' => $request->note,

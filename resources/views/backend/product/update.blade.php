@@ -69,6 +69,45 @@
             <input type="text" class="form-control" id="inputZip" name="price_L" value="{{$item->price_L}}">
         </div>
     </div>
+    <label for="">Is Report</label>
+    @if($item->is_report == 1)
+    <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+          <input type="radio" value="1" checked name="is_report">
+          </div>
+        </div>
+        <input type="text" class="form-control" aria-label="Text input with radio button" value="TRUE" readonly>
+      </div>
+
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+          <input type="radio" value="2" name="is_report">
+          </div>
+        </div>
+        <input type="text" class="form-control" value="FALSE" readonly>
+      </div>
+    @else
+    <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+          <input type="radio" value="1"  name="is_report">
+          </div>
+        </div>
+        <input type="text" class="form-control" aria-label="Text input with radio button" value="TRUE" readonly>
+      </div>
+
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+          <input type="radio" value="2" checked name="is_report">
+          </div>
+        </div>
+        <input type="text" class="form-control" value="FALSE" readonly>
+      </div>
+    @endif
+    
     <div class="form-group">
         <label for="">Công thức hiện tại</label>
         @foreach($product_recipe as $item)
