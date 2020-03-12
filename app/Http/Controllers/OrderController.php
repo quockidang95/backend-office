@@ -263,7 +263,6 @@ class OrderController extends Controller
     }
 
     public function admincartcheckout(Request $request){
-        dd($request);
         $cart_subtotal = Cart::subtotal();
         $temp = explode(".", $cart_subtotal);
         $temp1 = explode(",", $temp[0]);
