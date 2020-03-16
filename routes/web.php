@@ -36,11 +36,14 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     Route::get('doanh-thu-theo-ngay', 'StaticController@doanhthutheongay')->name('doanh.thu.theo.ngay');
     Route::get('lay-doanh-thu-theo-ngay', 'StaticController@laydoanhthutheongay');
     
+    //So du dau
+    Route::post('surplus-box', 'OrderController@surplus')->name('surplus.box');
+    Route::get('print/shift',  'OrderController@printshift')->name('print.shift');
     // Create order for admin
     Route::get('create-order-admin', 'OrderController@createorderadmin')->name('order.admin');
     Route::get('get-product-by-categoryid', 'OrderController@getproductbycategory');
     Route::get('admin/order/{id}', 'OrderController@productdetails');
-    Route::post('admin/cart/add', 'OrderController@admincartadd')->name('admin.cart.add');
+    Route::get('admin/cart/add/{id}', 'OrderController@admincartadd');
     Route::get('admin/cart/show', 'OrderController@admincartshow')->name('admin.cart.show');
     Route::get('admin/cart/delete/{rowID}', 'OrderController@admincartdelete')->name('admin.cart.delete');
     Route::post('admin/cart/checkout', 'OrderController@admincartcheckout')->name('admin.cart.checkout');

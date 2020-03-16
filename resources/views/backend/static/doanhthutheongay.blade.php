@@ -34,10 +34,11 @@
         <tr>
             <th scope="col">Ca làm việc</th>
             <th scope="col">Nhân viên</th>
-            <th scope="col">Type</th>
+            <th scope="col">Dư đầu ca</th>
             <th scope="col">Tổng doanh thu</th>
             <th scope="col">Doanh thu bằng tiền mặt</th>
             <th scope="col">Doanh thu online</th>
+            <th scope="col">Dư cuối ca </th>
         </tr>
     </thead>
     <tbody>       

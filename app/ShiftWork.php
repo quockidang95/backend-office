@@ -11,13 +11,13 @@ class ShiftWork extends Model
     protected $fillable = [
         'name_shift',
         'name_admin',
-        'type_shift',
         'surplus_box',
         'total_revenue',
         'revenue_online',
         'revenue_cash',
         'created_at',
-        'store_code'
+        'store_code',
+        'end_balance_shift'
     ];
 
     public $timestamps = false;

@@ -34,10 +34,11 @@ class StaticController extends Controller
                 <tr>
                     <th class="align-middle" scope="row">' . $shift->name_shift . '</th>
                     <td class="align-middle">' . $shift->name_admin . '</td>
-                    <td class="align-middle">' . $shift->type_shift . '</td>
-                    <td class="align-middle">' . $shift->total_revenue . '</td>
-                    <td class="align-middle">' . $shift->revenue_cash . '</td>
-                    <td class="align-middle">' . $shift->revenue_online . '</td>
+                    <td class="align-middle">' . number_format($shift->surplus_box) . '</td>
+                    <td class="align-middle">' . number_format($shift->total_revenue) . '</td>
+                    <td class="align-middle">' . number_format($shift->revenue_cash) . '</td>
+                    <td class="align-middle">' . number_format($shift->revenue_online) . '</td>
+                    <td class="align-middle">' . number_format($shift->end_balance_shift) . '</td>
                 </tr>
                ';
             }
