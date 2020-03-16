@@ -13,6 +13,7 @@
         echo '<input class="success" type="text" hidden value="'.$success.'"/>';
         Session::put('success', null);
     }
+
 ?>
 <div class="row">
   <div class="col-lg-12">
@@ -23,7 +24,37 @@
       </nav>
   </div>
 </div>
+@if(session('surplus_box') === null)
+<button type="button" id="surplus_box_1"  class="btn btn-primary" hidden data-toggle="modal" data-target="#surplus_box">
+  Launch demo modal
+</button> 
 
+<div class="modal fade" id="surplus_box" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Nhập số dư đầu</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <form action="{{ route('surplus.box') }}" method="POST">
+            @csrf
+            <p>Lưu ý: Số này chỉ nhập một lần nếu nhập sai vui lòng đăng xuất</p>
+            <div class="form-group">
+              <label for="">Nhập số dư đầu</label>
+                <input type="number" id="checkNumber" name="surplus_box" class="form-control" required>
+                <span id="showNumber"></span>
+            </div>
+            <button type="submit" class="btn btn-warning"> Xác nhận </button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
 <div class="col-lg-3 mb-5">
     <a href="{{  route('order.admin') }}" class="btn btn-primary">Tạo đơn hàng trực tiếp</a>
 </div>
@@ -63,4 +94,20 @@
 
 @endsection()
 @section('script')
+<script>
+  const surplus_box = $('#surplus_box_1');
+  if(surplus_box){
+    surplus_box.click()
+  }
+</script>
+<script>
+  $(document).ready(function (){
+    $('#checkNumber').on('keyup', function(){
+      const num = $(this).val();
+      console.log(num);
+      const newNum = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(num);
+      $('#showNumber').html(newNum.toString()).css('color', 'green').addClass('font-weight-bold');
+    })
+  })
+</script>
 @endsection()

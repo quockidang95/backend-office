@@ -81,10 +81,7 @@
                         <td colspan="4">Tạm tính: </td>
                         <td>{{number_format($order->total_price)}}</td>
                     </tr>
-                    <tr>
-                        <td colspan="4">Chiết khấu: </td>
-                        <td>{{$setting->discount_user . ' %'}}</td>
-                    </tr>
+                   
                     <tr >
                         <td colspan="4">Tông cộng: </td>
                         <td>{{number_format($order->price)}}</td>

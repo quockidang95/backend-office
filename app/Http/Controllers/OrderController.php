@@ -45,11 +45,22 @@ class OrderController extends Controller
         if(!session('revenue_online')){
             session(['revenue_online' => 0]);
         }
+
+        if(!session('end_balance_shift')){
+            session(['end_balance_shift' => 0]);
+        }
+
         $user = auth('web')->user();
         $date = date('Y-m-d');
         $orders = Order::where('created_at', 'LIKE', '%' . $date . '%')->whereIn('status', [1, 2])->where('store_code', $user->store_code)->orderby('created_at', 'desc')->get();
         return view('backend.order.index', compact('orders'));
     }
+
+    public function surplus (Request $request){
+        session(['surplus_box' => $request->surplus_box]);
+        return redirect(route('order.byday'));
+    }
+
     public function orderdetails($id)
     {
         $order = $this->orderRepository->getOrderById($id);
@@ -168,8 +179,13 @@ class OrderController extends Controller
         $input['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
         $input['store_code'] = auth()->user()->store_code;
         ShiftWork::create($input);
-        session(['total_revenue' => 0, 'revenue_cash' => 0, 'revenue_online' => 0]);
-        return redirect('order/index');
+        session(['total_revenue' => 0, 'revenue_cash' => 0, 'revenue_online' => 0, 'surplus_box' => null]);
+        auth()->logout();
+        return redirect('/login');
+    }
+
+    public function printshift(){
+        return view('backend.order.printshift');
     }
 
     //create order for admin
@@ -195,57 +211,32 @@ class OrderController extends Controller
         return view('backend.order.productdetails', compact('product'));
     }
 
-    public function admincartadd(Request $request){
-        $recipes = json_decode($request->p_recipe);
-        if(count($recipes) > 0){
-            $temp_array = explode("k", (string) $request->p_id);
-            $setting = Setting::find(1);
-            $product_id = $temp_array[0];
-            $product = Product::find($product_id);
+    public function admincartadd(Request $request, $id){
+        
+            $price = $request->input('price_' . $id);
+            $qty = $request->input('quantity_' . $id);
+            $product = Product::find($id);
+            $name = $product->name;
+          
             $size = '';
-            if ($product->price == $request->p_price) {
+            if ($product->price == $price) {
                 $size = 'M';
             }else{
                 $size = 'L';
             }
 
             Cart::add([
-                'id' => $request->p_id,
-                'name' => $request->p_name,
-                'qty' => $request->p_quantity,
-                'price' => (int) $request->p_price,
+                'id' => $id,
+                'name' => $name,
+                'qty' => $qty,
+                'price' => (int) $price,
                 'weight' => 12,
                 'options' => [
                     'size' => $size,
-                    'recipe' => $request->p_recipe
                 ],
             ]);
-        }else{
-            $temp_array = explode("k", (string) $request->p_id);
-            $setting = Setting::find(1);
-            $product_id = $temp_array[0];
-            $product = Product::find($product_id);
-            $size = '';
-            if ($product->price == $request->p_price) {
-                $size = 'M';
-            } else {
-                $size = 'L';
-            }
-
-            Cart::add([
-                'id' => $request->p_id,
-                'name' => $request->p_name,
-                'qty' => $request->p_quantity,
-                'price' => (int) $request->p_price,
-                'weight' => 12,
-                'options' => [
-                    'size' => $size,
-                    'recipe' => null,
-                ],
-            ]);
-        }
         session(['success' => 'Thêm thành công']);
-        return redirect(route('admin.cart.show'));
+        return redirect(route('order.admin'));
     }
 
     public function admincartshow(){
@@ -259,10 +250,11 @@ class OrderController extends Controller
             return redirect(route('order.admin'));
         }
         session(['success' => 'Bạn vừa xoá một sản phẩm']);
-        return redirect(route('admin.cart.show'));
+        return redirect(route('order.admin'));
     }
 
     public function admincartcheckout(Request $request){
+        
         $cart_subtotal = Cart::subtotal();
         $temp = explode(".", $cart_subtotal);
         $temp1 = explode(",", $temp[0]);
@@ -283,36 +275,19 @@ class OrderController extends Controller
         ]);
 
         $contents = Cart::content();
+
         foreach ($contents as $key => $value) {
-            $product_id = explode('k', $value->id);
-            $id = $product_id[0];
-            if($value->options->recipe == null){
+           
                 $item = OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $id,
-                    'price' => $product_id[1],
+                    'product_id' => $value->id,
+                    'price' => $value->price,
                     'quantity' => $value->qty,
                     'size' => $value->options->size
                 ]);
-            }else{
-                $recipes = json_decode($value->options->recipe);
-                $output = '';
-                foreach((array)$recipes as $key => $recipe) {
-                
-                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
-                }
-                $item = OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $id,
-                    'price' => $product_id[1],
-                    'quantity' => $value->qty,
-                    'size' => $value->options->size,
-                    'recipe' => $output
-                ]);
-            }
         }
 
         Cart::destroy();
-        return redirect(route('order.byday'));
-    }
+        return redirect(route('order.details', ['id' => $order->id ]));
+    } 
 }

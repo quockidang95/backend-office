@@ -14,6 +14,8 @@
         echo '<input class="success" type="text" hidden value="'.$success.'"/>';
         Session::put('success', null);
     }
+
+    $du_cuoi_ca = intval(Session::get('surplus_box')) + intval(Session::get('revenue_cash'));
 ?>
 
 <div class="row">
@@ -56,19 +58,20 @@
     </div>
     <div class="col-6">
         <div class="pt-5">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#chotca">Nhận & giao ca</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#chotca">Giao ca</button>
         <!-- Modal -->
             <div class="modal fade" id="chotca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Nhận & giao ca</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Giao ca</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
                     <div class="modal-body">
                         <form action="{{ route('shiftwork') }}" method="post">
+                            <p>Lưu ý: Xác nhận giao ca hệ thống sẽ tự động logout</p>
                             @csrf
                             <div class="form-group">
                                 <select class="form-control" name="name_shift">
@@ -80,29 +83,28 @@
                             <div class="form-group">
                                 <input class="form-control" name="name_admin" type="text" placeholder="Tên nhân viên" required>
                             </div>
+                        
                             <div class="form-group">
-                                <label for="">Type</label>
-                                <select class="form-control" name="type_shift">
-                                    <option value="nhan_ca">Nhận ca</option>
-                                    <option value="giao_ca">Giao ca</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Số tiền hiện tại trong két</label>
-                                <input class="form-control" type="number" name="surplus_box">
+                                <label for="">Số dư đầu</label>
+                            <input class="form-control" type="number" name="surplus_box" value="{{ session('surplus_box') }}" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="">Tổng doanh thu của ca</label>
-                            <input class="form-control" type="number" name="total_revenue" value="{{ session('total_revenue') }}" readonly>
+                                <input class="form-control" type="number" name="total_revenue" value="{{ session('total_revenue') }}" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="">Tiền mặt</label>
-                            <input class="form-control" type="number" value="{{ session('revenue_cash')}}" name="revenue_cash" readonly>
+                                <input class="form-control" type="number" value="{{ session('revenue_cash')}}" name="revenue_cash" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="">Online</label>
-                            <input class="form-control" type="number" value="{{ session('revenue_online')}}" name="revenue_online" readonly>
+                                <input class="form-control" type="number" value="{{ session('revenue_online')}}" name="revenue_online" readonly>
                             </div>
+                            <div class="form-group">
+                                <label for="">Dư cuối ca</label>
+                                <input class="form-control" type="number" value="{{ $du_cuoi_ca }}" name="end_balance_shift" readonly>
+                            </div>
+
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
