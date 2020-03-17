@@ -49,7 +49,6 @@ class OrderController extends Controller
         if(!session('end_balance_shift')){
             session(['end_balance_shift' => 0]);
         }
-
         $user = auth('web')->user();
         $date = date('Y-m-d');
         $orders = Order::where('created_at', 'LIKE', '%' . $date . '%')->whereIn('status', [1, 2])->where('store_code', $user->store_code)->orderby('created_at', 'desc')->get();
@@ -58,6 +57,7 @@ class OrderController extends Controller
 
     public function surplus (Request $request){
         session(['surplus_box' => $request->surplus_box]);
+        session(['shift_open' => Carbon::now('Asia/Ho_Chi_Minh')]);
         return redirect(route('order.byday'));
     }
 
@@ -178,14 +178,12 @@ class OrderController extends Controller
         $input = $request->all();
         $input['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
         $input['store_code'] = auth()->user()->store_code;
-        ShiftWork::create($input);
+        $input['shift_open'] = session('shift_open');
+        $input['shift_close'] = Carbon::now('Asia/Ho_Chi_Minh');
+        $shift =   ShiftWork::create($input);
         session(['total_revenue' => 0, 'revenue_cash' => 0, 'revenue_online' => 0, 'surplus_box' => null]);
         auth()->logout();
-        return redirect('/login');
-    }
-
-    public function printshift(){
-        return view('backend.order.printshift');
+        return view('backend.order.printshift', compact('shift'));
     }
 
     //create order for admin
@@ -264,7 +262,7 @@ class OrderController extends Controller
             'store_code' => auth()->user()->store_code,
             'total_price' => $total_price,
             'customer_id' => auth()->id(),
-            'table' => $request->table,
+            'table' => $request->table ? : 1,
             'order_here' => 1,
             'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
             'note' => $request->note,
