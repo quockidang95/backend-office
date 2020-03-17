@@ -38,7 +38,6 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     
     //So du dau
     Route::post('surplus-box', 'OrderController@surplus')->name('surplus.box');
-    Route::get('print/shift',  'OrderController@printshift')->name('print.shift');
     // Create order for admin
     Route::get('create-order-admin', 'OrderController@createorderadmin')->name('order.admin');
     Route::get('get-product-by-categoryid', 'OrderController@getproductbycategory');

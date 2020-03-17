@@ -17,7 +17,9 @@ class ShiftWork extends Model
         'revenue_cash',
         'created_at',
         'store_code',
-        'end_balance_shift'
+        'end_balance_shift',
+        'shift_open',
+        'shift_close'
     ];
 
     public $timestamps = false;

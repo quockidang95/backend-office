@@ -133,25 +133,7 @@
 </div>
 </div>
 @endsection
-<!-- Modal
 
-<div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-</div>
-
--->
 @section('script')
 <script>
     $('#category_selected').on('change', () => {
@@ -310,49 +292,3 @@
 </script>
 @endsection
 
-
-
-
-<!-- Modal
- <div class="col-xl-3 col-md-6 mb-4"">
-                        <div class="card border-left-warning shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <form action="{{env('APP_URL')}}/admin/cart/add/` + products[i].id +`" method="get">
-                                        @csrf
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            ` + products[i].name  + `
-                                            </div>
-
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <fieldset id="foobar" class="h4">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" class="custom-control-input" checked id="`+ products[i].price + products[i].id + '' + `"
-                                                            name="price_`+ products[i].id +`" value="`+ products[i].price +` ">
-                                                        <label class="custom-control-label" for="`+ products[i].price + products[i].id + '' + `"><span
-                                                                class="badge badge-warning">` +products[i].price + `</span></label>
-                                                    </div>
-                                                </fieldset>
-
-                                                <div class="quantity buttons_added" style="position: absolute; left: 0">
-                                                    <input type="button" value="-" class="minus style rounded"><input type="number"
-                                                        style="width: 25%; border: 0px solid #f6c23e; text-align: center" step="1" min="1" max=""
-                                                        name="quantity_`+ products[i].id +`" id="quantity_`+ products[i].id +`" value="1" title="Qty" class="input-text qty text rounded" size="4"
-                                                        pattern="" inputmode=""><input type="button" value="+" class="plus style rounded">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button class="btn btn-warning" type="submit" style="margin-top: 35px;">Add</button>
-                                        </div>
-                                        <div class="col-auto">
-                                            <img src="{{asset('source/images/`+ products[i].image +`')}}" with="60" height="60"/>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
--->
