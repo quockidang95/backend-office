@@ -291,6 +291,9 @@ class OrderController extends Controller
             $price = 0;
             foreach ($cart_contents as $key => $value) {
                 $product = Product::find($value->id);
+                 if(!$product->price_delivery){
+                    return redirect(route('order.admin'))->with('error', 'Sản phẩm hiện không có giá cho delivery!');
+                }
                 $price += $product->price_delivery * $value->qty;
             }
     
@@ -308,11 +311,9 @@ class OrderController extends Controller
                 'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
             ]);
 
-            foreach ($cart_contents as $key => $value) {  
+       foreach ($cart_contents as $key => $value) {  
                 $product = Product::find($value->id);
-                if(!$product->price_delivery){
-                    return redirect(route('order.admin'))->with('error', 'Sản phẩm hiện không có giá cho delivery!');
-                }
+               
                 $item = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $value->id,

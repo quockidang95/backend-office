@@ -84,7 +84,7 @@
                 <label for="sothe">Số thẻ</label>
                 <input type="text" class="form-control" name="table" />
             </div>
-            <div class="form-check">
+            <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" name="is_delivery" id="is_delivery" value="1">
                 <label class="form-check-label" for="is_delivery">
                   Mang đi
