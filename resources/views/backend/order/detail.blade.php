@@ -50,7 +50,10 @@
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                             {{'Delivery: ' . $order->address}}</div>
                         @endif
-                       
+                        @if($order->order_here == 2)
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            {{'Đơn hàng mang đi'}}</div>
+                        @endif
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                             {{'Khách: ' . $customer->name}}</div>
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">

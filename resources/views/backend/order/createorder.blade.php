@@ -40,17 +40,22 @@
 </div>
 </div>
 <div class="row">
-<div class="col-6" >
+<div class="col-8" >
     <div class="row" id="product">
 
     </div>
 </div>
-<div class="col-6">
+<div class="col-4">
     <div class="text-center font-weight-bold h4">Đơn hàng</div>
     @if(Cart::count() != 0)
     <?php $content = Cart::content();
     ?>
     <div class="container mt-5 shadow-lg">
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
         @foreach ($content as $item)
         <div class="row pb-3 pt-3" style="border-bottom: 1px solid #8080802b">
             <div class="col-1">
@@ -79,7 +84,15 @@
                 <label for="sothe">Số thẻ</label>
                 <input type="text" class="form-control" name="table" />
             </div>
-            <input type="text" name="note" required="" class="form-control form-control-user p-4" placeholder="Bạn có muốn dặn dò gì không">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="is_delivery" id="is_delivery" value="1">
+                <label class="form-check-label" for="is_delivery">
+                  Mang đi
+                </label>
+              </div>
+            <div class="form-group">
+                <input type="text" name="note" required="" class="form-control form-control-user p-4" placeholder="Bạn có muốn dặn dò gì không">
+            </div>
         </form>
     </div>
     
@@ -212,7 +225,7 @@
                                                         </div>
 
                                                         <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input" checked id="`+ products[i].price_L + products[i].id + '' + `"
+                                                            <input type="radio" class="custom-control-input" id="`+ products[i].price_L + products[i].id + '' + `"
                                                                 name="price_`+ products[i].id +`" value="`+ products[i].price_L +` ">
                                                             <label class="custom-control-label" for="`+ products[i].price_L + products[i].id + '' + `"><span
                                                                     class="badge badge-warning">` +products[i].price_L + `</span></label>

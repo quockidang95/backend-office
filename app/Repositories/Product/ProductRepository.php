@@ -39,6 +39,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         $productAdd->description = $req->description;
         $productAdd->price = $req->price;
         $productAdd->price_L = $req->price_L;
+        $productAdd->price_delivery = $req->price_delivery;
 
         $get_image = $req->file('image');
         $name_image = current(explode('.', $get_image->getClientOriginalName()));
@@ -89,6 +90,8 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         $productAdd->description = $req->description;
         $productAdd->price_L = $req->price_L;
         $productAdd->is_report = $req->is_report;
+        $productAdd->price_delivery = $req->price_delivery;
+
         $get_image = $req->file('image');
         if ($get_image) {
             $name_image = current(explode('.', $get_image->getClientOriginalName()));

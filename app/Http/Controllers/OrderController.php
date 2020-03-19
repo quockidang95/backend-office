@@ -252,40 +252,78 @@ class OrderController extends Controller
     }
 
     public function admincartcheckout(Request $request){
-        
-        $cart_subtotal = Cart::subtotal();
-        $temp = explode(".", $cart_subtotal);
-        $temp1 = explode(",", $temp[0]);
-        $price = $temp1[0] . $temp1[1];
-        $total_price = intval($price);
-        $order = Order::create([
-            'store_code' => auth()->user()->store_code,
-            'total_price' => $total_price,
-            'customer_id' => auth()->id(),
-            'table' => $request->table ? : 1,
-            'order_here' => 1,
-            'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
-            'note' => $request->note,
-            'created_by' => auth()->user()->name,
-            'payment_method' => 2, 
-            'price' => $total_price,
-            'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
-        ]);
+        if($request->is_delivery === null){
+            $cart_subtotal = Cart::subtotal();
+            $temp = explode(".", $cart_subtotal);
+            $temp1 = explode(",", $temp[0]);
+            $price = $temp1[0] . $temp1[1];
+            $total_price = intval($price);
+            $order = Order::create([
+                'store_code' => auth()->user()->store_code,
+                'total_price' => $total_price,
+                'customer_id' => auth()->id(),
+                'table' => $request->table ? : 1,
+                'order_here' => 1,
+                'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
+                'note' => $request->note,
+                'created_by' => auth()->user()->name,
+                'payment_method' => 2, 
+                'price' => $total_price,
+                'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
+            ]);
+    
+            $contents = Cart::content();
+            foreach ($contents as $key => $value) {   
+                    $item = OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $value->id,
+                        'price' => $value->price,
+                        'quantity' => $value->qty,
+                        'size' => $value->options->size
+                    ]);
+            }
+    
+            Cart::destroy();
+            return redirect(route('order.details', ['id' => $order->id ]));
+        }else{
 
-        $contents = Cart::content();
+            $cart_contents = Cart::content();
+            $price = 0;
+            foreach ($cart_contents as $key => $value) {
+                $product = Product::find($value->id);
+                 if(!$product->price_delivery){
+                    return redirect(route('order.admin'))->with('error', 'Sản phẩm hiện không có giá cho delivery!');
+                }
+                $price += $product->price_delivery * $value->qty;
+            }
+    
+            $order = Order::create([
+                'store_code' => auth()->user()->store_code,
+                'total_price' => $price,
+                'customer_id' => auth()->id(),
+                'table' => $request->table ? : 1,
+                'order_here' => 2,
+                'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
+                'note' => $request->note,
+                'created_by' => auth()->user()->name,
+                'payment_method' => 2, 
+                'price' => $price,
+                'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
+            ]);
 
-        foreach ($contents as $key => $value) {
-           
+       foreach ($cart_contents as $key => $value) {  
+                $product = Product::find($value->id);
+               
                 $item = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $value->id,
-                    'price' => $value->price,
+                    'price' => $product->price_delivery,
                     'quantity' => $value->qty,
-                    'size' => $value->options->size
                 ]);
-        }
+            }
 
-        Cart::destroy();
-        return redirect(route('order.details', ['id' => $order->id ]));
+            Cart::destroy();
+            return redirect(route('order.details', ['id' => $order->id ]));
+        }
     } 
 }
