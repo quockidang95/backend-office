@@ -68,6 +68,10 @@
             <label for="inputZip">Size L</label>
             <input type="text" class="form-control" id="inputZip" name="price_L" value="{{$item->price_L}}">
         </div>
+        <div class="form-group col-md-4">
+            <label >Mang đi</label>
+        <input type="number" class="form-control" name="price_delivery" value="{{ $item->price_delivery }}">
+        </div>
     </div>
     <label for="">Is Report</label>
     @if($item->is_report == 1)

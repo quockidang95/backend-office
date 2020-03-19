@@ -86,6 +86,10 @@
                             <label for="inputZip">Size L</label>
                             <input type="text" class="form-control" id="inputZip" name="price_L">
                         </div>
+                        <div class="form-group col-md-4">
+                            <label >Mang đi</label>
+                            <input type="number" class="form-control" name="price_delivery">
+                        </div>
                     </div>
                     <button class="btn btn-primary fa-pull-right mr-5 w-60" type="submit">Thêm</button>
                 </form>
