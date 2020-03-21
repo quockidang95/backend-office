@@ -292,7 +292,7 @@ class OrderController extends Controller
             foreach ($cart_contents as $key => $value) {
                 $product = Product::find($value->id);
                  if(!$product->price_delivery){
-                    return redirect(route('order.admin'))->with('error', 'Sản phẩm hiện không có giá cho delivery!');
+                    return redirect(route('order.admin'))->with('error', 'Sản phẩm' . $product->name . 'hiện không có giá cho delivery!');
                 }
                 $price += $product->price_delivery * $value->qty;
             }
