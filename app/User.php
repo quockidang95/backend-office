@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name', 'email', 'password', 'is_admin',
         'phone', 'sex', 'address', 'store_code',
         'role_id', 'birthday', 'status', 'wallet',
-        'token_device', 'is_login', 'point',
+        'token_device', 'is_login', 'point', 'is_surplus_box', 'surplus_box', 'login_at'
     ];
 
     /**

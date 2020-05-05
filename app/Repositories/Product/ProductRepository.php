@@ -119,7 +119,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
                                 <th class="align-middle" scope="row">' . $item->id . '</th>
                                 <td class="align-middle">' . $item->name . '</th>
                                 <td class="align-middle">' . $item->category->name . '</td>
-
+                                
                                 <td class="align-middle">
                                     <img src="source/images/' . $item->image . '" width="60" height="60">
                                 </td>

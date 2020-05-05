@@ -17,5 +17,6 @@ class CategoryController extends Controller
     public function index(){
         $categories = $this->categoryReposotory->getAll();
         return response()->json($categories, $this->successStatus);
+    
     }
 }

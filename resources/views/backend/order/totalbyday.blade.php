@@ -86,23 +86,7 @@
                         
                             <div class="form-group">
                                 <label for="">Số dư đầu</label>
-                            <input class="form-control" type="number" name="surplus_box" value="{{ session('surplus_box') }}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Tổng doanh thu của ca</label>
-                                <input class="form-control" type="number" name="total_revenue" value="{{ session('total_revenue') }}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Tiền mặt</label>
-                                <input class="form-control" type="number" value="{{ session('revenue_cash')}}" name="revenue_cash" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Online</label>
-                                <input class="form-control" type="number" value="{{ session('revenue_online')}}" name="revenue_online" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="">Dư cuối ca</label>
-                                <input class="form-control" type="number" value="{{ $du_cuoi_ca }}" name="end_balance_shift" readonly>
+                            <input class="form-control" type="number" name="surplus_box" value="{{ auth()->user()->surplus_box }}">
                             </div>
 
                     </div>
