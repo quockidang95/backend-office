@@ -32,23 +32,24 @@ class OrderController extends Controller
     public function index()
     {
         /*
-        if(!session('price_box')){
-            session(['price_box' => 0]);
-        }*/
+            if(!session('price_box')){
+                session(['price_box' => 0]);
+            }
 
-        if(!session('total_revenue')){
-            session(['total_revenue' => 0]);
-        }
-        if(!session('revenue_cash')){
-            session(['revenue_cash' => 0]);
-        }
-        if(!session('revenue_online')){
-            session(['revenue_online' => 0]);
-        }
+            if(!session('total_revenue')){
+                session(['total_revenue' => 0]);
+            }
+            if(!session('revenue_cash')){
+                session(['revenue_cash' => 0]);
+            }
+            if(!session('revenue_online')){
+                session(['revenue_online' => 0]);
+            }
 
-        if(!session('end_balance_shift')){
-            session(['end_balance_shift' => 0]);
-        }
+            if(!session('end_balance_shift')){
+                session(['end_balance_shift' => 0]);
+            }
+        */
         $user = auth('web')->user();
         $date = date('Y-m-d');
         $orders = Order::where('created_at', 'LIKE', '%' . $date . '%')->whereIn('status', [1, 2])->where('store_code', $user->store_code)->orderby('created_at', 'desc')->get();
@@ -56,8 +57,14 @@ class OrderController extends Controller
     }
 
     public function surplus (Request $request){
+        /*
         session(['surplus_box' => $request->surplus_box]);
         session(['shift_open' => Carbon::now('Asia/Ho_Chi_Minh')]);
+        */
+        auth()->user()->update(['is_surplus_box' => 1,
+                                'surplus_box' => $request->surplus_box,
+                                'login_at' => Carbon::now('Asia/Ho_Chi_Minh')
+                                ]);
         return redirect(route('order.byday'));
     }
 
@@ -174,14 +181,23 @@ class OrderController extends Controller
     }
 
     public function shiftwork(Request $request){
-       
+        $user = auth()->user();
         $input = $request->all();
         $input['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
-        $input['store_code'] = auth()->user()->store_code;
-        $input['shift_open'] = session('shift_open');
+        $input['store_code'] = $user->store_code;
+        $input['shift_open'] = $user->login_at;
         $input['shift_close'] = Carbon::now('Asia/Ho_Chi_Minh');
+
+        $totalRevenueCollection = Order::where('store_code', $user->store_code)
+                                        ->whereBetween('order_date', [$input['shift_open'], $input['shift_close']])
+                                        ->where('status', 3)->get();
+        $input['total_revenue'] = $totalRevenueCollection->sum('price');
+        $input['revenue_online'] = $totalRevenueCollection->where('payment_method', 1)->sum('price');
+        $input['revenue_cash'] = $totalRevenueCollection->where('payment_method', 2)->sum('price');
+        $input['end_balance_shift'] = $input['revenue_cash'] + auth()->user()->surplus_box;
         $shift =   ShiftWork::create($input);
-        session(['total_revenue' => 0, 'revenue_cash' => 0, 'revenue_online' => 0, 'surplus_box' => null]);
+       
+        auth()->user()->update(['is_surplus_box' => 0, 'surplus_box' => 0]);
         auth()->logout();
         return view('backend.order.printshift', compact('shift'));
     }
@@ -291,10 +307,12 @@ class OrderController extends Controller
             $price = 0;
             foreach ($cart_contents as $key => $value) {
                 $product = Product::find($value->id);
-                 if(!$product->price_delivery){
-                    return redirect(route('order.admin'))->with('error', 'Sản phẩm' . $product->name . 'hiện không có giá cho delivery!');
+                if(!$product->price_delivery){
+                    $price = $product->price * $value->qty;
+                }else{
+                    $price += $product->price_delivery * $value->qty;
                 }
-                $price += $product->price_delivery * $value->qty;
+                
             }
     
             $order = Order::create([
@@ -313,11 +331,11 @@ class OrderController extends Controller
 
        foreach ($cart_contents as $key => $value) {  
                 $product = Product::find($value->id);
-               
+                
                 $item = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $value->id,
-                    'price' => $product->price_delivery,
+                    'price' => $product->price_delivery ? : $product->price,
                     'quantity' => $value->qty,
                 ]);
             }

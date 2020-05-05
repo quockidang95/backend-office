@@ -325,7 +325,7 @@
     var notificationsCount     = parseInt(notificationsCountElem.data('count'));
     var notifications          = notificationsWrapper.find('div.dropdown-list');
     var store_code = $('#store_code').val();
-
+    
     // Enable pusher logging - don't include this in production
      Pusher.logToConsole = true;
 

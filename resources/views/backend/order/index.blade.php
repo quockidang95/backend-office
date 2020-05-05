@@ -24,7 +24,7 @@
       </nav>
   </div>
 </div>
-@if(session('surplus_box') === null)
+@if(auth()->user()->is_surplus_box !== 1)
 <button type="button" id="surplus_box_1"  class="btn btn-primary" hidden data-toggle="modal" data-target="#surplus_box">
   Launch demo modal
 </button> 
