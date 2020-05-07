@@ -31,25 +31,6 @@ class OrderController extends Controller
 
     public function index()
     {
-        /*
-            if(!session('price_box')){
-                session(['price_box' => 0]);
-            }
-
-            if(!session('total_revenue')){
-                session(['total_revenue' => 0]);
-            }
-            if(!session('revenue_cash')){
-                session(['revenue_cash' => 0]);
-            }
-            if(!session('revenue_online')){
-                session(['revenue_online' => 0]);
-            }
-
-            if(!session('end_balance_shift')){
-                session(['end_balance_shift' => 0]);
-            }
-        */
         $user = auth('web')->user();
         $date = date('Y-m-d');
         $orders = Order::where('created_at', 'LIKE', '%' . $date . '%')->whereIn('status', [1, 2])->where('store_code', $user->store_code)->orderby('created_at', 'desc')->get();
@@ -57,10 +38,7 @@ class OrderController extends Controller
     }
 
     public function surplus (Request $request){
-        /*
-        session(['surplus_box' => $request->surplus_box]);
-        session(['shift_open' => Carbon::now('Asia/Ho_Chi_Minh')]);
-        */
+        
         auth()->user()->update(['is_surplus_box' => 1,
                                 'surplus_box' => $request->surplus_box,
                                 'login_at' => Carbon::now('Asia/Ho_Chi_Minh')
@@ -268,12 +246,15 @@ class OrderController extends Controller
     }
 
     public function admincartcheckout(Request $request){
+        $discount = $request->discount ?? 0;
         if($request->is_delivery === null){
+
             $cart_subtotal = Cart::subtotal();
             $temp = explode(".", $cart_subtotal);
             $temp1 = explode(",", $temp[0]);
             $price = $temp1[0] . $temp1[1];
             $total_price = intval($price);
+
             $order = Order::create([
                 'store_code' => auth()->user()->store_code,
                 'total_price' => $total_price,
@@ -281,10 +262,9 @@ class OrderController extends Controller
                 'table' => $request->table ? : 1,
                 'order_here' => 1,
                 'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
-                'note' => $request->note,
                 'created_by' => auth()->user()->name,
                 'payment_method' => 2, 
-                'price' => $total_price,
+                'price' => $total_price - ($total_price * $discount/100),
                 'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
             ]);
     
@@ -322,10 +302,9 @@ class OrderController extends Controller
                 'table' => $request->table ? : 1,
                 'order_here' => 2,
                 'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
-                'note' => $request->note,
                 'created_by' => auth()->user()->name,
                 'payment_method' => 2, 
-                'price' => $price,
+                'price' => $price - ($price * $discount/100),
                 'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
             ]);
 

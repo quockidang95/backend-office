@@ -61,7 +61,7 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 {{'Phương thức thanh toán: ' . $payment_method}}</div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            {{number_format($order->total_price) . '  VNĐ'}} </div>
+                            {{number_format($order->price) . '  VNĐ'}} </div>
                         <?php
                            if($order->status == 1){
                                 echo '<span class="badge badge-pill badge-danger">Chưa xử lí</span>';

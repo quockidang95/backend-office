@@ -95,6 +95,9 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
         //Report 
         Route::get('report/setting', 'ReportController@getSetting')->name('report.setting');
         
+
+        // dashboard
+        Route::get('dashboard/index', 'DashboardController@index')->name('dashboard.index');
     });
 
         //Customer

@@ -52,7 +52,7 @@
                             }
                         ?>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            {{number_format($order->total_price) . '  VNĐ'}} </div>
+                            {{number_format($order->price) . '  VNĐ'}} </div>
                     </div>
 
                 </div>
