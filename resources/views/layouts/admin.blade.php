@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <base href="{{ asset('') }}">
-    <title>OFFICE COFFEE</title>
+    <title>CÔNG TY TNHH CÀ PHÊ VĂN PHÒNG</title>
     <link rel="shortcut icon" href="{{asset('img/AMEN.jpg')}}" />
     <!-- Custom fonts for this template-->
     <link href="{{asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
@@ -70,6 +70,7 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Danh mục:</h6>
+                        <a class="collapse-item" href="{{ route('dashboard.index') }}">Dashboard</a>
                         <a class="collapse-item" href="{{URL::to('/admin/index')}}">Quản lí tài khoảng</a>
                         <a class="collapse-item" href="{{route('store.index')}}">Cửa Hàng</a>
                         <a class="collapse-item" href="{{route('category.index')}}">Danh mục Sản phẩm</a>
@@ -246,15 +247,7 @@
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>@author : Dang Quoc Ki  </span> <br>
-                        <span>@company : Kingbao Media </span> <br>
-                        <span>Support: 0348704901 or fb: fb.com/quocki.dang</span>
-                    </div>
-                </div>
-            </footer>
+          
             <!-- End of Footer -->
 
         </div>

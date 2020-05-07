@@ -5,17 +5,17 @@
 @section('content')
 <?php
 
-    $error = Session::get('error');
-    if($error){
-        echo '<input class="error" type="text" hidden value="'.$error.'"/>';
-        Session::put('error', null);
-    }
+$error = Session::get('error');
+if ($error) {
+    echo '<input class="error" type="text" hidden value="' . $error . '"/>';
+    Session::put('error', null);
+}
 
-    $success = Session::get('success');
-    if($success){
-        echo '<input class="success" type="text" hidden value="'.$success.'"/>';
-        Session::put('success', null);
-    }
+$success = Session::get('success');
+if ($success) {
+    echo '<input class="success" type="text" hidden value="' . $success . '"/>';
+    Session::put('success', null);
+}
 ?>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -24,19 +24,17 @@
     </ol>
 </nav>
 <div class="row">
-<div class="col-4">
-<div class="form-group">
-    <label for="exampleFormControlSelect1">Chọn danh mục</label>
-    <select class="form-control" id="category_selected">
-        <option> CHỌN DANH MỤC </option>
-      @foreach($categories as $category)
-        <option value="{{ $category->id }}">  {{ $category->name }}</option>
-      @endforeach
-    </select>
-  </div>
-</div>
-<div class="col-3" style="margin-top: 30px">
-<a class="btn btn-warning" href="{{ route('admin.cart.show') }}">Xem giỏ hàng</a>
+<div class="col-6">
+
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Chọn danh mục</label>
+        <select class="form-control" id="category_selected">
+           
+        @foreach($categories as $category)
+            <option value="{{ $category->id }}" selected>  {{ $category->name }}</option>
+        @endforeach
+        </select>
+    </div>
 </div>
 </div>
 <div class="row">
@@ -49,7 +47,7 @@
     <div class="text-center font-weight-bold h4">Đơn hàng</div>
     @if(Cart::count() != 0)
     <?php $content = Cart::content();
-    ?>
+?>
     <div class="container mt-5 shadow-lg">
         @if(session('error'))
         <div class="alert alert-danger">
@@ -75,7 +73,7 @@
             </div>
         </div>
         @endforeach
-       
+
     </div>
     <div class="container mt-5">
         <form id="frmCheckOut" action="{{route('admin.cart.checkout')}}" method="post">
@@ -84,20 +82,26 @@
                 <label for="sothe">Số thẻ</label>
                 <input type="text" class="form-control" name="table" />
             </div>
+
+            <label>Giảm giá(%)</label>
+            <div class="input-group">
+                <input type="number" class="form-control" name="discount" value="0">
+                <div class="input-group-append">
+                    <span class="input-group-text">%</span>
+                </div>
+            </div>
+
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" name="is_delivery" id="is_delivery" value="1">
                 <label class="form-check-label" for="is_delivery">
                   Mang đi
                 </label>
               </div>
-            <div class="form-group">
-                <input type="text" name="note" required="" class="form-control form-control-user p-4" placeholder="Bạn có muốn dặn dò gì không">
-            </div>
         </form>
     </div>
-    
-    
-    
+
+
+
     @endif
     <div class="container cart mt-5">
         <input type="text" id="cart_count" value="{{Cart::count()}}" hidden>
@@ -111,16 +115,16 @@
                     Đặt hàng
                 </div>
                 <div class="col-3" style="padding-left: inherit">
-    
+
                     <?php
-                    $temp_array = explode(".", Cart::subtotal());
-                        echo $temp_array[0] . ' ₫';
-                    ?>
+$temp_array = explode(".", Cart::subtotal());
+echo $temp_array[0] . ' ₫';
+?>
                 </div>
             </div>
         </button>
     </div>
-    
+
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -137,7 +141,7 @@
                     <p class="text-center"> Xác nhận đặt hàng</p>
                 </div>
                 <div class="modal-footer">
-    
+
                     <button class="btn btn-warning" id="check_out" style="color: white" href="">Xác nhận</button>
                 </div>
             </div>
@@ -149,6 +153,7 @@
 
 @section('script')
 <script>
+    
     $('#category_selected').on('change', () => {
         const id = $('#category_selected option:selected').val()
         $.ajax({
@@ -163,7 +168,7 @@
                 let output = '';
                 for(let i = 0; i < products.length; i++){
                     if(products[i].price_L == null){
-                        
+
                         output = output + `
                             <div class="col-6 mb-4">
                                 <div class="card border-left-warning shadow h-100 py-2">
@@ -201,7 +206,7 @@
                                     </div>
                                 </div>
                             </div>
-                       
+
                         `
                     }else{
                         output = output + `
@@ -252,7 +257,7 @@
                     }
                 }
                 $('#product').html(output);
-            }   
+            }
         })
     })
     $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });

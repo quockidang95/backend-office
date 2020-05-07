@@ -21,9 +21,9 @@
         <tr>
         <th scope="row">{{number_format($item->discount_point) . ' VNĐ'}}</th>
         <td >{{$item->discount_user . ' %'}}</td>
-        @if($item->is_payment_delivery === 1)
+        @if($item->is_payment_delivery == 1)
             <td>true</td>
-        @elseif($item->is_payment_delivery === 2)
+        @elseif($item->is_payment_delivery == 2)
             <td>false</td>
         @endif
         </td>
