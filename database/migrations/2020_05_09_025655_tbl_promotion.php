@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class TblShiftworf extends Migration
+class TblPromotion extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class TblShiftworf extends Migration
      */
     public function up()
     {
-        Schema::create('shiftworks', function (Blueprint $table) {
+        Schema::create('promotions', function (Blueprint $table) {
             $table->bigIncrements('id');
-           
-            $table->string('name_shift');
-            $table->string('name_admin');
-            $table->unsignedInteger('price_box');
-            $table->unsignedInteger('total_price');
+            $table->string('title');
+            $table->string('body');
+            $table->string('promotion_code');
+            $table->integer('adjuster'); // % giam gia mua
+            $table->dateTime('end_date');
+            $table->dateTime('start_date');
             $table->dateTime('created_at');
-           
         });
     }
 
@@ -32,6 +32,6 @@ class TblShiftworf extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shiftworks');
+        Schema::dropIfExists('promotions');
     }
 }

@@ -40,6 +40,9 @@ Route::group(['middleware' => ['auth:api']], function(){
     //logout
     Route::get('logout', 'Api\UserController@logout');
     Route::post('feedback', 'Api\UserController@feedback');
+
+    //promotion
+    Route::get('promotions/{code}', 'Api\PromotionController@get');
 });
 Route::get('products/{id}', 'Api\ProductController@GetProductByCategory');
 Route::get('categories', 'Api\CategoryController@index');
