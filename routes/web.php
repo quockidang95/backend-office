@@ -98,6 +98,14 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
 
         // dashboard
         Route::get('dashboard/index', 'DashboardController@index')->name('dashboard.index');
+
+        // Promotion
+        Route::get('promotion/index', 'PromotionController@index')->name('promotion.index');
+        Route::get('promotion/add', 'PromotionController@viewstore')->name('promotion.viewadd');
+        Route::post('promotion/add', 'PromotionController@store')->name('promotion.store');
+        Route::get('promotion/del/{id}', 'PromotionController@delete')->name('promotion.delete');
+        Route::get('promotion/update/{id}', 'PromotionController@viewupdate')->name('promotion.viewupdate');
+        Route::post('promotion/update/{id}', 'PromotionController@update')->name('promotion.update');
     });
 
         //Customer
