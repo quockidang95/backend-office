@@ -23,7 +23,7 @@ class CustomerController extends Controller
     {
         $user = User::where('phone', $request->phone)->first();
         if ($user){
-            return redirect('/json')->withCookie(cookie('id', $user->id, 43000));
+            return redirect('/')->withCookie(cookie('id', $user->id, 43000));
         }
             $phone = $request->phone;
             return view('frontend.register', compact('phone'));
@@ -37,7 +37,7 @@ class CustomerController extends Controller
             'name' => $request->name,
             'address' => $request->address
         ]);
-        return redirect('/json')->withCookie(cookie('id', $user->id, 43000));;
+        return redirect('/')->withCookie(cookie('id', $user->id, 43000));;
     }
 
     public function logout(){
@@ -51,7 +51,7 @@ class CustomerController extends Controller
         if ($request->ajax()) {
             $data = json_decode($request->data);
             session(['store_code' => $data->ChiNhanh, 'table' => $data->SoBan]);
-            $redirect = env('APP_URL');
+            $redirect = env('APP_URL') . '/cart/show';
             return Response($redirect);
         }
     }
@@ -124,10 +124,17 @@ class CustomerController extends Controller
     public function ShowCart()
     {
         $setting = Setting::find(1);
+        
         if( session('store_code') == null){
             return redirect('/json');
-        }
+        } 
         return view('frontend.showcart', compact('setting'));
+    }
+
+    public function ShowCartDelivery(){
+        $setting = Setting::find(1);
+
+        return view('frontend.showcartdelivery', compact('setting'));
     }
 
     public function DeleteCart($rowId)
@@ -210,6 +217,83 @@ class CustomerController extends Controller
             $options
         );
         $pusher->trigger('Notify', 'send-message', $data);
+        Cart::destroy();
+        session(['store_code' => null, 'table' => null]);
+        return view('frontend.success');
+    }
+
+    public function checkoutdelivery(Request $request)
+    {
+        $id = $request->cookie('id');
+        $cart_subtotal = Cart::subtotal();
+        $temp = explode(".", $cart_subtotal);
+        $temp1 = explode(",", $temp[0]);
+        $price = $temp1[0] . $temp1[1];
+        $total_price = intval($price);
+
+        $setting = Setting::find(1);
+        $price_discount =  $total_price - $total_price * $setting->discount_user/100;
+        $point = $price_discount/$setting->discount_point;
+        $order = new Order;
+        $order->order_code = '#' . time() . $id;
+        $order->store_code = 'CH53MT';
+        $order->total_price = $total_price;
+        $order->customer_id = $id;
+        $order->order_here = 3;
+        $order->note = $request->note;
+        $order->address = $request->address;
+        $order->discount = $setting->discount_user;
+        $order->payment_method = $request->payment_method;
+        $order->price = $price_discount;
+        $order->order_date = Carbon::now('Asia/Ho_Chi_Minh');
+        $order->status = 1;
+        $order->save();
+
+        $contents = Cart::content();
+        foreach ($contents as $key => $value) {
+            $product_id = explode('k', $value->id);
+            $id = $product_id[0];
+            if($value->options->recipe == null){
+                $item = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $id,
+                    'price' => $product_id[1],
+                    'quantity' => $value->qty,
+                    'size' => $value->options->size
+                ]);
+            }else{
+                $recipes = json_decode($value->options->recipe);
+                $output = '';
+                foreach((array)$recipes as $key => $recipe) {
+                
+                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+                }
+                $item = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $id,
+                    'price' => $product_id[1],
+                    'quantity' => $value->qty,
+                    'size' => $value->options->size,
+                    'recipe' => $output
+                ]);
+            }
+        }
+
+        $data['store_code'] = 'CH53MT';
+        $data['table'] = session('table');
+        $data['id'] = $order->id;
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+        /*
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+        $pusher->trigger('Notify', 'send-message', $data); */
         Cart::destroy();
         session(['store_code' => null, 'table' => null]);
         return view('frontend.success');

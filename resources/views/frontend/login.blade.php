@@ -33,14 +33,14 @@
                                     <button type="submit" hidden>Login</button>
                                 </form>
                                 <div id="recaptcha-container"></div>
-                            <form class="user pt-3" id="frmLogin" style="display:none">
+                                <form class="user pt-3" id="frmLogin" style="display:none">
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-user" id="veryficationCode" aria-describedby="emailHelp" placeholder="Nhập vào mã xác nhận...">
                                       </div>
                                       <button type="button"  class="btn btn-warning btn-user btn-block" onclick="codeverify();">Đăng nhập</button>
 
                                 </form>
-
+                                
                             </div>
                         </div>
                     </div>

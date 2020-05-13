@@ -35,6 +35,7 @@ class PromotionController extends Controller
     public function checkStatus(Promotion $promotion){
 
         $now = Carbon::now('Asia/Ho_Chi_Minh');
+        
         if ( $promotion->start_date < $now && $promotion->end_date > $now ) {
             return true;
         }
