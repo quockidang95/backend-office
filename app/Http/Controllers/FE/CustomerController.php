@@ -286,14 +286,14 @@ class CustomerController extends Controller
             'cluster' => 'ap1',
             'encrypted' => true
         );
-        /*
+        
         $pusher = new Pusher(
             env('PUSHER_APP_KEY'),
             env('PUSHER_APP_SECRET'),
             env('PUSHER_APP_ID'),
             $options
         );
-        $pusher->trigger('Notify', 'send-message', $data); */
+        $pusher->trigger('Notify', 'send-message', $data);
         Cart::destroy();
         session(['store_code' => null, 'table' => null]);
         return view('frontend.success');
