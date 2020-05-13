@@ -43,27 +43,54 @@
 
 @section('showcart')
 <div class="container-fluid cart">
-    <a href="{{route('cart.show')}}" style="text-decoration: none;">
-        <div class="row  font-weight-bolder  text-white" style="padding-top: 13px; font-size: 0.875rem; ">
+    <button style="text-decoration: none; width: 100%" id="show_cart" data-toggle="modal" data-target="#exampleModal">
+        <div class="row  font-weight-bolder  text-white text-center" style="font-size: 0.875rem; ">
             <div class="col-3">
             {{ Cart::count() . ' MÓN'}}
             </div>
-            <div class="col-6" style="text-align: center">
+            <div class="col-6">
                 Xem Giỏ Hàng
             </div>
-            <div class="col-3 pl-2">
+            <div class="col-3">
 
              <?php
                 $temp_array = explode(".", Cart::subtotal());
-                    echo $temp_array[0] .  ' ₫';
+                    echo $temp_array[0] .'₫';
                 ?>
 
             </div>
         </div>
-    </a>
+    </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Chọn phương thức order.</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="col-6">
+            <a href="{{ route('cart.show')}}" class="btn btn-warning">Order Tại Quán</a>
+        </div>
+        <div class="col-6">
+            <a href="{{ route('cart.show.delivery')}}" class="btn btn-warning">Giao hàng</a>
+        </div>
+        <div class="col-6"></div>
+      </div>
+      <div class="modal-footer">
+      </div>
     </div>
+  </div>
+</div>
 @endsection
 
 @section('script')
+<script>
 
+</script>
 @endsection

@@ -124,8 +124,10 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
 Route::get('product/{id}', 'FE\CustomerController@detailsProduct')->name('frontend.product.details');
 Route::post('cart/add', 'FE\CustomerController@addProduct')->name('cart.add');
 Route::get('cart/show', 'FE\CustomerController@ShowCart')->name('cart.show');
+Route::get('cart/show/delivery', 'FE\CustomerController@ShowCartDelivery')->name('cart.show.delivery');
 Route::get('cart/delete/{id}', 'FE\CustomerController@DeleteCart')->name('cart.delete');
 Route::post('cart/checkout', 'FE\CustomerController@checkout')->name('cart.checkout');
+Route::post('cart/checkoutdelivery', 'FE\CustomerController@checkoutdelivery')->name('cart.checkout.delivery');
 Route::get('order/here', 'FE\CustomerController@orderhere')->name('ordernow');
 
 //Notification

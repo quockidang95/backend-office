@@ -28,7 +28,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-       // dd($request->cookie('id'));
+      
         if($request->cookie('id') == null){
             return redirect('/logincustomer');
         }
