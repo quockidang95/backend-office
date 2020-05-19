@@ -33,11 +33,13 @@
         <tr>
             <th scope="col">STT</th>
             <th scope="col">Title</th>
-            <th scope="col">Ngày bắt đầu</th>
-            <th scope="col">Mgày hết hạn</th>
-            <th scope="col"> Trạng thái </th>
             <th scope="col">Mã giảm giá</th>
             <th scope="col">Phần % giảm</th>
+            <th scope="col">Ngày bắt đầu</th>
+            <th scope="col">Mgày hết hạn</th>
+            <th scope="col">Áp dụng từ</th>
+            <th scope="col"> Trạng thái </th>
+            
             <th scope="col">Thao tác</th>
         </tr>
     </thead>
@@ -46,8 +48,11 @@
         <tr>
             <th class="align-middle" scope="row">{{$key + 1}}</th>
             <td class="align-middle">{{$item->title}}</td>
+            <td class="align-middle">{{ $item->promotion_code }}</td>
+            <td class="align-middle">{{ $item->adjuster }}</td>
             <td class="align-middle">{{$item->start_date}}</td>
             <td class="align-middle">{{$item->end_date}}</td>
+            <td class="align-middle">{{$item->start_hour . ' - ' . $item->end_hour}}</td>
             <td class="align-middle">
                 @if($item->status == 'expired')
                     <span class="badge badge-danger">Không còn áp dụng</span>
@@ -55,8 +60,7 @@
                     <span class="badge badge-success">Trong thời gian áp dụng</span>
                 @endif
             </td>
-            <td class="align-middle">{{ $item->promotion_code }}</td>
-            <td class="align-middle">{{ $item->adjuster }}</td>
+           
             <td class="align-middle">
                 <!-- Update category -->
                 <a title="update product" href="{{route('promotion.viewupdate', ['id' => $item->id])}}"

@@ -17,7 +17,7 @@ class Promotion extends Model
         'start_date',
         'end_date',
         'created_at',
-        'status'
+        'status', 'start_hour', 'end_hour',
     ];
 
     public $timestamps = false;

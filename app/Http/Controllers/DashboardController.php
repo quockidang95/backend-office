@@ -20,6 +20,30 @@ class DashboardController extends Controller
                                                         'revenueFor12Month',
                                                         'diff_day'));
     }
+
+    public function revenueMonth(Request $request){
+        if ($request->ajax()) {
+            $daysInMonth = Carbon::parse($request->dateselected)->daysInMonth;
+            $data_day = [];
+            $data_revenue = [];
+            for($i = 1; $i <= $daysInMonth; $i++)
+            {   
+                if($i < 10){
+                    $date = $request->dateselected . '-0' . $i;
+                    $revenue_day = $this->getRevenueForDay($date);
+                    array_push($data_day, '0' . $i);
+                    array_push($data_revenue, $revenue_day);
+                }else{
+                    $date = $request->dateselected . '-' . $i;
+                    $revenue_day = $this->getRevenueForDay($date);
+                    array_push($data_day, '' . $i);
+                    array_push($data_revenue, $revenue_day);
+                }
+            }
+
+            return Response(['data_date' => $data_day, 'data_revenue' => $data_revenue]);
+        }
+    }
     //|--------------------------------------------------------------------------|
     // repo for dashboard controller 
 
@@ -74,5 +98,13 @@ class DashboardController extends Controller
         
         return ($revenue_crrent_date - $revenue_diff_date) / $revenue_crrent_date * 100;
 
+    }
+
+    public function getRevenueForDay($day){
+        $dt = Carbon::parse($day);
+        
+        return Order::whereBetween('order_date', [$dt->startOfDay()->format('Y-m-d H:i'), $dt->endOfDay()->format('Y-m-d H:i')])
+                    ->where('store_code', auth()->user()->store_code)
+                    ->where('status', 3)->get('price')->sum('price');
     }
 }

@@ -17,7 +17,7 @@ class PromotionController extends Controller
 
             $check = $this->checkStatus($promotion);
             
-            if (!$check){
+            if ( !$check ) {
                 $promotion->update([ 'status' => 'expired']);
             } else {
                 $promotion->update([ 'status' => 'still']);
@@ -35,8 +35,12 @@ class PromotionController extends Controller
     public function checkStatus(Promotion $promotion){
 
         $now = Carbon::now('Asia/Ho_Chi_Minh');
+
+        if($promotion->start_hour > $now->hour || $promotion->end_hour < $now->hour){
+            return false;
+        }
         
-        if ( $promotion->start_date < $now && $promotion->end_date > $now ) {
+        if ( $promotion->start_date <= $now->toDateString() && $promotion->end_date >= $now->toDateString() ) {
             return true;
         }
 

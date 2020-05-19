@@ -32,6 +32,8 @@
 
 <form id="frmCheckOut" action="{{route('cart.checkout.delivery')}}" method="post">
     @csrf
+    <input type="text" hidden name="discount_promotion" value="0" id="discount_promotion" />
+    <input type="text" hidden name="discount_price" value="0" id="discount_price" />
     <fieldset id="foobar" class="col-md-4 order-md-2 mt-3">
     <label for="" class="font-weight-bold">Phương thức thanh toán</label>
     <div class="custom-control custom-radio">
@@ -48,12 +50,26 @@
     </div>
     <br>
 </fieldset>
+
+
+
+
 <input type="text" name="address" required class="form-control form-control-user p-4 mb-3" placeholder="Nhập địa chỉ giao hàng">
 
 <input type="text" name="note"  class="form-control form-control-user p-4" placeholder="Bạn có muốn dặn dò gì không">
 
 </form>
+<div class="row mb-4 ml-2">
+    <div class="col-6">
+        <label>Bạn có mã giảm giá</label>
+        <input type="text" class="form-control" id="promotion_code" />
+        <span id="status" class="mt-2"><span>
+    </div>
 
+    <div class="col-3" style="padding-top: 31px;">
+        <button class="btn btn-warning" id="btn_confirm_promotion">Confirm</button>
+    </div>
+</div>
 
 <div class="col-md-4 border-md-2 mb-5 mt-0">
     <ul class="list-group mb-3">
@@ -63,26 +79,23 @@
         </li>
         <li class="list-group-item d-flex justify-content-between">
             <span>Chiết khấu (%)</span>
-        <strong>{{$setting->discount_user . ' %'}}</strong>
+        <strong id="total_discount">{{ $setting->discount_user . ' %'}}</strong>
         </li>
         <li class="list-group-item d-flex justify-content-between">
             <span>Tổng cộng (VNĐ)</span>
-        <strong>
+        <strong id="total_price">
           <?php
             $temp = explode(".", Cart::subtotal());
             $temp1 = explode(",", $temp[0]);
             $price = $temp1[0] . $temp1[1];
             $price_int = intval($price);
-            $price_final = $price_int - $price_int * $setting->discount_user/100;
-            echo number_format($price_final) . ' ₫';
-            echo '<input type="number" id="price_final" name="price_final" value="' . $price_final . '" hidden>';
             ?>
         </strong>
         </li>
         <li class="list-group-item d-flex justify-content-between">
             <span>Điểm tích lũy</span>
-        <strong>
-            <?php echo $price_final/$setting->discount_point . ' điểm'; ?>
+        <strong id="point">
+                
         </strong>
         </li>
     </ul>
@@ -94,17 +107,14 @@
         id="cart_checkout">
         <div class="row  font-weight-bolder  text-white" style="padding-top: 3px; font-size: 0.875rem; ">
             <div class="col-3">
-                {{Cart::count() . ' MÓN'}}
+             
             </div>
             <div class="col-6" style="text-align: center">
                 Đặt hàng
             </div>
             <div class="col-3" style="padding-left: inherit">
 
-                <?php
-                $temp_array = explode(".", Cart::subtotal());
-                    echo $temp_array[0] . ' ₫';
-                ?>
+               
 
             </div>
         </div>
@@ -145,6 +155,15 @@
         }else{
             $('#cart_checkout').attr('disabled', false);
         }
+        const total_discount = @json($setting->discount_user);
+        $('#discount_promotion').val(total_discount) ;
+
+        
+        const total_price = @json($price_int) - @json($price_int) * total_discount / 100;
+        $('#discount_price').val(total_price);
+        $('#total_price').text(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(total_price));
+        const point = total_price / @json($setting->discount_point);
+        $('#point').text(point + ' điểm');
     });
 
 </script>
@@ -152,8 +171,9 @@
     $(document).ready(function (){
         $('#check_out').on('click', function(){
             var wallet = $('#wallet').val();
-            var price_final = $('#price_final').val();
+            var price_final = $('#discount_price').val();
             var radioValue = $("input[name='payment_method']:checked").val();
+           console.log($('#discount_promotion').val());
             if(radioValue === '2'){
                 $('#frmCheckOut').submit();
             }else{
@@ -166,5 +186,41 @@
         });
     });
 
+</script>
+
+<script>
+        $('#btn_confirm_promotion').on('click' , function(){
+            $promotionCode = $('#promotion_code').val();
+
+            $.ajax({
+                        type: 'get',
+                        url: '{{ URL::to('confirm-promotion-code') }}',
+                        data: {
+                            'promotionCode': $promotionCode
+                        },
+                        success:function(data){
+                            if ( data.error )
+                            {
+                                $('#status').text(data.error).addClass("badge badge-danger");
+                                return;
+                            } else {
+                                $('#status').text('thành công').removeClass("badge badge-danger").addClass("badge badge-success");
+                            }
+                            const total_discount = data.adjuster || @json($setting->discount_user);
+                            $('#total_discount').text(total_discount + ' %')
+
+                            $('#discount_promotion').val(total_discount) ;
+                         
+                            
+                            const total_price = @json($price_int) - @json($price_int) * total_discount / 100;
+                            $('#total_price').text(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(total_price));
+                            $('#discount_price').val(total_price);
+                            const point = total_price / @json($setting->discount_point);
+                            $('#point').text(point + ' điểm');
+                            
+                        }
+                    });
+        });
+        $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
 </script>
 @endsection

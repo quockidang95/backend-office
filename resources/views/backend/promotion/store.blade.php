@@ -38,6 +38,15 @@
                 <input type="text" class="form-control" name="end_date"  data-toggle="datepicker">
             </div>
         </div>
+
+        <div class="form-group">
+            <label>Giờ bắt đầu và kết thúc</label>
+            <div class="input-group">
+                <input type="text" class="form-control timepicker" name="start_hour" >
+                <div class="input-group-addon"> đến </div>
+                <input type="text" class="form-control timepicker" name="end_hour">
+            </div>
+        </div>
         <button class="btn btn-primary fa-pull-right mr-5 w-60" type="submit">Thêm</button>
     </form>
 
@@ -47,6 +56,18 @@
 @section('script')
 <link  href="{{ asset('datepicker/dist/datepicker.css') }}" rel="stylesheet">
 <script src="{{ asset('datepicker/dist/datepicker.js') }}"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+<script type="text/javascript">
+    $('.timepicker').timepicker({
+    timeFormat: 'HH:mm:ss',
+    interval: 30,
+    dynamic: false,
+    dropdown: true,
+    scrollbar: true
+});
+</script>
 <script>
     $('[data-toggle="datepicker"]').datepicker(
         {format: 'yyyy-mm-dd'}

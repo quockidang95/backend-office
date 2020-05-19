@@ -61,7 +61,7 @@
                         <td align="right" style="padding:5px;">Size </td>
                         <td align="right" style="padding:5px;">Giá </td>
                         <td align="right" style="padding:5px;">Sl </td>
-                        <td align="right" style="padding:5px;">Ghi chú</td>
+                     
                         <td align="right" style="padding:5px;">TT </td>
                     </tr>
 
@@ -71,7 +71,7 @@
                         <td align="right" style="padding:5px;">{{$item->size}}</td>
                         <td align="right" style="padding:5px;">{{$item->price}}</td>
                         <td align="right" style="padding:5px;">{{$item->quantity}}</td>
-                        <td align="right" style="padding:5px;">{{$item->recipe}}</td>
+                       
                         <td align="right" style="padding:5px;">{{$item->quantity * $item->price}}</td>
 
                         </tr>

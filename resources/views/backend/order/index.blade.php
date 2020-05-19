@@ -79,7 +79,7 @@
                 echo '<span class="badge badge-pill badge-warning">Đã tiếp nhận</span>';
             }
           ?>
-          <div class="h5 mb-0 font-weight-bold text-gray-800">{{number_format($item->total_price) . '  VNĐ'}} </div>
+          <div class="h5 mb-0 font-weight-bold text-gray-800">{{number_format($item->price) . '  VNĐ'}} </div>
 
           </div>
           <div class="col-auto">
