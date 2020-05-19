@@ -189,8 +189,9 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
     public function infoUser($id){
         $user = User::find($id);
         $rechages = Rechage::where('customer_id', $id)->orderby('created_at', 'desc')->get();
-
-        return view('backend.customer.info', compact('user', 'rechages'));
+        $ordersHistory = $user->orders()->orderBy('order_date', 'desc')->get();
+       
+        return view('backend.customer.info', compact('user', 'rechages', 'ordersHistory'));
     }
 
     public function tong($x, $y){

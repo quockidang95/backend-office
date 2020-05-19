@@ -63,8 +63,38 @@
     </tbody>
 </table>
 <div style="margin-left: 500px">{!! $users->links() !!}</div>
+
+<div>
+
+<div class="col-3">
+        <input type="text" id="date_selected" name="date_selected" class="form-control bg-lightlight border-0 small"data-toggle="datepicker" placeholder="Sinh nhật KH">
+</div>
+
+<div class="pt-3">
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">STT</th>
+            <th scope="col">Name</th>
+            <th scope="col">Birthday</th>
+            <th scope="col"> Action </th>
+        </tr>
+    </thead>
+    <tbody id="birthday-customer">
+                            
+    </tbody>
+</table>
+</div>
 @endsection
 @section('script')
+<link  href="{{ asset('datepicker/dist/datepicker.css') }}" rel="stylesheet">
+<script src="{{ asset('datepicker/dist/datepicker.js') }}"></script>
+<script>
+    $('[data-toggle="datepicker"]').datepicker(
+        {format: 'yyyy-mm'}
+    );
+</script>
+
 <script>
     $('#searchCustomer').on('keyup',function(){
                 $value = $(this).val();
@@ -83,15 +113,37 @@
             $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
 </script>
 <script>
-    $(function(){
-        var success = $('.success').val();
-        var error = $('.error').val();
-        if(success){
-            toastr.success(success, 'Hệ thống thông báo: ', {timeOut: 3000});
-        }
-        if(error){
-            toastr.error(error, 'Hệ thống thông báo: ', {timeOut: 3000});
-        }
-    });
-</script>
+    $('#date_selected').on('change',function(){
+                    $date_selected = $(this).val();
+                    $.ajax({
+                        type: 'get',
+                        url: '{{ URL::to('get-birthday-for-month') }}',
+                        data: {
+                            'dateselected': $date_selected,
+                        },
+                        success:function(data){
+                        console.log(Object.values(data));
+                      
+                           const stringArr = Object.values(data).map((item, index) => {
+                               const stt = index + 1;
+                                return  `
+                                    <tr>
+                                        <td>` + stt + `</td>
+                                        <td>` + item.name + `</td>
+                                        <td>` + item.birthday + `</td>
+                                        <td> <a class="btn btn-info btn-circle"href="{{env('APP_URL')}}/customer/info/` + item.id + `"
+                                                title="Xem thông tin khách hàng">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                `;
+                           });
+                           $('#birthday-customer').html(stringArr)
+                        }
+                         
+                    });
+                })
+                $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+    </script>
 @endsection

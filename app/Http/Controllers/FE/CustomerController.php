@@ -147,6 +147,7 @@ class CustomerController extends Controller
     }
 
     public function checkout(Request $request){
+      //  dd($request);
         $id = $request->cookie('id');
         $cart_subtotal = Cart::subtotal();
         $temp = explode(".", $cart_subtotal);
@@ -155,20 +156,19 @@ class CustomerController extends Controller
         $total_price = intval($price);
 
         $setting = Setting::find(1);
-        $price_discount =  $total_price - $total_price * $setting->discount_user/100;
-        $point = $price_discount/$setting->discount_point;
+       
+        $point = $request->discount_price/$setting->discount_point;
         $order = new Order;
         $order->order_code = '#' . session('store_code') . time() . $id;
-
+        $order->discount = $request->discount_promotion;
         $order->store_code = session('store_code');
         $order->table = strval(session('table'));
         $order->total_price = $total_price;
         $order->customer_id = $id;
         $order->order_here = 1;
         $order->note = $request->note;
-        $order->discount = $setting->discount_user;
         $order->payment_method = $request->payment_method;
-        $order->price = $price_discount;
+        $order->price = $request->discount_price;
         $order->order_date = Carbon::now('Asia/Ho_Chi_Minh');
         $order->status = 1;
         $order->save();
@@ -216,7 +216,7 @@ class CustomerController extends Controller
             env('PUSHER_APP_ID'),
             $options
         );
-        $pusher->trigger('Notify', 'send-message', $data);
+        $pusher->trigger('Notify', 'send-message', $data); 
         Cart::destroy();
         session(['store_code' => null, 'table' => null]);
         return view('frontend.success');
@@ -224,6 +224,7 @@ class CustomerController extends Controller
 
     public function checkoutdelivery(Request $request)
     {
+        
         $id = $request->cookie('id');
         $cart_subtotal = Cart::subtotal();
         $temp = explode(".", $cart_subtotal);
@@ -232,8 +233,6 @@ class CustomerController extends Controller
         $total_price = intval($price);
 
         $setting = Setting::find(1);
-        $price_discount =  $total_price - $total_price * $setting->discount_user/100;
-        $point = $price_discount/$setting->discount_point;
         $order = new Order;
         $order->order_code = '#' . time() . $id;
         $order->store_code = 'CH53MT';
@@ -242,9 +241,9 @@ class CustomerController extends Controller
         $order->order_here = 3;
         $order->note = $request->note;
         $order->address = $request->address;
-        $order->discount = $setting->discount_user;
+        $order->discount = $request->discount_promotion;
         $order->payment_method = $request->payment_method;
-        $order->price = $price_discount;
+        $order->price = $request->discount_price;
         $order->order_date = Carbon::now('Asia/Ho_Chi_Minh');
         $order->status = 1;
         $order->save();
@@ -278,7 +277,7 @@ class CustomerController extends Controller
                 ]);
             }
         }
-
+  
         $data['store_code'] = 'CH53MT';
         $data['table'] = session('table');
         $data['id'] = $order->id;
@@ -286,14 +285,14 @@ class CustomerController extends Controller
             'cluster' => 'ap1',
             'encrypted' => true
         );
-        
+      
         $pusher = new Pusher(
             env('PUSHER_APP_KEY'),
             env('PUSHER_APP_SECRET'),
             env('PUSHER_APP_ID'),
             $options
         );
-        $pusher->trigger('Notify', 'send-message', $data);
+        $pusher->trigger('Notify', 'send-message', $data); 
         Cart::destroy();
         session(['store_code' => null, 'table' => null]);
         return view('frontend.success');

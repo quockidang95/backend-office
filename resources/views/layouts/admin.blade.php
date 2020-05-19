@@ -98,7 +98,8 @@
                         <h6 class="collapse-header">Tùy chọn thống kê:</h6>
                         <a class="collapse-item" href="{{ route('doanh.thu.theo.ngay') }}">Doanh thutrong ngày</a>
                         <a class="collapse-item" href="{{ route('doanh.thu.theo.thang') }}">Doanh thu trong tháng</a>
-                        
+                        <a class="collapse-item" href="{{route('doanh.thu.theo.tuan')}}">Doanh thu theo tuần </a>
+                        <a class="collapse-item" href="{{route('doanh.thu.tuy.chon')}}">Doanh thu tuỳ chọn </a>
                     </div>
                 </div>
             </li>

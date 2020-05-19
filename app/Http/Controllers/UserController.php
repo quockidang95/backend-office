@@ -58,6 +58,39 @@ class UserController extends Controller
         Session::put('success', 'Thêm mới tài khoản thành công');
         return redirect()->route('customer.index');
     }
+
+    public function getBirthdayForMonth(Request $request)
+    {
+        $date = Carbon::create($request->dateselected);
+        $users = User::where('birthday', '!=', null)->get();
+
+        $userBirthdays = $users->filter( function ($user) use ($request){
+           return $this->checkBirthday($user->birthday, $request) === true;
+        });
+
+    
+        return Response($userBirthdays);
+    }
+
+
+
+
+    // repositories for controllers
+    public function checkBirthday( $birthday, $request) 
+    {
+        $daysInMonth = Carbon::create($request->dateselected)->daysInMonth;
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            if($i < 10){
+                if(Carbon::parse($birthday)->isBirthday(Carbon::parse($request->dateselected . '-0' . $i)))
+                return true;
+            }else{
+                if(Carbon::parse($birthday)->isBirthday(Carbon::parse($request->dateselected . '-' . $i)))
+                return true;
+            }
+            
+        }
+        return false;
+    }
 }
 
 ?>

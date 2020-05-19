@@ -48,8 +48,14 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     Route::post('admin/cart/checkout', 'OrderController@admincartcheckout')->name('admin.cart.checkout');
     //For Sếp
     Route::group(['middleware' => ['check_role']], function () {
+
+        // static
         Route::get('doanh-thu-theo-thang', 'StaticController@doanhthutheothang')->name('doanh.thu.theo.thang');
         Route::get('lay-doanh-thu-theo-thang', 'StaticController@laydoanhthutheothang');
+        Route::get('doanh-thu-theo-tuan', 'StaticController@doanhthutheotuan')->name('doanh.thu.theo.tuan');
+        Route::get('lay-doanh-thu-theo-tuan', 'StaticController@laydoanhthutheotuan');
+        Route::get('doanh-thu-tuy-chon', 'StaticController@daonhthutuychon')->name('doanh.thu.tuy.chon');
+        Route::get('lay-doanh-thu-tuy-chon','StaticController@laydoanhutuychon');
         //settings
         Route::get('setting/index', 'SettingController@index')->name('setting.index');
         Route::post('setting/update/{id}', 'SettingController@update')->name('setting.update');
@@ -74,8 +80,11 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
         Route::get('product/viewupdate/{id}', 'ProductController@viewupdate')->name('product.viewupdate');
         Route::get('search-product', 'ProductController@search');
         Route::get('product/category/{id}', 'ProductController@getAllByCategory')->name('product.bycateogry');
+
+        //customers
         Route::get('customer/view/store', 'UserController@viewstore')->name('customer.view.store');
         Route::post('customer/store', 'UserController@store')->name('customer.store');
+        Route::get('get-birthday-for-month', 'UserController@getBirthdayForMonth');
 
         //feedback
         Route::get('feedback/index', 'AdminController@feedback')->name('feedback.index');
@@ -98,7 +107,7 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
 
         // dashboard
         Route::get('dashboard/index', 'DashboardController@index')->name('dashboard.index');
-
+        Route::get('revenue-month', 'DashboardController@revenueMonth');
         // Promotion
         Route::get('promotion/index', 'PromotionController@index')->name('promotion.index');
         Route::get('promotion/add', 'PromotionController@viewstore')->name('promotion.viewadd');
@@ -106,6 +115,8 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
         Route::get('promotion/del/{id}', 'PromotionController@delete')->name('promotion.delete');
         Route::get('promotion/update/{id}', 'PromotionController@viewupdate')->name('promotion.viewupdate');
         Route::post('promotion/update/{id}', 'PromotionController@update')->name('promotion.update');
+
+      
     });
 
         //Customer
@@ -129,6 +140,9 @@ Route::get('cart/delete/{id}', 'FE\CustomerController@DeleteCart')->name('cart.d
 Route::post('cart/checkout', 'FE\CustomerController@checkout')->name('cart.checkout');
 Route::post('cart/checkoutdelivery', 'FE\CustomerController@checkoutdelivery')->name('cart.checkout.delivery');
 Route::get('order/here', 'FE\CustomerController@orderhere')->name('ordernow');
+
+Route::get('confirm-promotion-code', 'PromotionController@confirmcode');
+
 
 //Notification
 Route::get('notification', 'FE\CustomerController@notification')->name('notification');

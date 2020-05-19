@@ -138,6 +138,39 @@
             @endforeach
     </tbody>
 </table>
+
+<div class="mt-3">
+<table class="table table-bordered table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">STT</th>
+            <th scope="col">Mã hoá đơn</th>
+            <th scope="col">Mã Cửa hàng</th>
+            <th scope="col">Tổng tiền</th>
+            <th scope="col">Ngày tạo</th>
+            <th scope="col">Nhân viên xử lí</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($ordersHistory as $key => $item)
+        <tr>
+            <th scope="row">{{$key + 1}}</th>
+            <td>{{ $item->order_code }}</td>
+            <td>{{ $item->store_code }}</td>
+            <td>{{ number_format($item->price) . ' VNĐ' }}</td>
+            <td>{{ $item->order_date }}</td>
+            <td>{{ $item->created_by}}</td>
+            <td>
+                <a class="btn btn-info btn-circle" href="{{ route('order.view', ['id' => $item->id]) }}"
+                    title="Xem thông tin khách hàng">
+                    <i class="fas fa-info-circle"></i>
+                </a>
+            </td>
+            @endforeach
+    </tbody>
+</table>
+</div>
 @endsection
 @section('script')
 <script>
