@@ -122,6 +122,7 @@ class OrderController extends Controller
     }
 
     public function delivery(Request $request){
+        $setting = Setting::find(1);
         $order = Order::create([
             'store_code' => $request->store_code,
             'total_price' => $request->total_price,
@@ -131,7 +132,7 @@ class OrderController extends Controller
             'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
             'note' => $request->note,
             'payment_method' => $request->payment_method, 
-            'price' => $request->total_price,
+            'price' => $request->total_price - ($request->total_price * $setting->discount_user/100),
             'order_code' => '#' . $request->store_code . time() . auth()->id()
         ]);
 

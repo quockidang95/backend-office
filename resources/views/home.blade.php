@@ -43,8 +43,8 @@
 
 @section('showcart')
 <div class="container-fluid cart">
-    <button style="text-decoration: none; width: 100%" id="show_cart" data-toggle="modal" data-target="#exampleModal">
-        <div class="row  font-weight-bolder  text-white text-center" style="font-size: 0.875rem; ">
+    <span style="text-decoration: none; width: 100%" id="show_cart" data-toggle="modal" data-target="#exampleModal">
+        <div class="row  font-weight-bolder  text-white text-center" style="font-size: 0.875rem; margin-top: 12px; ">
             <div class="col-3">
             {{ Cart::count() . ' MÓN'}}
             </div>
@@ -60,7 +60,7 @@
 
             </div>
         </div>
-    </button>
+    </span>
 </div>
 
 <!-- Modal -->
