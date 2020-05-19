@@ -131,7 +131,7 @@ class OrderController extends Controller
             'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
             'note' => $request->note,
             'payment_method' => $request->payment_method, 
-            'price' => $request->total_price,
+            'price' => $request->price,
             'order_code' => '#' . $request->store_code . time() . auth()->id()
         ]);
 

@@ -43,7 +43,7 @@
         ?>
 
         <!-- Sidebar -->
-        <ul style="background-color: #32312f" class="navbar-nav  sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul style="background-color: #47325a;" class="navbar-nav  sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" style="background-color: white"
