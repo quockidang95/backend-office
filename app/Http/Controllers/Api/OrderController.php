@@ -21,60 +21,76 @@ class OrderController extends Controller
     {
         $user = auth('api')->user();
         $setting = Setting::find(1);
-        $order = new Order;
 
-        $order->order_code = '#' . $request->store_code . time() . $user->id;
-        $order->store_code = $request->store_code;
-        $order->table = $request->table;
-        $order->total_price = $request->total_price;
-        $order->customer_id = $user->id;
-        $order->order_here = 1;
-        $order->note = $request->note;
-        $order->payment_method = $request->payment_method;
-        $order->order_date = Carbon::now('Asia/Ho_Chi_Minh');
-        $order->status = 1;
-        $order->price = $request->total_price - ($request->total_price * $setting->discount_user/100);
-        $order->save();
+        $price = 0;
+        if ($request->price) {
+            $price = $request->price;
+        } else {
+            $price = $request->total_price - ($request->total_price * $setting->discount_user/100);
+        }
+        
+        $is_pay;
+        if ($request->payment_method == 1) {
+            $is_pay = 1;
+        } else {
+            $is_pay = 2;
+        }
+        
+        
+        $order = Order::create([
+            'order_code' => '#' . $request->store_code . time() . $user->id,
+            'store_code' => $request->store_code,
+            'table' => $request->table,
+            'total_price' => $request->total_price,
+            'customer_id' => $user->id,
+            'order_here' => 1,
+            'note' => $request->note,
+            'payment_method' => $request->payment_method,
+            'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
+            'status' => 1,
+            'price' => $price,
+            'is_pay' => $is_pay
+        ]);
 
         $products = json_decode($request->products);
       
-        foreach ($products as $product){
-            if(isset($product->recipe))
-            {
+        foreach ($products as $product) {
+            if (isset($product->recipe)) {
                 $output = '';
-                foreach ($product->recipe as $recipe){
+                foreach ($product->recipe as $recipe) {
                     $output .= $recipe->name . ': ' . $recipe->value . '%. ';
                 }
-                $item = new OrderItem;
-                $item->recipe = $output;
-                $item->order_id = $order->id;
-                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
-                $item->product_id = $product->id;
+
+                $priceProduct = 0;
+                $size = '';
                 if ($product->price != 0) {
-                    $item->price = $product->price;
-                    $item->size = 'Vừa';
+                    $priceProduct = $product->price;
+                    $size  = 'Vừa';
                 } else {
-                    $item->price = $product->price_L;
-                    $item->size = 'Lớn';
+                    $priceProduct = $product->price_L;
+                    $size = 'Lớn';
                 }
-                $item->quantity = $product->slChon;
-                $item->save();
-            }else{
-                $item = new OrderItem;
-                $item->order_id = $order->id;
-                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
-                $item->product_id = $product->id;
-                if ($product->price != 0) {
-                    $item->price = $product->price;
-                    $item->size = 'Vừa';
-                } else {
-                    $item->price = $product->price_L;
-                    $item->size = 'Lớn';
-                }
-                $item->quantity = $product->slChon;
-                $item->save();
+
+                $item = OrderItem::create([
+                    'recipe' => $output,
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                    'price' => $price,
+                    'size' => $size,
+                    'quantity' => $product->slChon,
+                ]);
+            } else {
+                $item = OrderItem::create([
+                    'recipe' => $output,
+                    'order_id' => $order->id,
+                    'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                    'price' => $price,
+                    'size' => $size,
+                    'product_id' => $product->id,
+                    'quantity' => $product->slChon,
+                ]);
             }
-            
         }
 
         $data['store_code'] = $request->store_code;
@@ -121,8 +137,24 @@ class OrderController extends Controller
         return response()->json($data, $this->successStatusCode);
     }
 
-    public function delivery(Request $request){
+    public function delivery(Request $request)
+    {
         $setting = Setting::find(1);
+
+        $price = 0;
+        if ($request->price) {
+            $price = $request->price;
+        } else {
+            $price = $request->total_price - ($request->total_price * $setting->discount_user/100);
+        }
+
+        $is_pay;
+        if ($request->payment_method == 1) {
+            $is_pay = 1;
+        } else {
+            $is_pay = 2;
+        }
+        
         $order = Order::create([
             'store_code' => $request->store_code,
             'total_price' => $request->total_price,
@@ -131,50 +163,51 @@ class OrderController extends Controller
             'order_here' => 3,
             'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
             'note' => $request->note,
-            'payment_method' => $request->payment_method, 
-            'price' => $request->total_price - ($request->total_price * $setting->discount_user/100),
-            'order_code' => '#' . $request->store_code . time() . auth()->id()
+            'payment_method' => $request->payment_method,
+            'price' => $price,
+            'order_code' => '#' . $request->store_code . time() . auth()->id(),
+            'is_pay' => $is_pay,
         ]);
 
         $products = json_decode($request->products);
       
-        foreach ($products as $product){
-            if(isset($product->recipe))
-            {
+        foreach ($products as $product) {
+            if (isset($product->recipe)) {
                 $output = '';
-                foreach ($product->recipe as $recipe){
+                foreach ($product->recipe as $recipe) {
                     $output .= $recipe->name . ': ' . $recipe->value . '%. ';
                 }
-                $item = new OrderItem;
-                $item->recipe = $output;
-                $item->order_id = $order->id;
-                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
-                $item->product_id = $product->id;
+
+                $priceProduct = 0;
+                $size = '';
                 if ($product->price != 0) {
-                    $item->price = $product->price;
-                    $item->size = 'Vừa';
+                    $priceProduct = $product->price;
+                    $size  = 'Vừa';
                 } else {
-                    $item->price = $product->price_L;
-                    $item->size = 'Lớn';
+                    $priceProduct = $product->price_L;
+                    $size = 'Lớn';
                 }
-                $item->quantity = $product->slChon;
-                $item->save();
-            }else{
-                $item = new OrderItem;
-                $item->order_id = $order->id;
-                $item->created_at = Carbon::now('Asia/Ho_Chi_Minh');
-                $item->product_id = $product->id;
-                if ($product->price != 0) {
-                    $item->price = $product->price;
-                    $item->size = 'Vừa';
-                } else {
-                    $item->price = $product->price_L;
-                    $item->size = 'Lớn';
-                }
-                $item->quantity = $product->slChon;
-                $item->save();
+
+                $item = OrderItem::create([
+                    'recipe' => $output,
+                    'order_id' => $order->id,
+                    'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                    'price' => $price,
+                    'size' => $size,
+                    'product_id' => $product->id,
+                    'quantity' => $product->slChon,
+                ]);
+            } else {
+                $item = OrderItem::create([
+                    'recipe' => $output,
+                    'order_id' => $order->id,
+                    'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                    'price' => $price,
+                    'size' => $size,
+                    'product_id' => $product->id,
+                    'quantity' => $product->slChon,
+                ]);
             }
-            
         }
 
         $data['store_code'] = $request->store_code;

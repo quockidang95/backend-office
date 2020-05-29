@@ -10,4 +10,5 @@ class SettingController extends Controller
         $setting = Setting::where('id', 1)->first();
         return response()->json($setting, 200);
     }
+    
 }

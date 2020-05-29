@@ -5,7 +5,7 @@
 ?>
 <nav aria-label="breadcrumb" class="col-md-6">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Sản Phẩm</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Sản Phẩm</a></li>
         <li class="breadcrumb-item active" aria-current="page">Danh sách sản phẩm</li>
     </ol>
 </nav>

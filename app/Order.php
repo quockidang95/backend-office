@@ -23,7 +23,7 @@ class Order extends Model
         'order_code',
         'price',
         'status',
-        'payment_method'
+        'payment_method', 'is_pay'
     ];
 
     public $timestamps = true;

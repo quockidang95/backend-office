@@ -58,10 +58,15 @@
                             {{'Khách: ' . $customer->name}}</div>
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                             {{'SĐT: ' . $customer->phone}}</div>
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                {{'Phương thức thanh toán: ' . $payment_method}}</div>
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            {{'Phương thức thanh toán: ' . $payment_method}}</div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             {{number_format($order->price) . '  VNĐ'}} </div>
+                        @if($order->is_pay == 1)
+                        <span class="badge badge-success"> Đã thanh toán </span> <br>
+                        @else
+                        <span class="badge badge-pill badge-danger">Chưa thanh toán</span> <br>
+                        @endif
                         <?php
                            if($order->status == 1){
                                 echo '<span class="badge badge-pill badge-danger">Chưa xử lí</span>';
@@ -83,13 +88,14 @@
             <div class="card-body">
                 <h5 class="card-title text-bold">Ghi chú:</h5>
 
-                <p class="card-text">{{ $order->note }}.</p>
+                <p class="card-text">{{ $order->note }}</p>
 
             </div>
         </div>
     </div>
     <div class="col-2" style="position: relative">
-    <a href="{{ route('order.product', ['id' => $order->id]) }}" target="_blank" class="btn btn-warning" style="text-decoration: none; color: white; position: absolute; top: 80px;">In DS Món</a>
+        <a href="{{ route('order.product', ['id' => $order->id]) }}" target="_blank" class="btn btn-warning"
+            style="text-decoration: none; color: white; position: absolute; top: 80px;">In DS Món</a>
     </div>
 </div>
 
@@ -101,7 +107,7 @@
             <th scope="col">Hình ảnh</th>
             <th scope="col">Số lượng</th>
             <th scope="col">Size </th>
-            <th  scope="col">Ghi chú</th>
+            <th scope="col">Ghi chú</th>
             <th scope="col">Giá</th>
         </tr>
     </thead>
@@ -116,7 +122,7 @@
             </td>
             <td class="align-middle">{{$item->quantity}}</td>
             <td class="align-middle">{{$item->size}}</td>
-        <td class="align-middle">{{ $item->recipe}}</td>
+            <td class="align-middle">{{ $item->recipe}}</td>
             <td class="align-middle">{{number_format($item->price) . ' VNĐ'}}</td>
         </tr>
         @endforeach

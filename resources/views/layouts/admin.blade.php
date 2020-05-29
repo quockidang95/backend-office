@@ -337,21 +337,41 @@
         if(data.store_code === store_code){
             var existingNotifications = notifications.html();
         var avatar = Math.floor(Math.random() * (71 - 20 + 1)) + 20;
-        var newNotificationHtml = `
-           <a class="dropdown-item d-flex align-items-center" href="{{env('APP_URL')}}/order/details/` + data.id + `">
-            <audio src="{{asset('audio.mp3')}}" autoplay></audio>
-                                    <div class="mr-3">
-                                      <div class="icon-circle bg-primary">
-                                        <i class="fas fa-file-alt text-white"></i>
-                                      </div>
-                                    </div>
-                                    <div>
+        var newNotificationHtml = '';
+        if( data.table )
+        {
+            newNotificationHtml = `
+            <a class="dropdown-item d-flex align-items-center" href="{{env('APP_URL')}}/order/details/` + data.id + `">
+                <audio src="{{asset('audio.mp3')}}" autoplay></audio>
+                                        <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                        </div>
+                                        <div>
 
-                                      <span class="font-weight-bold">Một khách hàng  vừa order tại bàn số ` + data.table + `</span>
-                                    </div>
+                                        <span class="font-weight-bold">Một khách hàng  vừa order tại bàn số ` + data.table + `</span>
+                                        </div>
 
-                                  </a>
-        `;
+                                    </a>
+            `;
+        }else{
+            newNotificationHtml = `
+            <a class="dropdown-item d-flex align-items-center" href="{{env('APP_URL')}}/order/details/` + data.id + `">
+                <audio src="{{asset('audio.mp3')}}" autoplay></audio>
+                                        <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                        </div>
+                                        <div>
+
+                                        <span class="font-weight-bold">Hệ thống vừa nhận được một order từ xa!</span>
+                                        </div>
+
+                                    </a>
+            `;
+        }
         notifications.html(newNotificationHtml + existingNotifications);
 
         notificationsCount += 1;

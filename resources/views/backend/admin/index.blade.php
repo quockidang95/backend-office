@@ -2,7 +2,7 @@
 @section('content')
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Quản lí tài khoảng</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Quản lí tài khoảng</a></li>
         <li class="breadcrumb-item active" aria-current="page">Danh sách tài khoản</li>
     </ol>
 </nav>

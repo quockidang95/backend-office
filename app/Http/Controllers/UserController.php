@@ -3,17 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Order;
 use App\Rechage;
 use Carbon\Carbon;
 use App\Notification;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
-use App\Repositories\User\UserRepositoryInterface;
+use Illuminate\Support\Arr;
 use App\Imports\UsersImport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use App\Repositories\User\UserRepositoryInterface;
+
 class UserController extends Controller
 {
     protected $userRepository;
@@ -72,7 +75,37 @@ class UserController extends Controller
         return Response($userBirthdays);
     }
 
+    public function getCustomerDear(Request $request){
+        
+        if($request->ajax())
+        {
+            $dt = Carbon::now('Asia/Ho_Chi_Minh');
+            $start = $dt->startOfMonth()->format('Y-m-d H:i:s');
+            $end = $dt->endOfMonth()->format('Y-m-d H:i:s');
 
+            $customerIds = Order::whereBetween('order_date', [ $start, $end ])
+                                ->where('status', 3)->get();
+            $arr = [];
+            foreach ($customerIds as $id){
+                array_push($arr, $id->customer_id);
+            }
+           
+            $res = array_count_values($arr);
+            arsort($res);
+            $customers = [];
+            foreach ($res as $key => $value){
+                $user = User::find($key);
+
+                $user['count'] = $value;
+                $user['total_price'] = $user->orders->sum->price;
+                unset($user['orders']);
+                array_push($customers, $user);
+            }
+           // dd($customer);
+            return Response($customers);
+
+        }
+    }
 
 
     // repositories for controllers
