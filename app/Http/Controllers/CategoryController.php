@@ -42,7 +42,6 @@ class CategoryController extends Controller
 
     public function delete($id)
     {
-        //$this->categoryRepository->delete($id);
         Session::put('success', 'Thêm danh mục thành công');
         return redirect()->route('category.index');
     }

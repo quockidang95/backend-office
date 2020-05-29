@@ -83,7 +83,7 @@
                     </tr>
                    
                     <tr >
-                        <td colspan="4">Tông cộng: </td>
+                        <td colspan="4">Tổng cộng: </td>
                         <td>{{number_format($order->price)}}</td>
                     </tr>
                 </table>
@@ -108,6 +108,11 @@
 
 
     </div>
+    <script type="text/javascript">
+        window.onload = function(){
+            window.print()
+        }
+    </script>
 </body>
 
 </html>

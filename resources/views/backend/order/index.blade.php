@@ -55,11 +55,15 @@
   </div>
 </div>
 @endif
-<div class="col-lg-3 mb-5">
-    <a href="{{  route('order.admin') }}" class="btn btn-primary">Tạo đơn hàng trực tiếp</a>
-</div>
 
-<div class="row">
+@foreach($tags as $tag)
+<a type="button" class="btn btn-warning m-2" href="{{ route('order.admin', ['tag' => $tag->number_tag]) }}">
+Tag <span class="badge badge-light">{{ $tag->number_tag }}</span>
+  <span class="sr-only">unread messages</span>
+</a>
+@endforeach
+ 
+<div class="row mt-5">
 @foreach ($orders as $item)
 <?php
     $customer = App\User::find($item->customer_id);
@@ -72,6 +76,11 @@
           <div class="text-xs font-weight-bold text-success text-uppercase mb-1">{{'Bàn: ' . $item->table}}</div>
           <div class="text-xs font-weight-bold text-success text-uppercase mb-1">{{'Khách: ' . $customer->name}}</div>
           <div class="text-xs font-weight-bold text-success text-uppercase mb-1">{{'SĐT: ' . $customer->phone}}</div>
+          @if($item->is_pay == 1)
+            <span class="badge badge-success"> Đã thanh toán </span> <br>
+          @else
+            <span class="badge badge-pill badge-danger">Chưa thanh toán</span> <br>
+          @endif
           <?php
             if($item->status == 1){
                 echo '<span class="badge badge-pill badge-danger">Chưa xử lí</span>';

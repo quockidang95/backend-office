@@ -2,8 +2,8 @@
 @section('content')
 <nav aria-label="breadcrumb col-8">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Danh mục sản phẩm</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Danh sách danh mục</li>
+        <li class="breadcrumb-item"><a href="{{ route('category.index')}}">Danh mục sản phẩm</a></li>
+        
     </ol>
 </nav>
 <button class="btn btn-success btn-icon-split fa-pull-right mb-2" data-toggle="modal" data-target="#addCategory">

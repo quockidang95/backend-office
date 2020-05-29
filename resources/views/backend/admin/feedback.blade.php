@@ -2,7 +2,7 @@
 @section('content')
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Quản trị viên</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Quản trị viên</a></li>
         <li class="breadcrumb-item active" aria-current="page">Phản hồi của khách hàng</li>
     </ol>
 </nav>
@@ -25,8 +25,6 @@
                     if(isset($customer)){
                         echo $customer->name;
                     }
-                    
-
                 ?>
             </th>
             <td>
@@ -37,7 +35,4 @@
         @endforeach
     </tbody>
 </table>
-@endsection
-@section('script')
-
 @endsection

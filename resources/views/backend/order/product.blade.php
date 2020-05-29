@@ -74,18 +74,25 @@
                 </table>
             </div>
            <br />
+           @if($order->note)
            <div style="text-align:center; margin-bottom:8px;" class="font-weight-bold">
             {{'Lưu ý: ' . $order->note}}
         </div>
+        @endif
            <?php
-                if($order->payment_method == 1){
-                 echo '   <div style="text-align:center; margin-bottom:8px;" class="font-weight-bold"> Đã thanh toán<br />';
+                if($order->payment_method == 1 || $order->is_pay == 1){
+                 echo '   <div style="text-align:center; margin-bottom:8px; font-size:17px;" class="font-weight-bold"> ĐÃ THANH TOÁN(' . number_format($order->price) .' VNĐ)<br />';
                 }else{
-                    echo ' <div style="text-align:center; margin-bottom:8px;" class="font-weight-bold"> Chưa thanh toán(' . number_format($order->price) .' VNĐ) <br />';
+                    echo ' <div style="text-align:center; margin-bottom:8px; font-size:17px;" class="font-weight-bold"> CHƯA THANH TOÁN(' . number_format($order->price) .' VNĐ) <br />';
                 }
            ?>
         </div>
     </div>
+    <script type="text/javascript">
+        window.onload = function(){
+            window.print()
+        }
+    </script>
 </body>
 
 </html>

@@ -22,14 +22,15 @@ class CustomerController extends Controller
     public function login(Request $request)
     {
         $user = User::where('phone', $request->phone)->first();
-        if ($user){
+        if ($user) {
             return redirect('/')->withCookie(cookie('id', $user->id, 43000));
         }
-            $phone = $request->phone;
-            return view('frontend.register', compact('phone'));
+        $phone = $request->phone;
+        return view('frontend.register', compact('phone'));
     }
 
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         $user = User::create([
             'phone' => $request->phone,
             'role_id' => 3,
@@ -37,10 +38,12 @@ class CustomerController extends Controller
             'name' => $request->name,
             'address' => $request->address
         ]);
-        return redirect('/')->withCookie(cookie('id', $user->id, 43000));;
+        return redirect('/')->withCookie(cookie('id', $user->id, 43000));
+        ;
     }
 
-    public function logout(){
+    public function logout()
+    {
         session(['name' => null, 'id' => null]);
         Cookie::queue(Cookie::forget('id'));
         return redirect('/logincustomer');
@@ -61,7 +64,7 @@ class CustomerController extends Controller
         $product = Product::find($id);
         $recipe_ids = ProductRecipe::where('product_id', $id)->get('recipe_id');
         $recipes = Recipe::whereIn('id', $recipe_ids)->get();
-        if($recipes){
+        if ($recipes) {
             return view('frontend.productdetails', compact('product', 'recipes'));
         }
         return view('frontend.productdetails', compact('product'));
@@ -69,9 +72,9 @@ class CustomerController extends Controller
 
     public function addProduct(Request $request)
     {
-       //dd($request->p_recipe);
+        //dd($request->p_recipe);
         $recipes = json_decode($request->p_recipe);
-        if(count($recipes) > 0){
+        if (count($recipes) > 0) {
             $temp_array = explode("k", (string) $request->p_id);
             $setting = Setting::find(1);
             $product_id = $temp_array[0];
@@ -79,7 +82,7 @@ class CustomerController extends Controller
             $size = '';
             if ($product->price == $request->p_price) {
                 $size = 'M';
-            }else{
+            } else {
                 $size = 'L';
             }
 
@@ -94,7 +97,7 @@ class CustomerController extends Controller
                     'recipe' => $request->p_recipe
                 ],
             ]);
-        }else{
+        } else {
             $temp_array = explode("k", (string) $request->p_id);
             $setting = Setting::find(1);
             $product_id = $temp_array[0];
@@ -125,13 +128,14 @@ class CustomerController extends Controller
     {
         $setting = Setting::find(1);
         
-        if( session('store_code') == null){
+        if (session('store_code') == null) {
             return redirect('/json');
-        } 
+        }
         return view('frontend.showcart', compact('setting'));
     }
 
-    public function ShowCartDelivery(){
+    public function ShowCartDelivery()
+    {
         $setting = Setting::find(1);
 
         return view('frontend.showcartdelivery', compact('setting'));
@@ -146,8 +150,9 @@ class CustomerController extends Controller
         return redirect(route('cart.show'));
     }
 
-    public function checkout(Request $request){
-      //  dd($request);
+    public function checkout(Request $request)
+    {
+        //  dd($request);
         $id = $request->cookie('id');
         $cart_subtotal = Cart::subtotal();
         $temp = explode(".", $cart_subtotal);
@@ -157,6 +162,15 @@ class CustomerController extends Controller
 
         $setting = Setting::find(1);
        
+        $is_pay;
+        if ($request->payment_method == 1) {
+            $is_pay = 1;
+        } else {
+            $is_pay = 2;
+        }
+
+
+        
         $point = $request->discount_price/$setting->discount_point;
         $order = new Order;
         $order->order_code = '#' . session('store_code') . time() . $id;
@@ -171,13 +185,14 @@ class CustomerController extends Controller
         $order->price = $request->discount_price;
         $order->order_date = Carbon::now('Asia/Ho_Chi_Minh');
         $order->status = 1;
+        $order->is_pay = $is_pay;
         $order->save();
 
         $contents = Cart::content();
         foreach ($contents as $key => $value) {
             $product_id = explode('k', $value->id);
             $id = $product_id[0];
-            if($value->options->recipe == null){
+            if ($value->options->recipe == null) {
                 $item = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $id,
@@ -185,11 +200,10 @@ class CustomerController extends Controller
                     'quantity' => $value->qty,
                     'size' => $value->options->size
                 ]);
-            }else{
+            } else {
                 $recipes = json_decode($value->options->recipe);
                 $output = '';
-                foreach((array)$recipes as $key => $recipe) {
-                
+                foreach ((array)$recipes as $key => $recipe) {
                     $output .= $recipe->name . ': ' . $recipe->value . '%. ';
                 }
                 $item = OrderItem::create([
@@ -216,7 +230,7 @@ class CustomerController extends Controller
             env('PUSHER_APP_ID'),
             $options
         );
-        $pusher->trigger('Notify', 'send-message', $data); 
+        $pusher->trigger('Notify', 'send-message', $data);
         Cart::destroy();
         session(['store_code' => null, 'table' => null]);
         return view('frontend.success');
@@ -224,13 +238,19 @@ class CustomerController extends Controller
 
     public function checkoutdelivery(Request $request)
     {
-        
         $id = $request->cookie('id');
         $cart_subtotal = Cart::subtotal();
         $temp = explode(".", $cart_subtotal);
         $temp1 = explode(",", $temp[0]);
         $price = $temp1[0] . $temp1[1];
         $total_price = intval($price);
+
+        $is_pay;
+        if ($request->payment_method == 1) {
+            $is_pay = 1;
+        } else {
+            $is_pay = 2;
+        }
 
         $setting = Setting::find(1);
         $order = new Order;
@@ -246,13 +266,14 @@ class CustomerController extends Controller
         $order->price = $request->discount_price;
         $order->order_date = Carbon::now('Asia/Ho_Chi_Minh');
         $order->status = 1;
+        $order->is_pay = $is_pay;
         $order->save();
 
         $contents = Cart::content();
         foreach ($contents as $key => $value) {
             $product_id = explode('k', $value->id);
             $id = $product_id[0];
-            if($value->options->recipe == null){
+            if ($value->options->recipe == null) {
                 $item = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $id,
@@ -260,11 +281,10 @@ class CustomerController extends Controller
                     'quantity' => $value->qty,
                     'size' => $value->options->size
                 ]);
-            }else{
+            } else {
                 $recipes = json_decode($value->options->recipe);
                 $output = '';
-                foreach((array)$recipes as $key => $recipe) {
-                
+                foreach ((array)$recipes as $key => $recipe) {
                     $output .= $recipe->name . ': ' . $recipe->value . '%. ';
                 }
                 $item = OrderItem::create([
@@ -292,27 +312,30 @@ class CustomerController extends Controller
             env('PUSHER_APP_ID'),
             $options
         );
-        $pusher->trigger('Notify', 'send-message', $data); 
+        $pusher->trigger('Notify', 'send-message', $data);
         Cart::destroy();
         session(['store_code' => null, 'table' => null]);
         return view('frontend.success');
     }
 
-    public function notification(Request $request){
+    public function notification(Request $request)
+    {
         $id = intval($request->cookie('id'));
         $rechages = Rechage::where('customer_id', $id)->orderBy('created_at', 'desc')->get();
 
         return view('frontend.notification', compact('rechages'));
     }
 
-    public function profiler(Request $request){
+    public function profiler(Request $request)
+    {
         $id = $request->cookie('id');
         $user = User::find(intval($id));
         
         return view('frontend.profiler', compact('user'));
     }
 
-    public function orderhere(Request $request){
+    public function orderhere(Request $request)
+    {
         $order = Order::where('customer_id', $request->cookie('id'))->orderby('order_date', 'desc')->first();
         return view('frontend.order', compact('order'));
     }

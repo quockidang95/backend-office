@@ -39,10 +39,10 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     //So du dau
     Route::post('surplus-box', 'OrderController@surplus')->name('surplus.box');
     // Create order for admin
-    Route::get('create-order-admin', 'OrderController@createorderadmin')->name('order.admin');
+    Route::get('create-order-admin/tag/{tag}', 'OrderController@createorderadmin')->name('order.admin');
     Route::get('get-product-by-categoryid', 'OrderController@getproductbycategory');
     Route::get('admin/order/{id}', 'OrderController@productdetails');
-    Route::get('admin/cart/add/{id}', 'OrderController@admincartadd');
+    Route::get('admin/cart/add/{id}', 'OrderController@admincartadd')->name('admin.cart.add');
     Route::get('admin/cart/show', 'OrderController@admincartshow')->name('admin.cart.show');
     Route::get('admin/cart/delete/{rowID}', 'OrderController@admincartdelete')->name('admin.cart.delete');
     Route::post('admin/cart/checkout', 'OrderController@admincartcheckout')->name('admin.cart.checkout');
@@ -85,7 +85,7 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
         Route::get('customer/view/store', 'UserController@viewstore')->name('customer.view.store');
         Route::post('customer/store', 'UserController@store')->name('customer.store');
         Route::get('get-birthday-for-month', 'UserController@getBirthdayForMonth');
-
+        Route::get('get-customer-dear', 'UserController@getCustomerDear');
         //feedback
         Route::get('feedback/index', 'AdminController@feedback')->name('feedback.index');
 
@@ -150,3 +150,4 @@ Route::get('profiler', 'FE\CustomerController@profiler')->name('profiler');
 Route::get('logout', 'FE\CustomerController@logout')->name('logout');
 Route::post('register', 'FE\CustomerController@register')->name('register');
 Route::get('test/{id}', 'OrderController@tesst');
+

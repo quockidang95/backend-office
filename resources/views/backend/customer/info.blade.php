@@ -16,7 +16,7 @@
 ?>
 <nav aria-label="breadcrumb col-8">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Khách hàng</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('customer.index') }}">Khách hàng</a></li>
         <li class="breadcrumb-item active" aria-current="page">Thông tin khách hàng</li>
     </ol>
 </nav>

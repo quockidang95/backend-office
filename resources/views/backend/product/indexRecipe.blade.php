@@ -3,7 +3,7 @@
 @section('content')
 <nav aria-label="breadcrumb" class="col-md-6">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Công thức</a></li>
+        <li class="breadcrumb-item">Công thức</li>
         <li class="breadcrumb-item active" aria-current="page">Danh sách các công thức</li>
     </ol>
 </nav>

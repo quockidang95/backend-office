@@ -28,10 +28,10 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-      
-        if($request->cookie('id') == null){
+        if ($request->cookie('id') == null) {
             return redirect('/logincustomer');
         }
+
         $categories = Category::all();
         $product = Product::all();
 
@@ -41,15 +41,17 @@ class HomeController extends Controller
             $object['list_product'] = $value->products;
             array_push($data_array, $object);
         }
-
+        
         return view('home', compact('data_array', 'categories'));
     }
 
-    public function login(){
+    public function login()
+    {
         return view('frontend.login');
     }
 
-    public function json(){
+    public function json()
+    {
         return view('frontend.qrcode');
     }
 }
