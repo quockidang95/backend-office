@@ -111,7 +111,7 @@
             <th scope="col">Tổng giá</th>
             <th scope="col">Trạng thái</th>
             <th scope="col">Thời gian tạo</th>
-            <th scope="col">Tạo bởi</th>
+            <th scope="col">Xử lí bởi</th>
             <th scope="col">Thao tác</th>
         </tr>
     </thead>
@@ -122,7 +122,7 @@
             <td class="align-middle">{{$item->customer->name}}</th>
             <td class="align-middle">{{$item->customer->phone}}</th>
             <td class="align-middle">
-                {{number_format($item->total_price) . ' VNĐ'}}
+                {{number_format($item->price) . ' VNĐ'}}
             </td>
             <td class="align-middle">
                 <?php
