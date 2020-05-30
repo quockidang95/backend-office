@@ -12,7 +12,7 @@
     <link type="text/css" href="view/stylesheet/stylesheet.css" rel="stylesheet" media="all" />
 </head>
 
-<body style="padding:0px; width:55mm; margin:auto; font-size:15px;">
+<body style="padding:0px; width:55mm; margin:auto; font-size:13px;">
     <style>
         .tb {
             display: block;
@@ -66,9 +66,9 @@
                     @foreach ($orderItems as $item)
                     <tr>
                         <td><b>{{$item->product_id->name}}</b></td>
-                        <td align="right" style="padding:5px;">{{$item->size}}</td>
-                        <td align="right" style="padding:5px;">{{$item->recipe}}</td>
-                        <td align="right" style="padding:5px;">{{$item->quantity}}</td>
+                        <td align="right" style="padding:4px;">{{$item->size}}</td>
+                        <td align="right" style="padding:4px;">{{$item->recipe}}</td>
+                        <td align="right" style="padding:4px;">{{$item->quantity}}</td>
                         </tr>
                     @endforeach
                 </table>
@@ -81,9 +81,9 @@
         @endif
            <?php
                 if($order->payment_method == 1 || $order->is_pay == 1){
-                 echo '   <div style="text-align:center; margin-bottom:8px; font-size:17px;" class="font-weight-bold"> ĐÃ THANH TOÁN(' . number_format($order->price) .' VNĐ)<br />';
+                 echo '   <div style="text-align:center; margin-bottom:8px; font-size:14px;" class="font-weight-bold"> ĐÃ THANH TOÁN(' . number_format($order->price) .' VNĐ)<br />';
                 }else{
-                    echo ' <div style="text-align:center; margin-bottom:8px; font-size:17px;" class="font-weight-bold"> CHƯA THANH TOÁN(' . number_format($order->price) .' VNĐ) <br />';
+                    echo ' <div style="text-align:center; margin-bottom:8px; font-size:14px;" class="font-weight-bold"> CHƯA THANH TOÁN(' . number_format($order->price) .' VNĐ) <br />';
                 }
            ?>
         </div>
