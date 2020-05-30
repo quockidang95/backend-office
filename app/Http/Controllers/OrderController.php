@@ -209,8 +209,6 @@ class OrderController extends Controller
     public function createorderadmin($tag)
     {
         session(['tag' => $tag]);
-        $tagUdate = Tag::where('number_tag', $tag)->first();
-        $tagUdate->update(['status' => 'using']);
         $categories = Category::all();
         $product = Product::all();
 
@@ -323,6 +321,10 @@ class OrderController extends Controller
             }
     
             Cart::destroy();
+            $tag =  Tag::where('number_tag', session('tag'))->first();
+            if ($tag) {
+                $tag->update(['status' => 'using']);
+            }
             return redirect(route('order.details', ['id' => $order->id ]));
         } else {
             $cart_contents = Cart::content();
@@ -364,6 +366,10 @@ class OrderController extends Controller
             }
 
             Cart::destroy();
+            $tag =  Tag::where('number_tag', session('tag'))->first();
+            if ($tag) {
+                $tag->update(['status' => 'using']);
+            }
             return redirect(route('order.details', ['id' => $order->id ]));
         }
     }
