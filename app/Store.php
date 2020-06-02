@@ -9,7 +9,9 @@ class Store extends Model
     //
     protected $table = 'stores';
 
-    protected $hidden = [
+    protected $fillable = [
         'name', 'address','pass_wifi','open_hours',
     ];
+
+    public $timestamps = false;
 }
