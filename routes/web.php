@@ -15,7 +15,7 @@ Route::get('/', 'HomeController@index');
 Auth::routes();
 Route::get('logincustomer', 'HomeController@login');
 Route::get('/json', 'HomeController@json');
-Route::get('/testqrcode', function(){
+Route::get('/testqrcode', function () {
     return view('frontend.test');
 });
 Route::post('submitlogin', 'FE\CustomerController@login')->name('customerlogin');
@@ -55,12 +55,13 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
         Route::get('doanh-thu-theo-tuan', 'StaticController@doanhthutheotuan')->name('doanh.thu.theo.tuan');
         Route::get('lay-doanh-thu-theo-tuan', 'StaticController@laydoanhthutheotuan');
         Route::get('doanh-thu-tuy-chon', 'StaticController@daonhthutuychon')->name('doanh.thu.tuy.chon');
-        Route::get('lay-doanh-thu-tuy-chon','StaticController@laydoanhutuychon');
+        Route::get('lay-doanh-thu-tuy-chon', 'StaticController@laydoanhutuychon');
         //settings
         Route::get('setting/index', 'SettingController@index')->name('setting.index');
         Route::post('setting/update/{id}', 'SettingController@update')->name('setting.update');
         // stores
         Route::get('store/index', 'StoreController@index')->name('store.index');
+        Route::post('store/update/{id}', 'StoreController@update')->name('store.update');
         // admins
         Route::get('admin/index', 'AdminController@index')->name('admin.index'); //$url = route('profile', ['id' => 1]);
         Route::post('admin/add', 'AdminController@store')->name('admin.add');
@@ -94,14 +95,14 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
         Route::get('recipe/store', 'ProductController@storeRecipe')->name('recipe.store');
         Route::post('recipe/store', 'ProductController@postStoreRecipe')->name('recipe.store');
 
-        // export 
+        // export
         Route::post('export', 'StaticController@exportMoth')->name('export.revenue');
         Route::post('export/day', 'StaticController@exportDay')->name('export.day');
-        //notification 
+        //notification
         Route::get('notification/sendall', 'NotificationController@sendAll')->name('notification.sendall');
         Route::post('notification/sendall', 'NotificationController@postSendAll')->name('notification.sendall');
 
-        //Report 
+        //Report
         Route::get('report/setting', 'ReportController@getSetting')->name('report.setting');
         
 
@@ -115,20 +116,18 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
         Route::get('promotion/del/{id}', 'PromotionController@delete')->name('promotion.delete');
         Route::get('promotion/update/{id}', 'PromotionController@viewupdate')->name('promotion.viewupdate');
         Route::post('promotion/update/{id}', 'PromotionController@update')->name('promotion.update');
-
-      
     });
 
-        //Customer
-        Route::get('customer/index', 'UserController@index')->name('customer.index');
-        Route::get('customer/info/{id}', 'UserController@info')->name('customer.info');
-        Route::get('search-customer', 'UserController@search');
-        Route::post('/naptien/{id}', 'UserController@naptien')->name('naptien');
+    //Customer
+    Route::get('customer/index', 'UserController@index')->name('customer.index');
+    Route::get('customer/info/{id}', 'UserController@info')->name('customer.info');
+    Route::get('search-customer', 'UserController@search');
+    Route::post('/naptien/{id}', 'UserController@naptien')->name('naptien');
 
-        //Rechage of day
-        Route::get('rechage/index', 'OrderController@indexRechage')->name('rechage');
-        Route::post('store/pricebox', 'OrderController@storePriceBox')->name('store.pricebox');
-        Route::post('shiftwork', 'OrderController@shiftwork')->name('shiftwork');
+    //Rechage of day
+    Route::get('rechage/index', 'OrderController@indexRechage')->name('rechage');
+    Route::post('store/pricebox', 'OrderController@storePriceBox')->name('store.pricebox');
+    Route::post('shiftwork', 'OrderController@shiftwork')->name('shiftwork');
 });
 
 //front-end
@@ -150,4 +149,3 @@ Route::get('profiler', 'FE\CustomerController@profiler')->name('profiler');
 Route::get('logout', 'FE\CustomerController@logout')->name('logout');
 Route::post('register', 'FE\CustomerController@register')->name('register');
 Route::get('test/{id}', 'OrderController@tesst');
-

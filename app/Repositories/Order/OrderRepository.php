@@ -14,25 +14,28 @@ use App\Repositories\Order\OrderRepositoryInterface;
 
 class OrderRepository extends EloquentRepository implements OrderRepositoryInterface
 {
-
     public function getModel()
     {
         return \App\Order::class;
     }
 
-    public function getOrderByID($orderID){
+    public function getOrderByID($orderID)
+    {
         return $this->find($orderID);
     }
 
-    public function getOrderItemByID($orderItemID){
+    public function getOrderItemByID($orderItemID)
+    {
         return OrderItem::find($orderItemID);
     }
 
-    public function getProductByID($productID){
+    public function getProductByID($productID)
+    {
         return Product::find($productID);
     }
     
-    public function getAllOrderItemByOrderId($orderID){
+    public function getAllOrderItemByOrderId($orderID)
+    {
         return OrderItem::where('order_id', $orderID)->get();
     }
 
@@ -48,13 +51,13 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     {
         switch ($order->store_code) {
             case 'CH53MT':
-                $order->store_code = '53 Man Thiện 2, P. Hiệp Phú, Quận 9, TP HCM';
+                $order->store_code = 'CH 53 Man Thiện 2, P. Hiệp Phú, Quận 9, TP HCM';
                 break;
             case 'CH34TL2':
-                $order->store_code = '34 Tân Lập 2, Hiệp Phú, Q9, TP.HCM';
+                $order->store_code = 'CH 34 Tân Lập 2, Hiệp Phú, Q9, TP.HCM';
                 break;
             case 'CH102TH':
-                $order->store_code = '102 Tân Hòa, Hiệp Phú, Q9, TP.HCM';
+                $order->store_code = 'CH 102 Tân Hòa, Hiệp Phú, Q9, TP.HCM';
                 break;
         }
         foreach ($orderItems as $item) {
@@ -63,19 +66,25 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         }
     }
 
-    public function revenue(){
+    public function revenue()
+    {
         $user = auth('web')->user();
         $date = date('Y-m-d');
-        $orders = Order::where('order_date', 'LIKE', '%' . $date . '%')->whereIn('status', [3, 4])->where('store_code', $user->store_code)->orderby('order_date', 'desc')->get();
+        $orders = Order::where('order_date', 'LIKE', '%' . $date . '%')
+                        ->where(function ($query) {
+                            $query->whereIn('status', [3, 4]);
+                            $query->orWhere('is_pay', 1);
+                        })
+                        ->where('store_code', $user->store_code)->orderby('order_date', 'desc')->get();
     
         $totalPrice = 0;
         $price = 0;
         $tienmat = 0;
-        foreach($orders as $item){
-            if($item->status == 3){
+        foreach ($orders as $item) {
+            if ($item->is_pay == 1) {
                 $totalPrice= $totalPrice + $item->total_price;
                 $price = $price + $item->price;
-                if($item->payment_method == 2){
+                if ($item->payment_method == 2) {
                     $tienmat = $tienmat + $item->price;
                 }
             }
@@ -83,29 +92,31 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         return view('backend.order.totalbyday', compact('totalPrice', 'orders', 'price', 'tienmat'));
     }
 
-    public function checkOrder($orderID){
+    public function checkOrder($orderID)
+    {
         $order = $this->find($orderID);
-        if($order->status != 2){
+        if ($order->status != 2) {
             return false;
         }
         return true;
     }
 
-    public function changeStatusAndCheckOutOrder($order, $user){
+    public function changeStatusAndCheckOutOrder($order, $user)
+    {
         $setting = Setting::find(1);
-        if($order->payment_method == 1){ // dùng ví điện tử
-            $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
+        $order->update(['status' => 3, 'created_by' => auth()->user()->name, 'is_pay' => 1]);
+        if ($order->payment_method == 1) { // dùng ví điện tử
             $wallet =  $user->wallet - $order->price;
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['wallet' => $wallet, 'point' => $point]);
-        }else if($order->payment_method == 2){ // tien mat tai ban
-            $order->update(['status' => 3, 'created_by' => auth()->user()->name]);
+        } elseif ($order->payment_method == 2) { // tien mat tai ban
             $point = $user->point + $order->price/$setting->discount_point;
             $user->update(['point' => $point]);
         }
     }
 
-    public function createdNotificationSuccessOrder($order, $user){
+    public function createdNotificationSuccessOrder($order, $user)
+    {
         $noti['title'] = 'Thông báo đơn hàng';
         $noti['body'] = 'Đơn hàng ' . $order->order_code . ' của Quí khách đã hoàn tất.';
         $noti['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
@@ -120,13 +131,15 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         ];
         return $dataMess;
     }
-    public function changeStatusAndCancelOrder($order, $user){
+    public function changeStatusAndCancelOrder($order, $user)
+    {
         $setting = Setting::find(1);
         $price = $order->total_price - ($setting->discount_user * $order->total_price)/100;
-        $order->update(['status' => 4, 'created_by' => auth()->user()->name, 'price' => $price]);
+        $order->update(['status' => 4, 'created_by' => auth()->user()->name, 'is_pay' => 2]);
     }
 
-    public function createdNotificationCancelOrder($order, $user){
+    public function createdNotificationCancelOrder($order, $user)
+    {
         $noti['title'] = 'Thông báo đơn hàng';
         $noti['body'] = 'Đơn hàng ' . $order->order_code . ' của Quí khách bị hủy. Cám ơn quí khách đã sử dụng dịch vụ tại OFFICE COFFEE.';
         $noti['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
@@ -142,7 +155,8 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         return $dataMess;
     }
 
-    public function changeStatusNextOrder($orderID){
+    public function changeStatusNextOrder($orderID)
+    {
         $order = $this->find($orderID);
         $order->update(['status' => 2]);
     }
@@ -167,14 +181,15 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($ch);
-        if ($result === FALSE) {
+        if ($result === false) {
             return null;
         }
         curl_close($ch);
         return json_decode($result, true);
     }
 
-    function vieworder($id){
+    public function vieworder($id)
+    {
         $order = Order::find($id);
         $orderItems = OrderItem::where('order_id', $id)->get();
 
@@ -185,14 +200,14 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         return view('backend.order.vieworder', compact('order', 'orderItems'));
     }
 
-    public function indexRechage(){
+    public function indexRechage()
+    {
         $currentDate = date('Y-m-d');
         $rechages = Rechage::where('created_at', 'LIKE', '%' . $currentDate . '%')->where('store_code', auth()->user()->store_code)->orderby('created_at', 'desc')->get();
         $totalPrice = 0;
-        foreach($rechages as $item){
+        foreach ($rechages as $item) {
             $totalPrice = $totalPrice + $item->price;
         }
         return view('backend.rechage.index', compact('rechages', 'totalPrice'));
     }
 }
-

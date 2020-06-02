@@ -126,8 +126,8 @@
             </td>
             <td class="align-middle">
                 <?php
-                    if($item->status == 3){
-                        echo '<span class="badge badge-success">Đơn hàng đã hoàn tất</span>';
+                    if($item->status == 3 || $item->is_pay == 1){
+                        echo '<span class="badge badge-success">Đơn hàng đã thanh toán</span>';
                     }else if($item->status == 4){
                         echo '<span class="badge badge-danger">Đơn hàng đã hủy</span>';
                     }
@@ -163,4 +163,5 @@
     });
 
 </script>
+
 @endsection()

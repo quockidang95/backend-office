@@ -76,8 +76,8 @@
                         ?>
                     </div>
                     <div class="col-auto">
-                        <a target="_blank" href="{{ route('printbill', ['id' => $order->id])}}"> <i
-                                class="fas fa-print fa-2x .bg-gradient-success"></i></a>
+                        <span onclick="printPage('{{env('APP_URL') . '/order/print/' . $order->id }}')"> <i
+                                class="fas fa-print fa-2x .bg-gradient-success"></i></span>
                     </div>
                 </div>
             </div>
@@ -94,8 +94,8 @@
         </div>
     </div>
     <div class="col-2" style="position: relative">
-        <a href="{{ route('order.product', ['id' => $order->id]) }}" target="_blank" class="btn btn-warning"
-            style="text-decoration: none; color: white; position: absolute; top: 80px;">In DS Món</a>
+        <span onclick="printPage('{{env('APP_URL') . '/order/product/' . $order->id }}')" class="btn btn-warning"
+            style="text-decoration: none; color: white; position: absolute; top: 80px;">In DS Món</span>
     </div>
 </div>
 
@@ -136,4 +136,30 @@
 </div>
 @endsection()
 @section('script')
+<script type="text/javascript">
+    function closePrint () {
+      document.body.removeChild(this.__container__);
+    }
+    
+    function setPrint () {
+      this.contentWindow.__container__ = this;
+      this.contentWindow.onbeforeunload = closePrint;
+      this.contentWindow.onafterprint = closePrint;
+      this.contentWindow.focus(); // Required for IE
+      this.contentWindow.print();
+    }
+    
+    function printPage (sURL) {
+      var oHiddFrame = document.createElement("iframe");
+      oHiddFrame.onload = setPrint;
+      oHiddFrame.style.position = "fixed";
+      oHiddFrame.style.right = "0";
+      oHiddFrame.style.bottom = "0";
+      oHiddFrame.style.width = "0";
+      oHiddFrame.style.height = "0";
+      oHiddFrame.style.border = "0";
+      oHiddFrame.src = sURL;
+      document.body.appendChild(oHiddFrame);
+    }
+</script>
 @endsection()
