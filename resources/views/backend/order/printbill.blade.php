@@ -57,7 +57,7 @@
 
                 <table class="tb2">
                     <tr>
-                        <td>Tên món</td>
+                        <td style="width:100%">Tên món</td>
                         <td align="right" style="padding:5px;">Size </td>
                         <td align="right" style="padding:5px;">Giá </td>
                         <td align="right" style="padding:5px;">Sl </td>
@@ -67,7 +67,7 @@
 
                     @foreach ($orderItems as $item)
                     <tr>
-                        <td><b>{{$item->product_id->name}}</b></td>
+                        <td style="font-size: 8px; width:100%;"><b>{{$item->product_id->name}}</b></td>
                         <td align="right" style="padding:5px;">{{$item->size}}</td>
                         <td align="right" style="padding:5px;">{{$item->price}}</td>
                         <td align="right" style="padding:5px;">{{$item->quantity}}</td>
@@ -83,7 +83,7 @@
                     </tr>
                    
                     <tr >
-                        <td colspan="4">Tổng cộng: </td>
+                        <td colspan="4">Thành tiền: </td>
                         <td>{{number_format($order->price)}}</td>
                     </tr>
                 </table>
@@ -95,10 +95,10 @@
 
         </div>
         <div style="margin-top:18px;">
-            <div style="text-align: center;"><b>GÓP Ý </b></br></><i>Phục vụ - Chất lượng đồ uống</i></br>
-                Facebook.com/officecoffeevietnam
-                <br />
-                <b style="font-size:13px;">0989 138 236</b>
+            <div style="text-align: center;">
+               <p> Giờ mở cửa: {{ auth()->user()->store()->open_hours }}</br>
+               Pass wifi: {{ auth()->user()->store()->pass_wifi }}</p>
+
             </div>
         </div>
         <div class="conment" style="text-align:center;">

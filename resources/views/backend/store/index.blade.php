@@ -13,6 +13,8 @@
             <th scope="col">Tên cửa hàng</th>
             <th scope="col">Mã cửa hàng</th>
             <th scope="col">Địa chỉ</th>
+            <th scope="col">Pass Wifi</th>
+            <th scope="col">Giờ mở cửa</th>
             <th scope="col">Thao tác</th>
         </tr>
     </thead>
@@ -22,6 +24,8 @@
         <th scope="row">{{$item->name}}</th>
         <td scope="row">{{$item->store_code}}</td>
         <td>{{$item->address}}</td>
+        <td> {{$item->pass_wifi}}</td>
+        <td> {{$item->open_hours}}</td>
             <td>...</td>
         </tr>
         @endforeach

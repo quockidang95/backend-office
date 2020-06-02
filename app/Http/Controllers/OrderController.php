@@ -152,20 +152,20 @@ class OrderController extends Controller
         $orderItems = OrderItem::where('order_id', $order->id)->get();
         switch ($order->store_code) {
             case 'CH53MT':
-                $order->store_code = '53 Man Thiện 2, P. Hiệp Phú, Quận 9, TP HCM';
+                $order->store_code = 'CH 53 Man Thiện 2, P. Hiệp Phú, Quận 9, TP HCM';
                 break;
             case 'CH34TL2':
-                $order->store_code = '34 Tân Lập 2, Hiệp Phú, Q9, TP.HCM';
+                $order->store_code = 'CH 34 Tân Lập 2, Hiệp Phú, Q9, TP.HCM';
                 break;
             case 'CH102TH':
-                $order->store_code = '102 Tân Hòa, Hiệp Phú, Q9, TP.HCM';
+                $order->store_code = 'CH 102 Tân Hòa, Hiệp Phú, Q9, TP.HCM';
                 break;
         }
         foreach ($orderItems as $item) {
             $product = Product::find($item->product_id);
             $item->product_id = $product;
         }
-        return view('backend.order.test', compact('order', 'orderItems', 'setting'));
+        return view('test', compact('order', 'orderItems', 'setting'));
     }
 
 
@@ -186,6 +186,7 @@ class OrderController extends Controller
     {
         $user = auth()->user();
         $input = $request->all();
+        
         $input['created_at'] =  Carbon::now('Asia/Ho_Chi_Minh');
         $input['store_code'] = $user->store_code;
         $input['shift_open'] = $user->login_at;
@@ -193,11 +194,13 @@ class OrderController extends Controller
 
         $totalRevenueCollection = Order::where('store_code', $user->store_code)
                                         ->whereBetween('order_date', [$input['shift_open'], $input['shift_close']])
-                                        ->where('status', 3)->get();
+                                        ->where('is_pay', 1)->get();
+
         $input['total_revenue'] = $totalRevenueCollection->sum('price');
         $input['revenue_online'] = $totalRevenueCollection->where('payment_method', 1)->sum('price');
         $input['revenue_cash'] = $totalRevenueCollection->where('payment_method', 2)->sum('price');
         $input['end_balance_shift'] = $input['revenue_cash'] + auth()->user()->surplus_box;
+
         $shift =   ShiftWork::create($input);
        
         auth()->user()->update(['is_surplus_box' => 0, 'surplus_box' => 0]);

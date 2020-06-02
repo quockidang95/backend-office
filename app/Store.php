@@ -10,6 +10,6 @@ class Store extends Model
     protected $table = 'stores';
 
     protected $hidden = [
-        'name', 'address',
+        'name', 'address','pass_wifi','open_hours',
     ];
 }

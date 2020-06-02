@@ -2,9 +2,10 @@
 
 namespace App;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use App\Store;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -50,5 +51,11 @@ class User extends Authenticatable
     public function rechages()
     {
         return $this->hasMany('App\Rechage', 'customer_id');
+    }
+
+    public function store()
+    {
+        $store_code = $this->store_code;
+        return Store::where('store_code', $store_code)->first();
     }
 }
