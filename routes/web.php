@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     Route::get('order/product/{id}', 'OrderController@printproduct')->name('order.product');
     Route::get('doanh-thu-theo-ngay', 'StaticController@doanhthutheongay')->name('doanh.thu.theo.ngay');
     Route::get('lay-doanh-thu-theo-ngay', 'StaticController@laydoanhthutheongay');
+
     
     //So du dau
     Route::post('surplus-box', 'OrderController@surplus')->name('surplus.box');
@@ -46,6 +47,14 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     Route::get('admin/cart/show', 'OrderController@admincartshow')->name('admin.cart.show');
     Route::get('admin/cart/delete/{rowID}', 'OrderController@admincartdelete')->name('admin.cart.delete');
     Route::post('admin/cart/checkout', 'OrderController@admincartcheckout')->name('admin.cart.checkout');
+
+
+    // update product to cart
+    Route::get('order/view/add/{id}', 'OrderController@viewaddProduct')->name('order.view.add');
+    Route::get('admin/cart/update/add/{id}', 'OrderController@admincartupdateadd')->name('admin.cart.update.add');
+    Route::get('admin/cart/update/delete/{rowID}', 'OrderController@admincartupdatedelete')->name('admin.cart.update.delete');
+    Route::post('admin/cart/update/checkout', 'OrderController@admincartupdatecheckout')->name('admin.cart.update.checkout');
+
     //For Sếp
     Route::group(['middleware' => ['check_role']], function () {
 

@@ -93,8 +93,8 @@ class OrderController extends Controller
         $mess = $this->orderRepository->send($user->token_device, $data_message);
         session(['success' => 'Đơn hàng này đã được xử lí thành công!']);
 
-        if (session('tag')) {
-            $tag =  Tag::where('number_tag', session('tag'))->first();
+        $tag =  Tag::where('number_tag', $order->table)->first();
+        if ($tag) {
             $tag->update(['status' => 'not_using']);
         }
         
@@ -128,10 +128,13 @@ class OrderController extends Controller
         $data_message = $this->orderRepository->createdNotificationCancelOrder($order, $user);
         $mess = $this->orderRepository->send($user->token_device, $data_message);
         session(['success' => 'Đơn hàng này đã được xử lí thành công!']);
-        if (session('tag')) {
-            $tag =  Tag::where('number_tag', session('tag'))->first();
+        
+        $tag =  Tag::where('number_tag', $order->table)->first();
+        if ($tag) {
             $tag->update(['status' => 'not_using']);
         }
+       
+        
         return redirect(route('order.byday'));
     }
 
@@ -263,7 +266,7 @@ class OrderController extends Controller
                 'price' => (int) $price,
                 'weight' => 12,
                 'options' => [
-                    'size' => $size,
+                'size' => $size,
                 ],
             ]);
         session(['success' => 'Thêm thành công']);
@@ -289,6 +292,7 @@ class OrderController extends Controller
     public function admincartcheckout(Request $request)
     {
         $discount = $request->discount ?? 0;
+
         if ($request->is_delivery === null) {
             $cart_subtotal = Cart::subtotal();
             $temp = explode(".", $cart_subtotal);
@@ -303,6 +307,7 @@ class OrderController extends Controller
                 'customer_id' => auth()->id(),
                 'table' => $request->table ? : 1,
                 'order_here' => 1,
+                'discount' => $discount,
                 'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
                 'created_by' => auth()->user()->name,
                 'payment_method' => 2,
@@ -325,6 +330,7 @@ class OrderController extends Controller
     
             Cart::destroy();
             $tag =  Tag::where('number_tag', session('tag'))->first();
+            session(['tag' => null]);
             if ($tag) {
                 $tag->update(['status' => 'using']);
             }
@@ -352,6 +358,7 @@ class OrderController extends Controller
                 'created_by' => auth()->user()->name,
                 'payment_method' => 2,
                 'status' => 2,
+                'discount' => $discount,
                 'is_pay' => $request->is_pay,
                 'price' => $price - ($price * $discount/100),
                 'order_code' => '#' . auth()->user()->store_code . time() . auth()->id()
@@ -375,5 +382,105 @@ class OrderController extends Controller
             }
             return redirect(route('order.details', ['id' => $order->id ]));
         }
+    }
+
+    public function viewaddProduct($id)
+    {
+        $order = Order::find($id);
+        session(['order_id' => $order->id]);
+        $categories = Category::all();
+        $product = Product::all();
+
+        $data_array = [];
+        foreach ($categories as $key => $value) {
+            $object['category'] = $value;
+            $object['list_product'] = $value->products;
+            array_push($data_array, $object);
+        }
+        return view('backend.order.addproduct', compact('data_array', 'categories', 'order'));
+    }
+
+    public function admincartupdateadd(Request $request, $id)
+    {
+        $price = $request->input('price_' . $id);
+        $qty = $request->input('quantity_' . $id);
+        $product = Product::find($id);
+        $name = $product->name;
+        $size = '';
+        if ($product->price == $price) {
+            $size = 'M';
+        } else {
+            $size = 'L';
+        }
+
+        Cart::add([
+                'id' => $id,
+                'name' => $name,
+                'qty' => $qty,
+                'price' => (int) $price,
+                'weight' => 12,
+                'options' => [
+                'size' => $size,
+                ],
+            ]);
+        session(['success' => 'Thêm thành công']);
+        return redirect(route('order.view.add', ['id' => session('order_id')]));
+    }
+
+    public function admincartupdatecheckout(Request $request)
+    {
+        $cart_subtotal = Cart::subtotal();
+        $temp = explode(".", $cart_subtotal);
+        $temp1 = explode(",", $temp[0]);
+        $price = $temp1[0] . $temp1[1];
+        $total_price = intval($price);
+
+
+        $order = Order::find(session('order_id'));
+        if ($order) {
+            $contents = Cart::content();
+            foreach ($contents as $key => $value) {
+                $orderItem = OrderItem::where('order_id', $order->id)
+                            ->where('product_id', $value->id)->first();
+                if ($orderItem) {
+                    $qty = $orderItem->quantity + $value->qty;
+                    $orderItem->update(['quantity' => $qty]);
+                } else {
+                    $item = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $value->id,
+                    'price' => $value->price,
+                    'quantity' => $value->qty,
+                    'size' => $value->options->size
+                    ]);
+                }
+            }
+
+            $totalPriceOrder = $total_price + $order->total_price;
+            if ($order->discount) {
+                $priceOrder = $totalPriceOrder - ($totalPriceOrder * $order->discount / 100);
+            } else {
+                $priceOrder = $totalPriceOrder;
+            }
+
+            if ($order->is_pay == 1) {
+                $order->update(['note' => ('Đã thanh toán ' . number_format($order->price) . ' VNĐ'), 'is_pay' => 2]);
+            }
+
+            $order->update(['total_price' => $totalPriceOrder, 'price' => $priceOrder]);
+            Cart::destroy();
+            return redirect(route('order.details', ['id' => $order->id]));
+        }
+    }
+
+    public function admincartupdatedelete($rowID)
+    {
+        Cart::update($rowID, 0);
+        if (Cart::count() === 0) {
+            session(['success' => 'Bạn vừa xoá một sản phẩm']);
+            return redirect(route('order.view.add', ['id' => session('order_id')]));
+        }
+        session(['success' => 'Bạn vừa xoá một sản phẩm']);
+        return redirect(route('order.view.add', ['id' => session('order_id')]));
     }
 }

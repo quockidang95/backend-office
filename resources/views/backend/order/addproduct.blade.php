@@ -33,7 +33,7 @@ if ($success) {
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href=" {{ route('order.byday') }} ">Order </a></li>
-        <li class="breadcrumb-item active" aria-current="page">Tạo Order tại quầy</li>
+        <li class="breadcrumb-item active" aria-current="page">Thêm món</li>
     </ol>
 </nav>
 <div class="row">
@@ -54,7 +54,7 @@ if ($success) {
             </div>
             <nav class="nav nav-underline smooth-scroll">
                 @foreach ($categories as $item)
-                <a class="nav-link " href="{{'create-order-admin/tag/'. session('tag') .'/#abc' . $item->id}}">{{$item->name}}</a>
+                <a class="nav-link " href="{{'order/view/add/' . $order->id . '/#abc' . $item->id}}">{{$item->name}}</a>
                 @endforeach
             </nav>
         </div>
@@ -67,13 +67,13 @@ if ($success) {
                 @foreach ($data_array as $item)
                 <div style="display: inline-block">
                 <div class="hidden" id="{{'abc' . $item['category']->id}}"></div>
-                <p style="display: block;">{{$item['category']->name}}</p>
+                <p style="display: block">{{$item['category']->name}}</p>
                 @foreach ($item['list_product'] as $product)
                 @if ($product->price_L == null)
-                <div class="col-10 mb-4 card_product">
+                <div class="col-10 mb-4 card_product ">
                     <div class="card border-left-warning shadow h-100 py-2">
                         <div class="card-body" style="height:150px;">
-                            <form action="{{ route('admin.cart.add', ['id' => $product->id]) }}" method="get">
+                            <form action="{{ route('admin.cart.update.add', ['id' => $product->id]) }}" method="get">
                                 @csrf
                                 <div class="row no-gutters align-items-center">
                                     <div class="col">
@@ -118,7 +118,7 @@ if ($success) {
                 <div class="col-10 mb-4 card_product">
                     <div class="card border-left-warning shadow h-100 py-2">
                         <div class="card-body" style="height:150px;">
-                            <form action="{{ route('admin.cart.add', ['id' => $product->id]) }}" method="get">
+                            <form action="{{ route('admin.cart.update.add', ['id' => $product->id]) }}" method="get">
                                 @csrf
                                 <div class="row no-gutters align-items-center">
                                     <div class="col">
@@ -170,8 +170,9 @@ if ($success) {
                 </div>
                 @endif
                 @endforeach
-            </div>
+                </div>
                 @endforeach
+                <div class=""></div>
             </div>
         </div>
     </div>
@@ -203,7 +204,7 @@ if ($success) {
                     {{number_format($item->price) . ' ₫'}}
                 </div>
                 <div class="col-1">
-                    <a href="{{route('admin.cart.delete', ['rowID' => $item->rowId])}}"><i
+                    <a href="{{route('admin.cart.update.delete', ['rowID' => $item->rowId])}}"><i
                             class="fas fa-backspace"></i></a>
                 </div>
             </div>
@@ -211,34 +212,9 @@ if ($success) {
     
         </div>
         <div class="container mt-5">
-            <form id="frmCheckOut" action="{{route('admin.cart.checkout')}}" method="post">
+            <form id="frmCheckOut" action="{{route('admin.cart.update.checkout')}}" method="post">
                 @csrf
-                <div class="form-group ">
-                    <label for="sothe">Số thẻ</label>
-                <input type="text" class="form-control" readonly name="table" value="{{session('tag')}}"/>
-                </div>
-    
-                <label>Giảm giá(%)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" name="discount" value="0" id="discount">
-                    <div class="input-group-append">
-                        <span class="input-group-text">%</span>
-                    </div>
-                </div>
-    
-                <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" name="is_delivery" id="is_delivery" value="1">
-                    <label class="form-check-label" for="is_delivery">
-                        Mang đi
-                    </label>
-                </div>
-    
-                <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" name="is_pay" id="is_pay" value="1">
-                    <label class="form-check-label" for="is_pay">
-                        Đã thanh toán
-                    </label>
-                </div>
+                
             </form>
         </div>
     
@@ -254,7 +230,7 @@ if ($success) {
                         {{Cart::count() . ' MÓN'}}
                     </div>
                     <div class="col-6" style="text-align: center">
-                        Đặt hàng
+                        Thêm món
                     </div>
                     <div class="col-3" style="padding-left: inherit" id="total">
     
