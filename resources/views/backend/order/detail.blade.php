@@ -98,7 +98,12 @@
             style="text-decoration: none; color: white; position: absolute; top: 80px;">In DS Món</span>
     </div>
 </div>
-
+<a class="btn btn-success btn-icon-split fa-pull-right mb-2" href="{{  route('order.view.add', [ 'id' => $order->id]) }}">
+    <span class="icon text-white-50">
+        <i class="fas fa-plus"></i>
+    </span>
+    <span class="text">Thêm Món</span>
+</a>
 <table class="table table-striped table-hover table-sm">
     <thead class="thead table-dark">
         <tr>

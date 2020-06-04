@@ -23,15 +23,17 @@ class Order extends Model
         'order_code',
         'price',
         'status',
-        'payment_method', 'is_pay'
+        'payment_method', 'is_pay', 'tag'
     ];
 
     public $timestamps = true;
 
-    public function orderitems(){
+    public function orderitems()
+    {
         return $this->hasMany('App\OrderItem', 'order_id');
     }
-     public function customer(){
+    public function customer()
+    {
         return $this->belongsTo('App\User', 'customer_id');
     }
 }
