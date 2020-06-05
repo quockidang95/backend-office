@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Session;
 use App\User;
 use Illuminate\Support\Facades\Validator;
 use App\Feedback;
+
 class AdminController extends Controller
 {
+    // setup thanh cong
     protected $adminRepository;
     public function __construct(UserRepositoryInterface $adminRepository)
     {
@@ -25,17 +27,18 @@ class AdminController extends Controller
         return view('backend.admin.index', compact('admins'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $input = $request->all();
         $admin = User::where('email', $input['email'])->first();
-        if($admin){
+        if ($admin) {
             Session::put('error', 'Email đã tồn tại');
             return Redirect::to(route('admin.index'));
         }
         $validator = Validator::make($request->all(), [
             'c_password' => 'required|same:password',
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             Session::put('error', 'Mật khẩu không khớp');
             return Redirect::to(route('admin.index'));
         }
@@ -49,7 +52,8 @@ class AdminController extends Controller
         return redirect()->route('admin.index');
     }
     
-    public function delete($id){
+    public function delete($id)
+    {
         $user = $this->adminRepository->find($id);
         $user->status = 0;
         $user->save();
@@ -57,11 +61,12 @@ class AdminController extends Controller
         return redirect()->route('admin.index');
     }
 
-    public function update(Request $request, $id){
-        $validator = Validator::make($request->all(),[
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
             'c_password' => 'required|same:password',
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             Session::put('error', 'Mật khẩu không khớp');
             return Redirect::to(route('admin.index'));
         }
@@ -71,9 +76,9 @@ class AdminController extends Controller
         return redirect()->route('admin.index');
     }
 
-    public function feedback(){
+    public function feedback()
+    {
         $feedbacks = Feedback::all();
         return view('backend.admin.feedback', compact('feedbacks'));
-
     }
 }
