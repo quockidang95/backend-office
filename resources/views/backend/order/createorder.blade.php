@@ -72,7 +72,7 @@ if ($success) {
                 @if ($product->price_L == null)
                 <div class="col-10 mb-4 card_product">
                     <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body" style="height:150px;">
+                        <div class="card-body" style="height:200px;">
                             <form action="{{ route('admin.cart.add', ['id' => $product->id]) }}" method="get">
                                 @csrf
                                 <div class="row no-gutters align-items-center">
@@ -95,7 +95,7 @@ if ($success) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-5">
+                                    <div style="display: flex; margin-top: 10px;">
                                         <div class="quantity buttons_added">
                                             <input type="button" value="-" class="minus style rounded"><input
                                                 type="number"
@@ -105,8 +105,7 @@ if ($success) {
                                                 class="input-text qty text rounded" size="4" pattern=""
                                                 inputmode=""><input type="button" value="+" class="plus style rounded">
                                         </div>
-                                    </div>
-                                    <div class="col-2">
+                                    
                                         <button class="btn btn-warning" type="submit">Add</button>
                                     </div>
                                 </div>
@@ -117,7 +116,7 @@ if ($success) {
                 @else
                 <div class="col-10 mb-4 card_product">
                     <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body" style="height:150px;">
+                        <div class="card-body" style="height:200px;">
                             <form action="{{ route('admin.cart.add', ['id' => $product->id]) }}" method="get">
                                 @csrf
                                 <div class="row no-gutters align-items-center">
@@ -149,7 +148,7 @@ if ($success) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-5">
+                                    <div style="display: flex; margin-top: 10px;">
                                         <div class="quantity buttons_added">
                                             <input type="button" value="-" class="minus style rounded"><input
                                                 type="number"
@@ -159,8 +158,7 @@ if ($success) {
                                                 class="input-text qty text rounded" size="4" pattern=""
                                                 inputmode=""><input type="button" value="+" class="plus style rounded">
                                         </div>
-                                    </div>
-                                    <div class="col-2">
+                                
                                         <button class="btn btn-warning" type="submit">Add</button>
                                     </div>
                                 </div>
