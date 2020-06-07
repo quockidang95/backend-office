@@ -51,7 +51,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     {
         switch ($order->store_code) {
             case 'CH53MT':
-                $order->store_code = 'CH 53 Man Thiện 2, P. Hiệp Phú, Quận 9, TP HCM';
+                $order->store_code = 'CH 53 Man Thiện, P. Hiệp Phú, Quận 9, TP HCM';
                 break;
             case 'CH34TL2':
                 $order->store_code = 'CH 34 Tân Lập 2, Hiệp Phú, Q9, TP.HCM';

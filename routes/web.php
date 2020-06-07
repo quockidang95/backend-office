@@ -55,6 +55,9 @@ Route::group(['middleware' => ['auth', 'is_admin']], function () {
     Route::get('admin/cart/update/delete/{rowID}', 'OrderController@admincartupdatedelete')->name('admin.cart.update.delete');
     Route::post('admin/cart/update/checkout', 'OrderController@admincartupdatecheckout')->name('admin.cart.update.checkout');
 
+
+    // get product by ids
+    Route::get('get-product-by-id', 'OrderController@getProductById');
     //For Sếp
     Route::group(['middleware' => ['check_role']], function () {
 

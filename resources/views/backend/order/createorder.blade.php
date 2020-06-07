@@ -38,140 +38,22 @@ if ($success) {
 </nav>
 <div class="row">
     <div class="col-8">
-        <!--
-    <div class="form-group">
-        <label for="exampleFormControlSelect1">Chọn danh mục</label>
-        <select class="form-control" id="category_selected">
-
-        @foreach($categories as $category)
-            <option value="{{ $category->id }}" selected>  {{ $category->name }}</option>
-        @endforeach
-        </select>
-    </div> -->
         <div class="nav-scroller bg-white shadow-sm scrollTOP" id="scrollID">
             <div id="myProgress">
                 <div id="myBar"></div>
             </div>
             <nav class="nav nav-underline smooth-scroll">
                 @foreach ($categories as $item)
-                <a class="nav-link " href="{{'create-order-admin/tag/'. session('tag') .'/#abc' . $item->id}}">{{$item->name}}</a>
+                <button class="btn btn-warning m-1" id="{{ $item->id }}" data-idCategory="{{ $item->id }}">{{$item->name}}</button>
                 @endforeach
             </nav>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-8 pt-3">
-        <div class="row" id="product">
-            <div data-spy="scroll" data-target="#scrollID" data-offset="0">
-                @foreach ($data_array as $item)
-                <div style="display: inline-block">
-                <div class="hidden" id="{{'abc' . $item['category']->id}}"></div>
-                <p style="display: block;">{{$item['category']->name}}</p>
-                @foreach ($item['list_product'] as $product)
-                @if ($product->price_L == null)
-                <div class="col-10 mb-4 card_product">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body" style="height:200px;">
-                            <form action="{{ route('admin.cart.add', ['id' => $product->id]) }}" method="get">
-                                @csrf
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col">
-                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-2">
-                                            {{ $product->name}}
-                                        </div>
-                                        <div>
-                                            <img src="{{asset('source/images/' . $product->image)}}" with="50"
-                                                height="50" />
-                                        </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" checked
-                                                    id="{{$product->price . $product->id . ''}}"
-                                                    name="{{ 'price_' . $product->id }}" value="{{ $product->price }}">
-                                                <label class="custom-control-label"
-                                                    for="{{ $product->price . $product->id . '' }}"><span
-                                                        class="badge badge-warning">{{$product->price}}</span></label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; margin-top: 10px;">
-                                        <div class="quantity buttons_added">
-                                            <input type="button" value="-" class="minus style rounded"><input
-                                                type="number"
-                                                style="width: 25%; border: 0px solid #f6c23e; text-align: center"
-                                                step="1" min="1" max="" name="{{ 'quantity_' .  $product->id }}"
-                                                id="{{'quantity_' . $product->id}}" value="1" title="Qty"
-                                                class="input-text qty text rounded" size="4" pattern=""
-                                                inputmode=""><input type="button" value="+" class="plus style rounded">
-                                        </div>
-                                    
-                                        <button class="btn btn-warning" type="submit">Add</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                @else
-                <div class="col-10 mb-4 card_product">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body" style="height:200px;">
-                            <form action="{{ route('admin.cart.add', ['id' => $product->id]) }}" method="get">
-                                @csrf
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col">
-                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            {{ $product->name}}</div>
-                                        <div>
-                                            <img src="{{asset('source/images/' . $product->image)}}" with="50"
-                                                height="50" />
-                                        </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" checked
-                                                    id="{{$product->price . $product->id . ''}}"
-                                                    name="{{ 'price_' . $product->id }}" value="{{ $product->price }}">
-                                                <label class="custom-control-label"
-                                                    for="{{ $product->price . $product->id . '' }}"><span
-                                                        class="badge badge-warning">{{$product->price}}</span></label>
-                                            </div>
 
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" checked
-                                                    id="{{$product->price_L . $product->id . ''}}"
-                                                    name="{{ 'price_' . $product->id }}"
-                                                    value="{{ $product->price_L }}">
-                                                <label class="custom-control-label"
-                                                    for="{{ $product->price_L . $product->id . '' }}"><span
-                                                        class="badge badge-warning">{{$product->price_L}}</span></label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; margin-top: 10px;">
-                                        <div class="quantity buttons_added">
-                                            <input type="button" value="-" class="minus style rounded"><input
-                                                type="number"
-                                                style="width: 25%; border: 0px solid #f6c23e; text-align: center"
-                                                step="1" min="1" max="" name="{{ 'quantity_' .  $product->id }}"
-                                                id="{{'quantity_' . $product->id}}" value="1" title="Qty"
-                                                class="input-text qty text rounded" size="4" pattern=""
-                                                inputmode=""><input type="button" value="+" class="plus style rounded">
-                                        </div>
-                                
-                                        <button class="btn btn-warning" type="submit">Add</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                @endif
-                @endforeach
-            </div>
-                @endforeach
-            </div>
-        </div>
+    <div class="col-8 pt-3" id="content-product">
+    
     </div>
 
     <div class="col-4">
@@ -325,5 +207,255 @@ if ($success) {
         }
       
     });
+</script>
+<script>
+      $("button").click(function(){
+        const idCategory = parseInt(this.id);
+        $.ajax({
+                type: 'get',
+                url: '{{ URL::to('get-product-by-id') }}',
+                data: {
+                        'id': idCategory
+                    },
+                    success:function(data){
+                        console.log(data);
+                        const contentProduct = data.map((item) =>{
+                            if(item.price_L == null)
+                            {
+                                return `
+                                    <div class="col-10 mb-4 card_product">
+                                        <div class="card border-left-warning shadow h-100 py-2">
+                                            <div class="card-body" style="height:200px;">
+                                                <form action="{{env('APP_URL')}}/admin/cart/add/` + item.id + `" method="get">
+                                                    @csrf
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col">
+                                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-2">`
+                                                                + item.name +
+                                                        ` </div>
+                                                            <div>
+                                                                <img src="{{asset('source/images/` + item.image + `')}}" with="50"
+                                                                    height="50" />
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" class="custom-control-input" checked
+                                                                        id="` + item.price + item.id + '' + `"
+                                                                        name="` + 'price_'  + item.id + `" value=" ` + item.price + `">
+                                                                    <label class="custom-control-label"
+                                                                        for="` + item.price + item.id + '' + `"><span
+                                                                            class="badge badge-warning"> ` + item.price + `</span></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex; margin-top: 10px;">
+                                                            <div class="quantity buttons_added">
+                                                                <input type="button" value="-" class="minus style rounded"><input
+                                                                    type="number"
+                                                                    style="width: 25%; border: 0px solid #f6c23e; text-align: center"
+                                                                    step="1" min="1" max="" name="` + 'quantity_' +  item.id + `"
+                                                                    id="` + 'quantity_' + item.id + `" value="1" title="Qty"
+                                                                    class="input-text qty text rounded" size="4" pattern=""
+                                                                    inputmode=""><input type="button" value="+" class="plus style rounded">
+                                                            </div>
+                                                        
+                                                            <button class="btn btn-warning" type="submit">Add</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }else{
+                                return `
+                                    <div class="col-10 mb-4 card_product">
+                                        <div class="card border-left-warning shadow h-100 py-2">
+                                            <div class="card-body" style="height:200px;">
+                                                <form action="{{env('APP_URL')}}/admin/cart/add/` + item.id + `" method="get">
+                                                    @csrf
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col">
+                                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-2">`
+                                                                + item.name +
+                                                        ` </div>
+                                                            <div>
+                                                                <img src="{{asset('source/images/` + item.image + `')}}'" with="50"
+                                                                    height="50" />
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" class="custom-control-input" checked
+                                                                        id="` + item.price + item.id + '' + `"
+                                                                        name="` + 'price_'  + item.id + `" value=" ` + item.price + `">
+                                                                    <label class="custom-control-label"
+                                                                        for="` + item.price + item.id + '' + `"><span
+                                                                            class="badge badge-warning"> ` + item.price + `</span></label>
+                                                                </div>
+
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" class="custom-control-input"
+                                                                        id="` + item.price_L + item.id + '' + `"
+                                                                        name="` + 'price_'  + item.id + `" value=" ` + item.price_L + `">
+                                                                    <label class="custom-control-label"
+                                                                        for="` + item.price_L + item.id + '' + `"><span
+                                                                            class="badge badge-warning"> ` + item.price_L + `</span></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex; margin-top: 10px;">
+                                                            <div class="quantity buttons_added">
+                                                                <input type="button" value="-" class="minus style rounded"><input
+                                                                    type="number"
+                                                                    style="width: 25%; border: 0px solid #f6c23e; text-align: center"
+                                                                    step="1" min="1" max="" name="` + 'quantity_' +   item.id + `"
+                                                                    id="` + 'quantity_' + item.id + `" value="1" title="Qty"
+                                                                    class="input-text qty text rounded" size="4" pattern=""
+                                                                    inputmode=""><input type="button" value="+" class="plus style rounded">
+                                                            </div>
+                                                        
+                                                            <button class="btn btn-warning" type="submit">Add</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                           
+                        })
+
+                        $('#content-product').html(contentProduct);
+                    }
+                })
+            
+      })
+      $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+</script>
+<script>
+   $(document).ready(function(){
+        $.ajax({
+                type: 'get',
+                url: '{{ URL::to('get-product-by-id') }}',
+                data: {
+                        'id': 5
+                    },
+                    success:function(data){
+                        console.log(data);
+                        const contentProduct = data.map((item) =>{
+                            if(item.price_L == null)
+                            {
+                                return `
+                                    <div class="col-10 mb-4 card_product">
+                                        <div class="card border-left-warning shadow h-100 py-2">
+                                            <div class="card-body" style="height:200px;">
+                                                <form action="{{env('APP_URL')}}/admin/cart/add/` + item.id + `" method="get">
+                                                    @csrf
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col">
+                                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-2">`
+                                                                + item.name +
+                                                        ` </div>
+                                                            <div>
+                                                                <img src="{{asset('source/images/` + item.image + `')}}" with="50"
+                                                                    height="50" />
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" class="custom-control-input" checked
+                                                                        id="` + item.price + item.id + '' + `"
+                                                                        name="` + 'price_'  + item.id + `" value=" ` + item.price + `">
+                                                                    <label class="custom-control-label"
+                                                                        for="` + item.price + item.id + '' + `"><span
+                                                                            class="badge badge-warning"> ` + item.price + `</span></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex; margin-top: 10px;">
+                                                            <div class="quantity buttons_added">
+                                                                <input type="button" value="-" class="minus style rounded"><input
+                                                                    type="number"
+                                                                    style="width: 25%; border: 0px solid #f6c23e; text-align: center"
+                                                                    step="1" min="1" max="" name="` + 'quantity_' +  item.id + `"
+                                                                    id="` + 'quantity_' + item.id + `" value="1" title="Qty"
+                                                                    class="input-text qty text rounded" size="4" pattern=""
+                                                                    inputmode=""><input type="button" value="+" class="plus style rounded">
+                                                            </div>
+                                                        
+                                                            <button class="btn btn-warning" type="submit">Add</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }else{
+                                return `
+                                    <div class="col-10 mb-4 card_product">
+                                        <div class="card border-left-warning shadow h-100 py-2">
+                                            <div class="card-body" style="height:200px;">
+                                                <form action="{{env('APP_URL')}}/admin/cart/add/` + item.id + `" method="get">
+                                                    @csrf
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col">
+                                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-2">`
+                                                                + item.name +
+                                                        ` </div>
+                                                            <div>
+                                                                <img src="{{asset('source/images/` + item.image + `')}}'" with="50"
+                                                                    height="50" />
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" class="custom-control-input" checked
+                                                                        id="` + item.price + item.id + '' + `"
+                                                                        name="` + 'price_'  + item.id + `" value=" ` + item.price + `">
+                                                                    <label class="custom-control-label"
+                                                                        for="` + item.price + item.id + '' + `"><span
+                                                                            class="badge badge-warning"> ` + item.price + `</span></label>
+                                                                </div>
+
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" class="custom-control-input"
+                                                                        id="` + item.price_L + item.id + '' + `"
+                                                                        name="` + 'price_'  + item.id + `" value=" ` + item.price_L + `">
+                                                                    <label class="custom-control-label"
+                                                                        for="` + item.price_L + item.id + '' + `"><span
+                                                                            class="badge badge-warning"> ` + item.price_L + `</span></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex; margin-top: 10px;">
+                                                            <div class="quantity buttons_added">
+                                                                <input type="button" value="-" class="minus style rounded"><input
+                                                                    type="number"
+                                                                    style="width: 25%; border: 0px solid #f6c23e; text-align: center"
+                                                                    step="1" min="1" max="" name="` + 'quantity_' +   item.id + `"
+                                                                    id="` + 'quantity_' + item.id + `" value="1" title="Qty"
+                                                                    class="input-text qty text rounded" size="4" pattern=""
+                                                                    inputmode=""><input type="button" value="+" class="plus style rounded">
+                                                            </div>
+                                                        
+                                                            <button class="btn btn-warning" type="submit">Add</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                           
+                        })
+
+                        $('#content-product').html(contentProduct);
+                    }
+                })
+   })
+                $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
 </script>
 @endsection
