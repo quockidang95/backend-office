@@ -155,7 +155,7 @@ class OrderController extends Controller
         $orderItems = OrderItem::where('order_id', $order->id)->get();
         switch ($order->store_code) {
             case 'CH53MT':
-                $order->store_code = 'CH 53 Man Thiện 2, P. Hiệp Phú, Quận 9, TP HCM';
+                $order->store_code = 'CH 53 Man Thiện, P. Hiệp Phú, Quận 9, TP HCM';
                 break;
             case 'CH34TL2':
                 $order->store_code = 'CH 34 Tân Lập 2, Hiệp Phú, Q9, TP.HCM';
@@ -216,6 +216,9 @@ class OrderController extends Controller
     {
         session(['tag' => $tag]);
         $categories = Category::all();
+
+
+        /*
         $product = Product::all();
 
         $data_array = [];
@@ -223,8 +226,8 @@ class OrderController extends Controller
             $object['category'] = $value;
             $object['list_product'] = $value->products;
             array_push($data_array, $object);
-        }
-        return view('backend.order.createorder', compact('data_array', 'categories'));
+        } */
+        return view('backend.order.createorder', compact('categories'));
     }
 
     public function getproductbycategory(Request $request)
@@ -389,15 +392,8 @@ class OrderController extends Controller
         $order = Order::find($id);
         session(['order_id' => $order->id]);
         $categories = Category::all();
-        $product = Product::all();
-
-        $data_array = [];
-        foreach ($categories as $key => $value) {
-            $object['category'] = $value;
-            $object['list_product'] = $value->products;
-            array_push($data_array, $object);
-        }
-        return view('backend.order.addproduct', compact('data_array', 'categories', 'order'));
+       
+        return view('backend.order.addproduct', compact('categories', 'order'));
     }
 
     public function admincartupdateadd(Request $request, $id)
@@ -482,5 +478,14 @@ class OrderController extends Controller
         }
         session(['success' => 'Bạn vừa xoá một sản phẩm']);
         return redirect(route('order.view.add', ['id' => session('order_id')]));
+    }
+
+    public function getProductById(Request $request)
+    {
+        if ($request->ajax()) {
+            $products = Product::where('category_id', $request->id)->get();
+
+            return Response($products);
+        }
     }
 }

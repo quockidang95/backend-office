@@ -102,6 +102,7 @@
             <th scope="col">Tên tài khoản</th>
             <th scope="col">Trạng thái</th>
             <th scope="col">Mã cửa hàng</th>
+            <th scope="col"> Câp bậc </th>
             <th scope="col">Thao tác</th>
 
         </tr>
@@ -126,6 +127,13 @@
                     }
                 ?>
 
+            </td>
+            <td>
+                @if($item->role_id  == 1)
+                    Quản trị viên
+                @elseif($item->role_id == 2)
+                Nhân viên
+                @endif
             </td>
             <td>
                 <!--Infor admin -->
