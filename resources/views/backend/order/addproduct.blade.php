@@ -255,7 +255,7 @@ if ($success) {
                                                               + item.name +
                                                       ` </div>
                                                           <div>
-                                                              <img src="{{asset('source/images/` + item.image + `')}}'" with="50"
+                                                              <img src="{{asset('source/images/` + item.image + `')}}" with="50"
                                                                   height="50" />
                                                           </div>
                                                           <div class="h5 mb-0 font-weight-bold text-gray-800">
@@ -380,7 +380,7 @@ if ($success) {
                                                               + item.name +
                                                       ` </div>
                                                           <div>
-                                                              <img src="{{asset('source/images/` + item.image + `')}}'" with="50"
+                                                              <img src="{{asset('source/images/` + item.image + `')}}" with="50"
                                                                   height="50" />
                                                           </div>
                                                           <div class="h5 mb-0 font-weight-bold text-gray-800">

@@ -3,29 +3,28 @@ namespace App\Repositories\Order;
 
 interface OrderRepositoryInterface
 {
-//web
-    function getOrderById($orderID);
-    function getOrderItemById($orderItemID);
-    function getProductById($productID);
-    function getAllOrderItemByOrderId($orderID);
+    //web
+    public function getOrderById($orderID);
+    public function getOrderItemById($orderItemID);
+    public function getProductById($productID);
+    public function getAllOrderItemByOrderId($orderID);
 
-    function getDetailOrder(&$orderItems);
-    function printOrder($order, &$orderItems);
-    function revenue();
+    public function getDetailOrder(&$orderItems);
+    public function printOrder($order, &$orderItems);
+    public function revenue();
    
-    function send($to = "", $data = array());
-    function vieworder($id);
-    function indexRechage();
-//success order
-    function checkOrder($orderID);
-    function changeStatusAndCheckOutOrder($order, $user);
-    function createdNotificationSuccessOrder($order, $user);
+    public function send($to = "", $data = array());
+    public function vieworder($id);
+    public function indexRechage();
+    //success order
+    public function checkOrder($orderID);
+    public function changeStatusAndCheckOutOrder($order, $user);
+    public function createdNotificationSuccessOrder($order, $user);
 
-// error order
-    function changeStatusAndCancelOrder($order, $user);
-    function createdNotificationCancelOrder($order, $user);
+    // error order
+    public function changeStatusAndCancelOrder($order, $user);
+    public function createdNotificationCancelOrder($order, $user);
 
-// next order
-    function changeStatusNextOrder($orderID);
+    // next order
+    public function changeStatusNextOrder($orderID);
 }
-?>
