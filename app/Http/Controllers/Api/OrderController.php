@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Order;
-use App\OrderItem;
-use Illuminate\Support\Carbon;
-use Pusher\Pusher;
+use DB;
 use App\User;
+use App\Order;
+use Exception;
 use App\Product;
 use App\Setting;
+use App\OrderItem;
+use Pusher\Pusher;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Http\Controllers\Controller;
 use function GuzzleHttp\json_decode;
 
 class OrderController extends Controller
@@ -19,96 +21,83 @@ class OrderController extends Controller
 
     public function order(Request $request)
     {
+        DB::beginTransaction();
+
         $user = auth('api')->user();
         $setting = Setting::find(1);
-
-        $price = 0;
-        if ($request->price) {
-            $price = $request->price;
-        } else {
-            $price = $request->total_price - ($request->total_price * $setting->discount_user/100);
-        }
         
-        $is_pay;
-        if ($request->payment_method == 1) {
-            $is_pay = 1;
-        } else {
-            $is_pay = 2;
-        }
+        $price = isset($request->price) ? $request->price
+            : ($request->total_price - ($request->total_price * $setting->discount_user/100));
         
-        
-        $order = Order::create([
-            'order_code' => '#' . $request->store_code . time() . $user->id,
-            'store_code' => $request->store_code,
-            'table' => $request->table,
-            'total_price' => $request->total_price,
-            'customer_id' => $user->id,
-            'order_here' => 1,
-            'note' => $request->note,
-            'payment_method' => $request->payment_method,
-            'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
-            'status' => 1,
-            'price' => $price,
-            'is_pay' => $is_pay
-        ]);
-
-        $products = json_decode($request->products);
-      
-        foreach ($products as $product) {
-            if (isset($product->recipe)) {
-                $output = '';
-                foreach ($product->recipe as $recipe) {
-                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+        $is_pay = ($request->payment_method == 1) ?  1 : 2;
+    
+        try {
+            $order = Order::create([
+                'order_code' => '#' . $request->store_code . time() . $user->id,
+                'store_code' => $request->store_code,
+                'table' => $request->table,
+                'total_price' => $request->total_price,
+                'customer_id' => $user->id,
+                'order_here' => 1,
+                'note' => $request->note,
+                'payment_method' => $request->payment_method,
+                'order_date' => Carbon::now('Asia/Ho_Chi_Minh'),
+                'status' => 1,
+                'price' => $price,
+                'is_pay' => $is_pay
+            ]);
+    
+            $products = json_decode($request->products);
+          
+            foreach ($products as $product) {
+                $recipes = isset($product->recipe) ? $product->recipe : [];
+    
+                $output = null;
+                if ($recipes != []) {
+                    foreach ($recipes as $recipe) {
+                        $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+                    }
                 }
-
-                $priceProduct = 0;
-                $size = '';
-                if ($product->price != 0) {
-                    $priceProduct = $product->price;
-                    $size  = 'Vừa';
-                } else {
-                    $priceProduct = $product->price_L;
-                    $size = 'Lớn';
-                }
-
+    
+                $priceProduct = ($product->price != 0) ? $product->price : $product->price_L;
+    
+                $size = ($product->price != 0) ? 'M' : 'L';
+    
                 $item = OrderItem::create([
                     'recipe' => $output,
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
-                    'price' => $price,
+                    'price' => $priceProduct,
                     'size' => $size,
-                    'quantity' => $product->slChon,
-                ]);
-            } else {
-                $item = OrderItem::create([
-                    'recipe' => $output,
-                    'order_id' => $order->id,
-                    'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
-                    'price' => $price,
-                    'size' => $size,
-                    'product_id' => $product->id,
                     'quantity' => $product->slChon,
                 ]);
             }
-        }
 
-        $data['store_code'] = $request->store_code;
-        $data['table'] = $request->table;
-        $data['id'] = $order->id;
-        $options = array(
+           
+
+            $data['store_code'] = $request->store_code;
+            $data['table'] = $request->table;
+            $data['id'] = $order->id;
+            $options = array(
             'cluster' => 'ap1',
             'encrypted' => true
-        );
-        $pusher = new Pusher(
-            env('PUSHER_APP_KEY'),
-            env('PUSHER_APP_SECRET'),
-            env('PUSHER_APP_ID'),
-            $options
-        );
+            );
+            $pusher = new Pusher(
+                env('PUSHER_APP_KEY'),
+                env('PUSHER_APP_SECRET'),
+                env('PUSHER_APP_ID'),
+                $options
+            );
 
-        $pusher->trigger('Notify', 'send-message', $data);
-        return response()->json($order, 200);
+            $pusher->trigger('Notify', 'send-message', $data);
+            DB::commit();
+            return response()->json($order, 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
     }
     
     public function historyorder()
@@ -139,23 +128,16 @@ class OrderController extends Controller
 
     public function delivery(Request $request)
     {
-        $setting = Setting::find(1);
+        DB::beginTransaction();
 
-        $price = 0;
-        if ($request->price) {
-            $price = $request->price;
-        } else {
-            $price = $request->total_price - ($request->total_price * $setting->discount_user/100);
-        }
-
-        $is_pay;
-        if ($request->payment_method == 1) {
-            $is_pay = 1;
-        } else {
-            $is_pay = 2;
-        }
+        try {
+            $setting = Setting::find(1);
+            $price = isset($request->price) ? $request->price
+                        : ($request->total_price - ($request->total_price * $setting->discount_user/100));
+    
+            $is_pay = ($request->payment_method == 1) ?  1 : 2;
         
-        $order = Order::create([
+            $order = Order::create([
             'store_code' => $request->store_code,
             'total_price' => $request->total_price,
             'customer_id' => auth('api')->id(),
@@ -169,62 +151,55 @@ class OrderController extends Controller
             'is_pay' => $is_pay,
         ]);
 
-        $products = json_decode($request->products);
+            $products = json_decode($request->products);
       
-        foreach ($products as $product) {
-            if (isset($product->recipe)) {
-                $output = '';
-                foreach ($product->recipe as $recipe) {
-                    $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+            foreach ($products as $product) {
+                $recipes = isset($product->recipe) ? $product->recipe : [];
+
+                $output = null;
+                if ($recipes != []) {
+                    foreach ($recipes as $recipe) {
+                        $output .= $recipe->name . ': ' . $recipe->value . '%. ';
+                    }
                 }
 
-                $priceProduct = 0;
-                $size = '';
-                if ($product->price != 0) {
-                    $priceProduct = $product->price;
-                    $size  = 'Vừa';
-                } else {
-                    $priceProduct = $product->price_L;
-                    $size = 'Lớn';
-                }
+                $priceProduct = ($product->price != 0) ? $product->price : $product->price_L;
+
+                $size = ($product->price != 0) ? 'M' : 'L';
 
                 $item = OrderItem::create([
-                    'recipe' => $output,
-                    'order_id' => $order->id,
-                    'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
-                    'price' => $price,
-                    'size' => $size,
-                    'product_id' => $product->id,
-                    'quantity' => $product->slChon,
-                ]);
-            } else {
-                $item = OrderItem::create([
-                    'recipe' => $output,
-                    'order_id' => $order->id,
-                    'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
-                    'price' => $price,
-                    'size' => $size,
-                    'product_id' => $product->id,
-                    'quantity' => $product->slChon,
-                ]);
+                'recipe' => $output,
+                'order_id' => $order->id,
+                'created_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                'price' => $price,
+                'size' => $size,
+                'product_id' => $product->id,
+                'quantity' => $product->slChon,
+            ]);
             }
+
+            $data['store_code'] = $request->store_code;
+            $data['table'] = $request->table;
+            $data['id'] = $order->id;
+            $options = array(
+                'cluster' => 'ap1',
+                'encrypted' => true
+            );
+            $pusher = new Pusher(
+                env('PUSHER_APP_KEY'),
+                env('PUSHER_APP_SECRET'),
+                env('PUSHER_APP_ID'),
+                $options
+            );
+
+            $pusher->trigger('Notify', 'send-message', $data);
+
+            DB::commit();
+            return response()->json($order, 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json($e->getMessage(), 400);
         }
-
-        $data['store_code'] = $request->store_code;
-        $data['table'] = $request->table;
-        $data['id'] = $order->id;
-        $options = array(
-            'cluster' => 'ap1',
-            'encrypted' => true
-        );
-        $pusher = new Pusher(
-            env('PUSHER_APP_KEY'),
-            env('PUSHER_APP_SECRET'),
-            env('PUSHER_APP_ID'),
-            $options
-        );
-
-        $pusher->trigger('Notify', 'send-message', $data);
-        return response()->json($order, 200);
     }
 }

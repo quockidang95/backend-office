@@ -72,7 +72,6 @@ class CustomerController extends Controller
 
     public function addProduct(Request $request)
     {
-        //dd($request->p_recipe);
         $recipes = json_decode($request->p_recipe);
         if (count($recipes) > 0) {
             $temp_array = explode("k", (string) $request->p_id);
@@ -168,8 +167,6 @@ class CustomerController extends Controller
         } else {
             $is_pay = 2;
         }
-
-
         
         $point = $request->discount_price/$setting->discount_point;
         $order = new Order;
