@@ -17,6 +17,7 @@ use App\ShiftWork;
 use App\ProductRecipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Order\OrderRepositoryInterface;
 
@@ -101,16 +102,20 @@ class OrderController extends Controller
         return redirect(route('order.byday'));
     }
 
-    public function next($id)
+    public function next(Request $request, $id)
     {
-        $check_status_order = $this->orderRepository->checkOrder($id);
-        if ($check_status_order) {
-            session(['error' => 'Đơn hàng này đã được tiếp nhận rồi...!']);
+        if ($request->ajax()) {
+            $check_status_order = $this->orderRepository->checkOrder($id);
+            if ($check_status_order) {
+                return response()->json(false);
+                session(['error' => 'Đơn hàng này đã được tiếp nhận rồi...!']);
+                return redirect(route('order.details', ['id' => $id]));
+            }
+            $this->orderRepository->changeStatusNextOrder($id);
+            return response()->json(true);
+            session(['success' => 'Tiếp nhận đơn hàng thành công...!']);
             return redirect(route('order.details', ['id' => $id]));
         }
-        $this->orderRepository->changeStatusNextOrder($id);
-        session(['success' => 'Tiếp nhận đơn hàng thành công...!']);
-        return redirect(route('order.details', ['id' => $id]));
     }
 
     public function error($order_id)
@@ -215,25 +220,16 @@ class OrderController extends Controller
     public function createorderadmin($tag)
     {
         session(['tag' => $tag]);
-        $categories = Category::all();
+        $categories = Category::select('id', 'name')->get();
 
-
-        /*
-        $product = Product::all();
-
-        $data_array = [];
-        foreach ($categories as $key => $value) {
-            $object['category'] = $value;
-            $object['list_product'] = $value->products;
-            array_push($data_array, $object);
-        } */
         return view('backend.order.createorder', compact('categories'));
     }
 
     public function getproductbycategory(Request $request)
     {
         if ($request->ajax()) {
-            $products = Product::where('status', 1)->get();
+            $products = Product::select('id', 'name', 'price', 'price_L', 'image')->where('status', 1)->get();
+            
             return json_encode($products);
         }
     }
@@ -243,7 +239,7 @@ class OrderController extends Controller
         $product = Product::find($id);
         $recipe_ids = ProductRecipe::where('product_id', $id)->get('recipe_id');
         $recipes = Recipe::whereIn('id', $recipe_ids)->get();
-        if ($recipes) {
+        if (isset($recipes)) {
             return view('backend.order.productdetails', compact('product', 'recipes'));
         }
         return view('backend.order.productdetails', compact('product'));
@@ -252,6 +248,7 @@ class OrderController extends Controller
     public function admincartadd(Request $request, $id)
     {
         $price = $request->input('price_' . $id);
+        
         $qty = $request->input('quantity_' . $id);
         $product = Product::find($id);
         $name = $product->name;
@@ -391,7 +388,7 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         session(['order_id' => $order->id]);
-        $categories = Category::all();
+        $categories = Category::select('id', 'name')->get();
        
         return view('backend.order.addproduct', compact('categories', 'order'));
     }
@@ -483,8 +480,16 @@ class OrderController extends Controller
     public function getProductById(Request $request)
     {
         if ($request->ajax()) {
-            $products = Product::where('category_id', $request->id)->get();
+            $category_id = $request->id;
+            $nameCache = 'products-' . $category_id;
 
+            $products;
+            if (Cache::has($nameCache)) {
+                $products = Cache::get($nameCache);
+            } else {
+                $products = Product::where('category_id', $category_id)->where('status', '!=', 0)->get();
+                Cache::put($nameCache, $products, 1440);
+            }
             return Response($products);
         }
     }

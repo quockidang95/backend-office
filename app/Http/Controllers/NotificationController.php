@@ -7,19 +7,23 @@ use App\Notification;
 use Carbon;
 use Illuminate\Http\Request;
 use App\Repositories\Order\OrderRepositoryInterface;
+
 class NotificationController extends Controller
 {
     private $orderRepository;
 
-    public function __construct(OrderRepositoryInterface $orderRepository){
+    public function __construct(OrderRepositoryInterface $orderRepository)
+    {
         $this->orderRepository = $orderRepository;
     }
 
-    public function sendAll(){
+    public function sendAll()
+    {
         return view('backend.notification.sendalldevice');
     }
 
-    public function postSendAll(Request $request){
+    public function postSendAll(Request $request)
+    {
         $token_devices = User::select('token_device')->where('token_device', '!=', null)->get()->toArray();
         $message = [
             'title' => $request->title,
@@ -28,24 +32,24 @@ class NotificationController extends Controller
 
         $notification = $this->sendMultipleNotifications($token_devices, $message);
      
-        if($notification){
+        if ($notification) {
             Notification::create([
                 'title' => $request->title,
                 'body' => $request->body,
                 'type_notifi' => 'common',
-                'created_at' => Carbon::now('Asia/Ho_Chi_Minh')  
+                'created_at' => Carbon::now('Asia/Ho_Chi_Minh')
             ]);
             session(['success' => 'Gửi thông báo thành công']);
             return redirect(route('notification.sendall'));
         }
-        if($notification == null){
+        if ($notification == null) {
             session(['error' => 'Gửi thất bại']);
             return redirect(route('notification.sendall'));
         }
-        
     }
 
-    public function sendMultipleNotifications($to = "", $data = array()){
+    public function sendMultipleNotifications($to = "", $data = array())
+    {
         $url = 'https://fcm.googleapis.com/fcm/send';
         $serverKey = "AIzaSyB7ZLUj7bIfiAWHStCpKVDfguewapUloX0";
 
@@ -64,7 +68,7 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($ch);
-        if ($result === FALSE) {
+        if ($result === false) {
             return null;
         }
         curl_close($ch);

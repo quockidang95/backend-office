@@ -111,7 +111,7 @@ input::-moz-focus-inner, input::-moz-focus-outer {
     <fieldset id="foobar">
         <div class="custom-control custom-radio">
             <input type="radio" class="custom-control-input input-checked" id="{{$product->price . $product->id . ''}}"
-                name="price" value="{{$product->price}}">
+                name="price" value="{{$product->price}}" checked>
             <label class="custom-control-label" for="{{$product->price . $product->id . ''}}"><span
                     class="badge badge-warning">{{number_format($product->price) . ' VNĐ'}}</span></label>
         </div>
@@ -120,7 +120,7 @@ input::-moz-focus-inner, input::-moz-focus-outer {
     <fieldset id="foobar">
         <div class="custom-control custom-radio">
             <input type="radio" class="custom-control-input input-checked" id="{{$product->price . $product->id . ''}}"
-                name="price" value="{{$product->price}}">
+                name="price" value="{{$product->price}}" checked>
             <label class="custom-control-label" for="{{$product->price . $product->id . ''}}"><span
                     class="badge badge-warning">{{number_format($product->price) . ' VNĐ'}}</span></label>
         </div>
@@ -215,6 +215,16 @@ rangeSlider();
 
 
 <script>
+
+    $(document).ready(function (){
+      if($("input[name='price']:checked"))
+      {
+        $('#p_price').val($("input[name='price']:checked").val());
+        const num = Number($("input[name='price']:checked").val());
+        $('#total_price').val( new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(num));
+      }
+    })
+
     $(document).on('change', 'input[type=radio][name=price]', function(){
         $('#p_price').val($(this).val());
         var number = Number($(this).val()) * Number($('#quantity').val())
