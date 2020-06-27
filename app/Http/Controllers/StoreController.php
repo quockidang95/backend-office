@@ -21,14 +21,9 @@ class StoreController extends Controller
 
     public function index()
     {
-        if (Auth::user()->is_admin == 1) {
-            $stores = $this->storeRepository->getAll();
-            // Session::put('success', 'Load danh sách cửa hàng thành công');
-            return view('backend.store.index', compact('stores'));
-        }
-
-        Session::put('error', 'Account không có quyền');
-        return Redirect::to('dashboard');
+        $stores = $this->storeRepository->getAll();
+           
+        return view('backend.store.index', compact('stores'));
     }
     public function update(Request $request, $id)
     {

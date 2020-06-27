@@ -23,7 +23,9 @@ class AdminController extends Controller
 
     public function index()
     {
-        $admins  = User::where('is_admin', 1)->get();
+        $admins  = User::select('id', 'name', 'status', 'store_code', 'role_id')
+                        ->where('is_admin', 1)->get();
+
         return view('backend.admin.index', compact('admins'));
     }
 
@@ -55,8 +57,8 @@ class AdminController extends Controller
     public function delete($id)
     {
         $user = $this->adminRepository->find($id);
-        $user->status = 0;
-        $user->save();
+        $user->update(['status' => 0]);
+
         Session::put('success', 'Xóa tài khoảng thành công');
         return redirect()->route('admin.index');
     }

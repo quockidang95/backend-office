@@ -32,7 +32,7 @@ class HomeController extends Controller
             return redirect('/logincustomer');
         }
 
-        $categories = Category::all();
+        $categories = Category::where('id', '!=', 20)->get();
         $product = Product::all();
 
         $data_array = [];

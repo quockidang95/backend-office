@@ -46,7 +46,26 @@
                 <input type="text" class="form-control timepicker" name="end_hour" value="{{ $promotion->end_hour }}">
             </div>
         </div>
-
+        <div class="form-group">
+            <label for=""> Danh sách sản phẩm áp dụng</label>
+            <ul>
+                @foreach ($products as $product)
+                    <li>{{ $product->name }}</li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="form-group">
+            <label> Sản phẩm áp dụng</label> <br>
+        <select class="selectpicker" multiple name="arrID[]">
+            @foreach ($categories as $item)
+            <optgroup label="{{ $item->name }}">
+             @foreach($item->products as $product)
+                 <option value="{{ $product->id}}">{{ $product->name }}</option>
+             @endforeach
+            </optgroup>
+            @endforeach
+          </select>
+        </div>
         <button class="btn btn-primary fa-pull-right mr-5 w-60" type="submit">Cập nhật</button>
     </form>
 
@@ -54,6 +73,15 @@
 </div>
 @endsection
 @section('script')
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
+
 <link  href="{{ asset('datepicker/dist/datepicker.css') }}" rel="stylesheet">
 <script src="{{ asset('datepicker/dist/datepicker.js') }}"></script>
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">

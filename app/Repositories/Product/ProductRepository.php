@@ -2,14 +2,16 @@
 
 namespace App\Repositories\Product;
 
+use Redirect;
+use App\Recipe;
 use App\Product;
 use App\Category;
+use App\ProductRecipe;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Repositories\EloquentRepository;
 use App\Repositories\Product\ProductRepositoryInterface;
-use Redirect;
-use App\ProductRecipe;
-use App\Recipe;
+
 class ProductRepository extends EloquentRepository implements ProductRepositoryInterface
 {
     /**
@@ -21,18 +23,21 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         return \App\Product::class;
     }
 
-    public function getAllProductByCategory($id){
+    public function getAllProductByCategory($id)
+    {
         return App\Product::where('category_id', $id)->where('status', 1)->get();
     }
 
-    public function getAllPaginate(){
+    public function getAllPaginate()
+    {
         $products = Product::where('status', 1) ->simplePaginate(5);
         $categories = Category::all();
         Session::put('success', 'Load danh sách sản phẩm thành công');
         return view('backend.product.index', compact('products'));
     }
 
-    public function addProduct($req){
+    public function addProduct($req)
+    {
         $productAdd = new Product;
         $productAdd->category_id = $req->category_id;
         $productAdd->name = $req->name;
@@ -48,33 +53,45 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         $productAdd->image = $new_image;
         $productAdd->save();
         Session::put('success', 'Add sản phẩm thành công');
+
+        $nameCache = 'products-' . $req->category_id;
+        $product = Product::where('category_id', $request->id)->where('status', '!=', 0)->get();
+        Cache::put($nameCache, $product, 1440);
+
         return Redirect::to('product/index');
     }
-    function disableProduct($id){
+    public function disableProduct($id)
+    {
         $product = Product::find($id);
         $product->status = 0;
         $product->save();
         Session::put('success', 'Khóa sản phẩm thành công');
+
+        $nameCache = 'products-' . $req->category_id;
+        $product = Product::where('category_id', $request->id)->where('status', '!=', 0)->get();
+        Cache::put($nameCache, $product, 1440);
+
         return Redirect::to('product/index');
     }
 
-    function updateProduct($req, $id){
+    public function updateProduct($req, $id)
+    {
         $recipes = $req->input('recipe');
-        if($recipes){
+        if ($recipes) {
             $product_recipe = ProductRecipe::where('product_id', $id)->get();
-            if(!$product_recipe){
-                foreach($recipes as $recipe){
+            if (!$product_recipe) {
+                foreach ($recipes as $recipe) {
                     ProductRecipe::create([
                         'product_id' => $id,
                         'recipe_id' => $recipe
                     ]);
                 }
-            }else{
-                foreach($product_recipe as $item){
+            } else {
+                foreach ($product_recipe as $item) {
                     ProductRecipe::destroy($item->id);
                 }
 
-                foreach($recipes as $recipe){
+                foreach ($recipes as $recipe) {
                     ProductRecipe::create([
                         'product_id' => $id,
                         'recipe_id' => $recipe
@@ -99,16 +116,36 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
             $get_image->move('source/images', $new_image);
             $productAdd->image = $new_image;
             $productAdd->save();
-            Session::put('success', 'Update sản phẩm thành công');
-            return Redirect::to('product/index');
         } else {
             $productAdd->save();
-            Session::put('success', 'Update sản phẩm thành công');
-            return Redirect::to('product/index');
         }
+
+        // put cache product for web
+        $nameCache = 'products-' . $req->category_id;
+        $products = Product::where('category_id', $req->category_id)->where('status', '!=', 0)->get();
+        Cache::put($nameCache, $products, 1440);
+
+
+        // cache products for api
+        $nameCacheApi = 'api-products' . $id;
+
+        $category = Category::find($req->category_id);
+        $productApis = $category->products;
+
+        foreach ($productApis as $product) {
+            $recipe_ids = ProductRecipe::where('product_id', $product->id)->get('recipe_id');
+            $recipes = Recipe::whereIn('id', $recipe_ids)->get();
+            $productApis['recipe'] = $recipes;
+        }
+        Cache::put($nameCacheApi, $productApis, 1440);
+        
+
+        Session::put('success', 'Update sản phẩm thành công');
+        return Redirect::to('product/index');
     }
 
-    public function findProductByName($requset){
+    public function findProductByName($requset)
+    {
         if ($request->ajax()) {
             $output = '';
             $products = Product::where('name', 'LIKE', '%' . $request->search . '%')->get();
@@ -166,7 +203,8 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         }
     }
 
-    public function find_1($id){
+    public function find_1($id)
+    {
         $product = Product::find($id);
         $recipe_ids = ProductRecipe::where('product_id', $id)->get('recipe_id');
         $recipes = Recipe::whereIn('id', $recipe_ids)->get();

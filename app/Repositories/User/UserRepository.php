@@ -15,7 +15,6 @@ use App\Repositories\User\UserRepositoryInterface;
 
 class UserRepository extends EloquentRepository implements UserRepositoryInterface
 {
-
     protected $successStatus = 200;
     protected $errorStatus = 401;
     /**
@@ -27,7 +26,8 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         return \App\User::class;
     }
 
-    public function validator($request){
+    public function validator($request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'address' => 'required',
@@ -35,18 +35,19 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
             'token_device' => 'required',
         ]);
         if ($validator->fails()) {
-           return false;
+            return false;
         }
 
         $phoneValidate = $request->phone;
         $userPhone = User::where('phone', $phoneValidate)->first();
-        if ($userPhone){
+        if ($userPhone) {
             return false;
         }
         return true;
     }
 
-    public function createUser($request){
+    public function createUser($request)
+    {
         $input = $request->all();
         $input['is_admin'] = 0;
         $input['role_id'] = 3;
@@ -56,12 +57,13 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         return response()->json($success, $this->successStatus);
     }
 
-    public function userLogin($request){
-       
+    public function userLogin($request)
+    {
         $user = User::where('phone', $request->phone)->where('role_id', 3)->first();
-        if (isset($user)){
+      
+        if ($user) {
             $success['token'] =  $user->createToken('MyApp')->accessToken;
-            if($request->token_device !== $user->token_device){
+            if ($request->token_device !== $user->token_device) {
                 $user->update(['token_device' => $request->token_device]);
             }
             return response()->json($success, $this->successStatus);
@@ -69,9 +71,10 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         return response()->json(['error' => 'Unauthorised'], 401);
     }
 
-    public function userUpdate($request){
+    public function userUpdate($request)
+    {
         $input = $request->all();
-        if($request->birthday){
+        if ($request->birthday) {
             $input['birthday'] = date('Y-m-d', strtotime($input['birthday']));
             $user = $this->update(auth('api')->id(), $input);
             return response()->json($user, $this->successStatus);
@@ -79,17 +82,18 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         $user = $this->update(Auth::id(), $input);
         return response()->json($user, $this->successStatus);
     }
-//web
-    public function rechangeUserAndCreateNotification($id, $request){
+    //web
+    public function rechangeUserAndCreateNotification($id, $request)
+    {
         $user = User::find($id);
         $setting = Setting::find(1);
 
-        if($request->money_discount != null){
+        if ($request->money_discount != null) {
             $rechageData['money_discount'] = $request->money_discount;
             $user->wallet = $user->wallet + $request->money_discount;
         }
-        if($request->point_discount != null){
-            if($request->point_discount > $user->point){
+        if ($request->point_discount != null) {
+            if ($request->point_discount > $user->point) {
                 session(['error' => 'Điểm thưởng không hợp lệ']);
                 return redirect(route('customer.info', ['id' => $id]));
             }
@@ -121,7 +125,7 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         $rechageData['created_at'] = Carbon::now('Asia/Ho_Chi_Minh');
         $rechageData['store_code'] = auth()->user()->store_code;
         $reg = Rechage::create($rechageData);
-        if($user->token_device == null){
+        if ($user->token_device == null) {
             Session::put('success', 'Nạp thành công ' . number_format($request->money) . ' vào tài khoản khách hàng ' . $user->name . '.');
             return redirect(route('customer.info', ['id' => $id]));
         }
@@ -149,14 +153,15 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($ch);
-        if ($result === FALSE) {
+        if ($result === false) {
             die('FCM Send Error: '  .  curl_error($ch));
         }
         curl_close($ch);
         return json_decode($result, true);
     }
 
-    public function searchUser($request){
+    public function searchUser($request)
+    {
         if ($request->ajax()) {
             $output = '';
             $users = User::where('phone', 'LIKE', '%' . $request->search . '%')->get();
@@ -186,7 +191,8 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         }
     }
 
-    public function infoUser($id){
+    public function infoUser($id)
+    {
         $user = User::find($id);
         $rechages = Rechage::where('customer_id', $id)->orderby('created_at', 'desc')->get();
         $ordersHistory = $user->orders()->orderBy('order_date', 'desc')->get();
@@ -194,7 +200,8 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         return view('backend.customer.info', compact('user', 'rechages', 'ordersHistory'));
     }
 
-    public function tong($x, $y){
+    public function tong($x, $y)
+    {
         return $x + $y;
     }
 }

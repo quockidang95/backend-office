@@ -21,7 +21,7 @@
                                     <img src="{{asset('img/office_logo.png')}}" width="100%" alt="">
                                     </h1>
                                 </div>
-                                <form class="user"id="frmPhone" method="POST" action="{{route('customerlogin')}}">
+                                <form class="user" id="frmPhone" method="POST" action="{{route('customerlogin')}}">
                                     @csrf
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-user" name="phone" id="phoneNumber" aria-describedby="emailHelp" placeholder="Nhập vào số điện thoại...">
@@ -52,5 +52,13 @@
     </div>
 
 </div>
-
+@endsection
+@section('script')
+<script type="text/javascript">
+    $('#frmPhone').keypress( function(e) {
+        if (e.keyCode == 13) {
+            return false;
+        }
+    })
+</script>
 @endsection

@@ -27,8 +27,6 @@
 </div>
 
 <div class="row">
-
-
     <div class="col-xl-3 col-md-6 mb-4">
         <?php
             $customer = App\User::find($order->customer_id);
@@ -69,9 +67,9 @@
                         @endif
                         <?php
                            if($order->status == 1){
-                                echo '<span class="badge badge-pill badge-danger">Chưa xử lí</span>';
+                                echo '<span class="badge badge-pill badge-danger" id="status">Chưa xử lí</span>';
                             }else if($order->status == 2){
-                                echo '<span class="badge badge-pill badge-warning">Đã tiếp nhận</span>';
+                                echo '<span class="badge badge-pill badge-warning" id="status">Đã tiếp nhận</span>';
                             }
                         ?>
                     </div>
@@ -135,12 +133,35 @@
 </table>
 <div class="col-xl-10 col-md-12 mb-4">
     <a href="{{ route('order.success', ['id' => $order->id]) }}" class="btn btn-outline-success">Xác nhận đơn hàng</a>
-    <a href="{{ route('order.next', ['id' => $order->id]) }}" class="btn btn-outline-warning">Tiếp nhận đơn hàng</a>
-    <a href="{{ route('order.error', ['id' => $order->id]) }}" class="btn btn-outline-danger">Hủy đơn hàng</a>
+    <button id="status_next" class="btn btn-outline-warning">Tiếp nhận đơn hàng</button>
+    <a href="{{ route('order.error', ['id' => $order->id ]) }}" id="status_error" class="btn btn-outline-danger">Hủy đơn hàng</a>
 
 </div>
 @endsection()
 @section('script')
+
+<script>
+    $('#status_next').click(function(){
+        $.ajax({
+            type: 'get',
+            url: `{{ route('order.next', ['id' => $order->id]) }}`,
+            data: {
+              
+            },
+            success: function(data) {
+                console.log(data)
+                if(data == false) {
+                    toastr.error('Đơn hàng này đã được tiếp nhận rồi', 'Hệ thống thông báo: ', {timeOut: 5000})
+                }else{
+                    $('#status').removeClass('badge-danger').addClass('badge-warning').html('Đã tiếp nhận')
+                }
+            }
+        })
+    });
+</script>
+
+
+
 <script type="text/javascript">
     function closePrint () {
       document.body.removeChild(this.__container__);
